@@ -18,6 +18,7 @@ mkdocs-macros-plugin = "^1.0.5"
 
 [tool.poe.tasks]
 serve = "mkdocs serve -a localhost:8001"
+export = "poetry export -f requirements.txt --output requirements.txt"
 
 [build-system]
 requires = ["poetry-core"]
