@@ -58,6 +58,7 @@ plugins:
         pagination: true
         pagination_per_page: 5
         post_date_format: long
+        draft: true
     - tags:
         tags_file: ./blog/tags.md
 
