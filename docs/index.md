@@ -1,6 +1,11 @@
+---
+hide:
+  - navigation
+  - toc
+---
 # Giray Coskun
 
-I am a Computer Scientist/Software Engineer. And this is my personal website. I will probably write about random stuff here about my interests and hobbies.
+I am a Computer Scientist/Software Engineer, living in Munich. And this is my personal website. Here I write about my hobbies and trips. I am a CMAS 3* Scuba Diver and a hiking enthusiast.
 
 If interested here is my professional website:
 

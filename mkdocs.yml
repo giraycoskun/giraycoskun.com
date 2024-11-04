@@ -1,7 +1,7 @@
-site_name: giraycoskun.com
+site_name: giraycoskun
 site_url: https://giraycoskun.com/
 site_author: Giray Coskun
-site_description: I am a software engineer and this is my personal website
+site_description: Giray Coskun, my personal website
 
 # Repository
 repo_name: giraycoskun/giraycoskun.com
@@ -11,9 +11,10 @@ theme:
   language: en 
   name: material
   custom_dir: docs/overrides
-  logo: assets/developer.png
-  favicon: assets/developer.png
+  logo: assets/icons/hiking.png
+  favicon: assets/icons/hiking.png
   features:
+    - navigation.tabs
     - navigation.indexes
     - navigation.top
     - navigation.tabs.sticky
@@ -27,6 +28,7 @@ theme:
     
     # Palette toggle for light mode
     - scheme: default
+      primary: deep orange
       toggle:
         icon: material/weather-night
         name: Switch to dark mode
@@ -45,6 +47,8 @@ extra:
     - icon: fontawesome/brands/linkedin 
       link: https://www.linkedin.com/in/giraycoskun/
   
+extra_css:
+  - assets/css/custom.css
 
 plugins:
     - search
@@ -53,6 +57,7 @@ plugins:
         blog_toc: true
         pagination: true
         pagination_per_page: 5
+        post_date_format: long
     - tags:
         tags_file: ./blog/tags.md
 
@@ -82,5 +87,3 @@ nav:
   - My Blog:
     - blog/index.md
     - blog/tags.md
-  - Developer Website: https://giraycoskun.com/
-  - GitHub Projects: https://giraycoskun.github.io/
