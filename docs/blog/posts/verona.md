@@ -12,6 +12,8 @@ categories:
 
 Verona was a great historical city that still feels like it belongs to the old ages. After the fall of the Roman Empire, it was invaded by barbarians. During the medieval ages, it was ruled by "House of Della Scala" known as the Scaligeri. And then it became under the control of The Republic of Venice , *"Serenissima Repubblica di Venezia"* as part of the "Veneto" region; until its union to the modern Italy.
 
+<!-- more -->
+
 ## Sightseeing
 
 <div class="album">

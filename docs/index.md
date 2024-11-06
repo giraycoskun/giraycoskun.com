@@ -5,11 +5,12 @@ hide:
 ---
 # Giray Coskun
 
-I am a Computer Scientist/Software Engineer, living in Munich. And this is my personal website. Here I write about my hobbies and trips. I am a CMAS 3* Scuba Diver and a hiking enthusiast.
+I am a Computer Scientist/Software Engineer, living in Munich. 
 
-If interested here is my professional website:
+This is my personal website. Here I write about my hobbies and trips. 
 
-[giraycoskun.dev](https://www.giraycoskun.dev/){ .md-button }
+I am a CMAS 3* Scuba Diver and a hiking enthusiast.
+
 
 ---
 

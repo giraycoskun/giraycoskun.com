@@ -59,6 +59,7 @@ plugins:
         pagination_per_page: 5
         post_date_format: long
         draft: true
+        post_readtime: true
     - tags:
         tags_file: ./blog/tags.md
 
@@ -88,3 +89,4 @@ nav:
   - My Blog:
     - blog/index.md
     - blog/tags.md
+  - Developer Website: https://giraycoskun.dev/
