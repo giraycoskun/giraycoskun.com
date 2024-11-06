@@ -37,9 +37,7 @@ Verona was a great historical city that still feels like it belongs to the old a
             <img src="https://www.museiverona.com/wp-content/uploads/2016/06/giulietta_box.jpg" alt="Image 3">
             <div class="caption">Casa di Giulietta</div>
         </div>
-        
-        <!-- Add more image containers as needed -->
-    </div>
+</div>
 
 ### Walking Tour
 

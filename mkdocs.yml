@@ -4,8 +4,8 @@ site_author: Giray Coskun
 site_description: Giray Coskun, my personal website
 
 # Repository
-repo_name: giraycoskun/giraycoskun.com
-repo_url: https://github.com/giraycoskun/giraycoskun.com
+# repo_name: giraycoskun/giraycoskun.com
+# repo_url: https://github.com/giraycoskun/giraycoskun.com
 
 theme:
   language: en 

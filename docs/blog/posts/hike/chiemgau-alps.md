@@ -7,7 +7,6 @@ categories:
   - Hike
 tags:
   - Alps
-  - Multi-day
 ---
 # Chiemgau Alps
 
