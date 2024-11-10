@@ -8,13 +8,13 @@ categories:
 tags:
   - Alps
 ---
-# Chiemgau Alps
+# Chiemgau Alps: From Oberaudorf &rarr; Spitzsteinhaus &rarr; Hochrieshütte to Aschau im Chiemgau
 
 ![Chiemgau Alps](/assets/img/chiemgauer-alpen.png)
 
 <!-- more -->
 
-## Day 1: From Oberaudorf to Spitzstein
+## Day 1: From Oberaudorf to Spitzsteinhaus (Spitzstein)
 
 <iframe src='https://connect.garmin.com/modern/activity/embed/17350135348' title='Oberaudorf Hiking' width='465' height='500' frameborder='0'></iframe>
 
