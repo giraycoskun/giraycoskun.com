@@ -4,17 +4,34 @@ hide:
   - toc
 ---
 
+<style>
+.md-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh; /* Adjust height to center vertically */
+    text-align: center; /* Center align text */
+}
+
+.img {
+    border: 4px solid black; /* 2px wide solid black border */
+    border-radius: 4px; /* Optional: adds rounded corners */
+}
+</style>
+
 # Giray Coskun
 
-I am a Computer Scientist/Software Engineer, living in Munich. I am also a CMAS 3\* Scuba Diver and a hiking enthusiast.
-
+<p style="text-align: left;">
+Hi, <br>
+I am a Computer Scientist/Software Engineer, living in Munich. <br>
+I am also a CMAS 3* Scuba Diver and a hiking enthusiast. <br>
 This is my personal website. Here I write about my hobbies and trips.
+</p>
 
-<div class="album">
-  <div class="image-container">
-      <img src="https://lh3.googleusercontent.com/pw/AP1GczOgVhVGAalntdpsl359yRlof4oP753jLG8g3XGIxuoEFXNAiFZiyB19588NzFZQMAdjZb2cRBhoyJRyx7uRi2zevflCAtyWsEdsPJcWjM_slPJ2G4Y9HSusfGnAsbM3SX61kc0geUutjkBzxPZLpHj2AA=w1472-h1962-s-no-gm?authuser=0" alt="Hiker">
-  </div>
-</div>
+<figure markdown="span" class="img">
+  ![Image title](https://lh3.googleusercontent.com/pw/AP1GczOgVhVGAalntdpsl359yRlof4oP753jLG8g3XGIxuoEFXNAiFZiyB19588NzFZQMAdjZb2cRBhoyJRyx7uRi2zevflCAtyWsEdsPJcWjM_slPJ2G4Y9HSusfGnAsbM3SX61kc0geUutjkBzxPZLpHj2AA=w1472-h1962-s-no-gm?authuser=0){ width="300" }
+</figure>
 
 ---
 
