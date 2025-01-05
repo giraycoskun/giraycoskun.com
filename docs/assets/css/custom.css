@@ -1,0 +1,14 @@
+.image-container {
+    text-align: center;
+}
+.album img {
+    width: 300px;
+    height: auto; /* Maintain aspect ratio */
+    border: 5px solid black;
+    object-fit: cover;
+}
+.caption {
+    margin-top: 5px;
+    font-size: 14px;
+    color: #555; /* Adjust color as needed */
+}
