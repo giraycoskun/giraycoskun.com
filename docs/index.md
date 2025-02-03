@@ -30,7 +30,7 @@ This is my personal website. Here I write about my hobbies and trips.
 </p>
 
 <figure markdown="span" class="img">
-  ![Image title](https://lh3.googleusercontent.com/pw/AP1GczOgVhVGAalntdpsl359yRlof4oP753jLG8g3XGIxuoEFXNAiFZiyB19588NzFZQMAdjZb2cRBhoyJRyx7uRi2zevflCAtyWsEdsPJcWjM_slPJ2G4Y9HSusfGnAsbM3SX61kc0geUutjkBzxPZLpHj2AA=w1472-h1962-s-no-gm?authuser=0){ width="300" }
+  ![Image title](/assets/img/index-profile.jpg){ width="300" }
 </figure>
 
 ---

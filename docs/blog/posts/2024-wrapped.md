@@ -16,6 +16,7 @@ Year started in Istanbul while working
 
 Started running in **February**. And regular trekking routes around Antalya. 
 
+<!-- more -->
 
 ## Spotify
 
@@ -30,7 +31,7 @@ img {
 ## 2025 Resolutions
 
 - [ ] Run Better. Run More.
-    * [ ] Sub 60 min. 10K
+    * [ ] Sub 55 min. 10K
     * [ ] Sub 25 min. 5K
 - [ ] Under 76 Kg
 - [ ] 5 Pull-up
