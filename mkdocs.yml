@@ -95,6 +95,4 @@ nav:
   - My Blog:
     - blog/index.md
     - blog/tags.md
-  - Notes:
-    - notes/index.md
   - Developer Website: https://giraycoskun.dev/
