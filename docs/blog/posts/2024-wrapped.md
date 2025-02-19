@@ -27,14 +27,3 @@ img {
 </style>
 
 ![spotify-wrapped](/assets/img/spotify-wrapped.jpg)
-
-## 2025 Resolutions
-
-- [ ] Run Better. Run More.
-    * [ ] Sub 55 min. 10K
-    * [ ] Sub 25 min. 5K
-- [ ] Under 76 Kg
-- [ ] 5 Pull-up
-- [ ] 10 Books
-- [ ] 5 Computer Science Books
-- [ ] 24 Movies
