@@ -49,6 +49,11 @@ extra:
   
 extra_css:
   - assets/css/custom.css
+  - https://unpkg.com/leaflet@1.9.4/dist/leaflet.css
+
+extra_javascript:
+  - assets/javascripts/extra.js
+  - https://unpkg.com/leaflet@1.9.4/dist/leaflet.js
 
 plugins:
     - search
