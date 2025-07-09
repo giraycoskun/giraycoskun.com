@@ -100,9 +100,6 @@ nav:
   - My Blog:
     - blog/index.md
     - blog/tags.md
-  - Diary:
-    - diary/index.md
-    - diary/wine-diary.md
-    - diary/beer-diary.md
-    - diary/hiking-diary.md
+  - Projects:
+    - projects/library.md
   - Developer Website: https://giraycoskun.dev/

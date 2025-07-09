@@ -1,4 +1,0 @@
-# Beer Diary
-
-## München
-
