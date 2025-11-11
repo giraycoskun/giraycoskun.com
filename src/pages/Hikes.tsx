@@ -8,7 +8,8 @@ type Hike = {
   title: string;
   distance: number;
   elevation: number;
-  embedSrc: string;
+  embedSrc?: string; // optional fallback
+  stravaId?: string | number;
   tags?: string[];
   region: string;
   year: number;
@@ -19,9 +20,10 @@ type Hike = {
 const hikes: Hike[] = [
   {
     title: 'Aueralm Loop',
-    distance: 11.65, // in km
-    elevation: 563, // in meters
-    embedSrc: 'https://connect.garmin.com/modern/activity/embed/20929483967',
+    distance: 11.65,
+    elevation: 562,
+    // Garmin embed removed — use Strava embed id instead
+    stravaId: '16394630411',
     tags: ['easy', 'winter'],
     region: 'Tegernsee',
     year: 2025,
@@ -34,9 +36,9 @@ const hikes: Hike[] = [
   },
   {
     title: 'Herzogstand - Heimgarten Loop',
-    distance: 8.2,
-    elevation: 310,
-    embedSrc: 'https://connect.garmin.com/modern/activity/embed/20458773353',
+    distance: 15.9,
+    elevation: 1232,
+    stravaId: '15891094903',
     tags: ['moderate'],
     region: 'Kochelsee - Walchensee',
     year: 2025,
@@ -64,6 +66,23 @@ function StatCard({ label, value, unit }: { label: string; value: string; unit: 
 
 function HikeTrack({ hike }: { hike: Hike }) {
   const [openImg, setOpenImg] = useState<string | null>(null);
+
+  useEffect(() => {
+    // load strava embed script once when a hike with stravaId is rendered
+    if (!hike.stravaId) return;
+    const src = 'https://strava-embeds.com/embed.js';
+    if (!document.querySelector(`script[src="${src}"]`)) {
+      const s = document.createElement('script');
+      s.src = src;
+      s.async = true;
+      document.body.appendChild(s);
+    } else {
+      // If script exists, attempt to re-run initialization if provided by the embed script.
+      // Many embed scripts auto-init on load; if needed, re-dispatch a DOM event for compatibility.
+      const ev = new Event('load');
+      window.dispatchEvent(ev);
+    }
+  }, [hike.stravaId]);
 
   return (
     <article className="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col min-h-0">
@@ -117,28 +136,54 @@ function HikeTrack({ hike }: { hike: Hike }) {
         </div>
       </div>
 
-      {/* --- Media area (embed) — increased height so Garmin embeds render properly --- */}
-      <div className="bg-gray-100 relative grow min-h-[360px] md:min-h-[520px] overflow-hidden">
-        <iframe
-          src={hike.embedSrc}
-          title={hike.title}
-          loading="lazy"
-          allowFullScreen
-          referrerPolicy="no-referrer"
-          className="w-full h-full border-0"
-        />
-
-        {/* fallback / affordance to open original if embed doesn't render */}
-        <div className="absolute right-3 top-3">
-          <a
-            href={hike.embedSrc}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs bg-white/90 text-gray-800 px-2 py-1 rounded shadow-sm hover:bg-white"
-          >
-            Open on Garmin
-          </a>
-        </div>
+      {/* --- Media area (Strava embed) — increased height so track embeds render properly --- */}
+      <div className="bg-gray-100 relative grow min-h-[520px] overflow-hidden">
+        {hike.stravaId ? (
+          <div className="w-full h-full flex items-center justify-center p-6">
+            <div
+              className="strava-embed-placeholder w-full h-full"
+              data-embed-type="activity"
+              data-embed-id={String(hike.stravaId)}
+              data-style="standard"
+              data-from-embed="false"
+            />
+            {/* fallback link */}
+            <div className="absolute right-3 top-3">
+              <a
+                href={`https://www.strava.com/activities/${hike.stravaId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs bg-white/90 text-gray-800 px-2 py-1 rounded shadow-sm hover:bg-white"
+              >
+                Open on Strava
+              </a>
+            </div>
+          </div>
+        ) : hike.embedSrc ? (
+          // fallback to any embedSrc (kept for backwards compatibility)
+          <>
+            <iframe
+              src={hike.embedSrc}
+              title={hike.title}
+              loading="lazy"
+              allowFullScreen
+              referrerPolicy="no-referrer"
+              className="w-full h-full border-0"
+            />
+            <div className="absolute right-3 top-3">
+              <a
+                href={hike.embedSrc}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs bg-white/90 text-gray-800 px-2 py-1 rounded shadow-sm hover:bg-white"
+              >
+                Open original
+              </a>
+            </div>
+          </>
+        ) : (
+          <div className="p-6 text-center text-sm text-gray-500">No embed or photos available</div>
+        )}
       </div>
 
       {/* image lightbox (per-card) */}

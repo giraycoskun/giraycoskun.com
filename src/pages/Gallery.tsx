@@ -9,17 +9,17 @@ export const gallery_data = [
 	{
 		src: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=2",
 		alt: "Summit view",
-		tags: ["summit", "mountain"],
+		tags: ["hike", "mountain"],
 	},
 	{
 		src: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=3",
 		alt: "Forest path",
-		tags: ["forest", "trail"],
+		tags: ["hike", "trail"],
 	},
 	{
 		src: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=4",
 		alt: "Lake at dusk",
-		tags: ["lake", "dusk"],
+		tags: ["hike", "dusk"],
 	},
 	{
 		src: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=5",
