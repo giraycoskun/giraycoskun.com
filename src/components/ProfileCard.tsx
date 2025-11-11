@@ -1,0 +1,150 @@
+import { Code2, Merge, ExternalLink } from "lucide-react";
+
+export function GitHubProfileCard() {
+  const profile = {
+    name: "Sarah Chen",
+    username: "sarahchen",
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
+    bio: "Full-stack developer passionate about open source",
+    repos: 42,
+  };
+
+  const repositories = [
+    {
+      id: 1,
+      name: "awesome-react-components",
+      tools: ["TypeScript", "React"],
+    },
+    {
+      id: 2,
+      name: "ml-toolkit",
+      tools: ["Python", "TensorFlow"],
+    },
+    {
+      id: 3,
+      name: "design-system",
+      tools: ["Docker", "Figma"],
+    },
+  ];
+
+  const tools = [
+    { name: "Python", icon: "https://skillicons.dev/icons?i=python" },
+    { name: "JavaScript", icon: "https://skillicons.dev/icons?i=javascript" },
+    { name: "Docker", icon: "https://skillicons.dev/icons?i=docker" },
+    { name: "React", icon: "https://skillicons.dev/icons?i=react" },
+    { name: "Node.js", icon: "https://skillicons.dev/icons?i=nodejs" },
+    { name: "PostgreSQL", icon: "https://skillicons.dev/icons?i=postgresql" },
+  ];
+
+  return (
+    <div className="flex flex-col md:flex-row">
+      {/* Avatar + Meta */}
+      <div className="md:w-1/3 bg-linear-to-r from-purple-600 to-blue-600 p-6 flex flex-col items-start gap-4">
+        <img
+          src={profile.avatar}
+          alt={profile.name}
+          className="w-20 h-20 rounded-full border-4 border-white shadow-lg"
+        />
+        <div className="text-white">
+          <h2 className="text-lg md:text-xl font-bold leading-tight">
+            {profile.name}
+          </h2>
+          <p className="text-purple-100 text-sm mt-1">@{profile.username}</p>
+        </div>
+        <p className="text-white/90 mt-3 text-sm">{profile.bio}</p>
+
+        {/* developer website CTA */}
+        <a
+          href="https://giraycoskun.dev"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-auto inline-flex items-center gap-2 text-sm bg-white/10 hover:bg-white/20 text-white px-3 py-2 rounded"
+          title="Visit giraycoskun.dev"
+          aria-label="Visit giraycoskun.dev"
+        >
+          Visit developer site
+          <ExternalLink size={14} />
+        </a>
+      </div>
+
+      {/* Tech Stack */}
+      <div className="md:w-2/3 p-6 flex flex-col">
+        <div className="mb-8">
+          <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+            <Code2 size={16} className="text-gray-500" />
+            Tech Stack
+          </h3>
+          <div className="flex flex-wrap gap-2">
+            {tools.map((tool) => (
+              <div
+                key={tool.name}
+                className="px-3 py-1.5 bg-linear-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-full text-sm font-medium text-gray-700 hover:shadow-md transition-shadow flex items-center gap-2"
+              >
+                <img
+                  src={tool.icon}
+                  alt={tool.name}
+                  className="w-4 h-4"
+                  loading="lazy"
+                />
+                <span>{tool.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="mb-4">
+          <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+            <Merge size={16} className="text-gray-500" />
+            Interests
+          </h3>
+          <p>
+            Discrete Optimization <br />
+            Causality
+          </p>
+        </div>
+      </div>
+
+      {/* Repositories */}
+      <div className="md:w-2/3 p-6 flex flex-col">
+        <div className="flex-1">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-800">
+              Favourite Repositories
+            </h3>
+            <span className="text-sm text-gray-500">{profile.repos} total</span>
+          </div>
+
+          <div className="space-y-3">
+            {repositories.map((repo) => (
+              <div
+                key={repo.id}
+                className="p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors border border-gray-200 cursor-pointer group"
+              >
+                <div className="flex items-start justify-between mb-2">
+                  <h4 className="font-semibold text-blue-600 group-hover:text-blue-700 flex items-center gap-2">
+                    {repo.name}
+                    <ExternalLink
+                      size={14}
+                      className="opacity-0 group-hover:opacity-100 transition-opacity"
+                    />
+                  </h4>
+                </div>
+
+                <div className="flex items-center gap-4 text-xs text-gray-600">
+                  <span className="font-medium">{repo.tools.join(", ")}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <a
+            href="https://github.com/giraycoskun?tab=repositories"
+            className="mt-4 inline-block text-sm text-blue-600 hover:text-blue-700 font-medium"
+          >
+            View all repositories →
+          </a>
+        </div>
+      </div>
+      
+    </div>
+  );
+}
