@@ -317,7 +317,7 @@ function Hikes() {
 
       {/* --- Hiking-related blog posts --- */}
       {(() => {
-        const hikingPosts = posts.filter((p) => (p.tags || []).includes('hiking'));
+        const hikingPosts = posts.filter((p) => (p.tags || []).includes('hike'));
 
         return (
           <section className="mt-12">
@@ -343,7 +343,7 @@ function Hikes() {
       })()}
 
       {/* --- Gallery Section (aggregated) --- */}
-      <Gallery limit={4} tag="hike" />
+      <Gallery limit={8} tag="hike" />
     </div>
   );
 }
