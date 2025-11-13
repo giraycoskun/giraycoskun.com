@@ -8,6 +8,7 @@ import { Gallery } from './pages/Gallery';
 import Blog from './pages/BlogIndex';
 import BlogPost from './pages/BlogPost';
 import NotFound from './pages/404';
+import Library from './pages/Library'; // added import
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/hikes" element={<Hikes />} />
+          <Route path="/library" element={<Library />} /> {/* new route */}
 
           {/* explicit 404 route for testing */}
           <Route path="/404" element={<NotFound />} />

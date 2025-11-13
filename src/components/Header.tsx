@@ -32,6 +32,13 @@ function Header() {
             <Link to="/blog" className="text-white hover:text-emerald-200 px-3">
               Blog
             </Link>
+
+            {/* separator */}
+            <div className="w-px h-6 bg-white opacity-30 mx-3" aria-hidden="true" />
+
+            <Link to="/library" className="text-white hover:text-emerald-200 px-3">
+              Library
+            </Link>
             
             {/* separator */}
             <div className="w-px h-6 bg-white opacity-30 mx-3" aria-hidden="true" />
