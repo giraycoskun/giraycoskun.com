@@ -4,7 +4,10 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import Home from './pages/Home';      // Your blog post list
 import Hikes from './pages/Hikes';    // The new Hikes page
-import { GalleryPage } from './pages/Gallery';
+import { Gallery } from './pages/Gallery';
+import Blog from './pages/BlogIndex';
+import BlogPost from './pages/BlogPost';
+import NotFound from './pages/404';
 
 function App() {
   return (
@@ -13,9 +16,16 @@ function App() {
       <main className="grow">
         <Routes> {/* Define all your application's routes */}
           <Route path="/" element={<Home />} />
-          <Route path="/gallery" element={<GalleryPage />} />
+          <Route path="/gallery" element={<Gallery />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/hikes" element={<Hikes />} />
-          {/* You can add a 404 "Not Found" page later */}
+
+          {/* explicit 404 route for testing */}
+          <Route path="/404" element={<NotFound />} />
+
+          {/* catch-all */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
       <Footer />

@@ -1,6 +1,6 @@
 // src/Header.jsx
 import { useState } from 'react';
-import { Link } from 'react-router-dom'; // Import Link
+import { Link } from 'react-router-dom';
 
 function Header() {
   const [open, setOpen] = useState(false);
@@ -29,13 +29,19 @@ function Header() {
             {/* separator */}
             <div className="w-px h-6 bg-white opacity-30 mx-3" aria-hidden="true" />
 
+            <Link to="/blog" className="text-white hover:text-emerald-200 px-3">
+              Blog
+            </Link>
+            
+            {/* separator */}
+            <div className="w-px h-6 bg-white opacity-30 mx-3" aria-hidden="true" />
+
             <Link to="/hikes" className="text-white hover:text-emerald-200 px-3">
               Hikes
             </Link>
 
             {/* separator */}
             <div className="w-px h-6 bg-white opacity-30 mx-3" aria-hidden="true" />
-
           </div>
           
           {/* The logo/brand should also be a Link */}
@@ -85,6 +91,14 @@ function Header() {
           >
             Hikes
           </Link>
+          <Link
+            to="/blog"
+            onClick={() => setOpen(false)}
+            className="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-emerald-500"
+          >
+            Blog
+          </Link>
+
         </div>
       </nav>
     </header>

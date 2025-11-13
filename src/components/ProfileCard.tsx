@@ -1,39 +1,38 @@
 import { Code2, Merge, ExternalLink } from "lucide-react";
 
 export function GitHubProfileCard() {
-  const profile = {
-    name: "Sarah Chen",
-    username: "sarahchen",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
-    bio: "Full-stack developer passionate about open source",
-    repos: 42,
-  };
-
   const repositories = [
     {
       id: 1,
-      name: "awesome-react-components",
-      tools: ["TypeScript", "React"],
+      name: "ChewPy",
+      tools: ["Python", "uv", "CLI Tool"],
+      url: "https://github.com/giraycoskun/ChewPy",
     },
     {
       id: 2,
-      name: "ml-toolkit",
-      tools: ["Python", "TensorFlow"],
+      name: "automated-reasoning",
+      tools: ["Python", "Go", "FastAPI", "Docker"],
+      url: "https://github.com/giraycoskun/automated-reasoning",
     },
     {
       id: 3,
-      name: "design-system",
-      tools: ["Docker", "Figma"],
+      name: "tvtime-scrapy-api",
+      tools: ["Docker", "Python", "Redis", "Celery"],
+      url: "https://github.com/giraycoskun/tvtime-scrapy-api",
     },
   ];
 
   const tools = [
     { name: "Python", icon: "https://skillicons.dev/icons?i=python" },
+    { name: "FastAPI", icon: "https://skillicons.dev/icons?i=fastapi" },
+    { name: "Go", icon: "https://skillicons.dev/icons?i=go" },
     { name: "JavaScript", icon: "https://skillicons.dev/icons?i=javascript" },
-    { name: "Docker", icon: "https://skillicons.dev/icons?i=docker" },
-    { name: "React", icon: "https://skillicons.dev/icons?i=react" },
     { name: "Node.js", icon: "https://skillicons.dev/icons?i=nodejs" },
+    { name: "React", icon: "https://skillicons.dev/icons?i=react" },
     { name: "PostgreSQL", icon: "https://skillicons.dev/icons?i=postgresql" },
+    { name: "Redis", icon: "https://skillicons.dev/icons?i=redis" },
+    { name: "Docker", icon: "https://skillicons.dev/icons?i=docker" },
+    { name: "AWS", icon: "https://skillicons.dev/icons?i=aws" },
   ];
 
   return (
@@ -41,24 +40,27 @@ export function GitHubProfileCard() {
       {/* Avatar + Meta */}
       <div className="md:w-1/3 bg-linear-to-r from-purple-600 to-blue-600 p-6 flex flex-col items-start gap-4">
         <img
-          src={profile.avatar}
-          alt={profile.name}
+          src="https://avatars.githubusercontent.com/u/37620872?s=400&u=3b9d821e80e76abc209441bc88b128956e77cbd2&v=4"
+          alt="giraycoskun avatar"
           className="w-20 h-20 rounded-full border-4 border-white shadow-lg"
         />
         <div className="text-white">
           <h2 className="text-lg md:text-xl font-bold leading-tight">
-            {profile.name}
+            Giray Coskun
           </h2>
-          <p className="text-purple-100 text-sm mt-1">@{profile.username}</p>
+          <p className="text-purple-100 text-sm mt-1">@giraycoskun</p>
         </div>
-        <p className="text-white/90 mt-3 text-sm">{profile.bio}</p>
+        <p className="text-white/90 mt-3 text-sm">
+          Software Engineer <br /> MSc Computer Science @ TUM <br /> Sabanci
+          University @ 2022
+        </p>
 
         {/* developer website CTA */}
         <a
           href="https://giraycoskun.dev"
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-auto inline-flex items-center gap-2 text-sm bg-white/10 hover:bg-white/20 text-white px-3 py-2 rounded"
+          className="mt-auto inline-flex items-center gap-2 text-sm bg-white/10 hover:bg-white/20 text-white px-3 py-2 rounded border-2 border-white"
           title="Visit giraycoskun.dev"
           aria-label="Visit giraycoskun.dev"
         >
@@ -68,7 +70,7 @@ export function GitHubProfileCard() {
       </div>
 
       {/* Tech Stack */}
-      <div className="md:w-2/3 p-6 flex flex-col">
+      <div className="md:w-2/3 p-6 flex flex-col items-start gap-4">
         <div className="mb-8">
           <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
             <Code2 size={16} className="text-gray-500" />
@@ -101,6 +103,20 @@ export function GitHubProfileCard() {
             Causality
           </p>
         </div>
+        {/* local server CTA */}
+        <div className="mb-4">
+          <a
+            href="https://server.giraycoskun.dev"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-auto inline-flex items-center gap-2 text-sm bg-gray-300 hover:bg-white/20 text-gray-700 px-3 py-2 rounded border-2 border-black"
+            title="Visit server.giraycoskun.dev"
+            aria-label="Visit server.giraycoskun.dev"
+          >
+            Visit local server
+            <ExternalLink size={14} />
+          </a>
+        </div>
       </div>
 
       {/* Repositories */}
@@ -110,7 +126,7 @@ export function GitHubProfileCard() {
             <h3 className="text-lg font-semibold text-gray-800">
               Favourite Repositories
             </h3>
-            <span className="text-sm text-gray-500">{profile.repos} total</span>
+            <span className="text-sm text-gray-500">20 total</span>
           </div>
 
           <div className="space-y-3">
@@ -120,12 +136,21 @@ export function GitHubProfileCard() {
                 className="p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors border border-gray-200 cursor-pointer group"
               >
                 <div className="flex items-start justify-between mb-2">
-                  <h4 className="font-semibold text-blue-600 group-hover:text-blue-700 flex items-center gap-2">
-                    {repo.name}
-                    <ExternalLink
-                      size={14}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity"
-                    />
+                  <h4 className="font-semibold flex items-center gap-2">
+                    <a
+                      href={repo.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 group-hover:text-blue-700 flex items-center gap-2"
+                    >
+                      <span className="inline-block truncate max-w-[18rem]">
+                        {repo.name}
+                      </span>
+                      <ExternalLink
+                        size={14}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity"
+                      />
+                    </a>
                   </h4>
                 </div>
 
@@ -144,7 +169,6 @@ export function GitHubProfileCard() {
           </a>
         </div>
       </div>
-      
     </div>
   );
 }

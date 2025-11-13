@@ -1,55 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import posts from './blog/posts'; // Import your blog posts data
+import posts from '../data/posts'; // Import your blog posts data
 import { Gallery } from "./Gallery"; // import shared gallery data
- 
-
-type Hike = {
-  title: string;
-  distance: number;
-  elevation: number;
-  embedSrc?: string; // optional fallback
-  stravaId?: string | number;
-  tags?: string[];
-  region: string;
-  year: number;
-  season: string;
-  images?: { src: string; alt?: string }[]; // added images
-};
-  
-const hikes: Hike[] = [
-  {
-    title: 'Aueralm Loop',
-    distance: 11.65,
-    elevation: 562,
-    // Garmin embed removed — use Strava embed id instead
-    stravaId: '16394630411',
-    tags: ['easy', 'winter'],
-    region: 'Tegernsee',
-    year: 2025,
-    season: 'autumn',
-    images: [
-      { src: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1200&auto=format&fit=crop', alt: 'Aueralm trail' },
-      { src: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200&auto=format&fit=crop', alt: 'Summit' },
-      { src: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?q=80&w=1200&auto=format&fit=crop', alt: 'Lake view' },
-    ],
-  },
-  {
-    title: 'Herzogstand - Heimgarten Loop',
-    distance: 15.9,
-    elevation: 1232,
-    stravaId: '15891094903',
-    tags: ['moderate'],
-    region: 'Kochelsee - Walchensee',
-    year: 2025,
-    season: 'autumn',
-    images: [
-      { src: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=1200&auto=format&fit=crop', alt: 'Ridge view' },
-      { src: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1200&auto=format&fit=crop', alt: 'Rocky ridge' },
-    ],
-  },
-  // Add more hikes here
-];
+import BlogPostCard from "../components/BlogPostCard";
+import { hikes } from '../data/hikes';
+import type { Hike } from '../data/types';
 
 // Helper component for the stat cards
 function StatCard({ label, value, unit }: { label: string; value: string; unit: string }) {
@@ -251,7 +205,17 @@ function Hikes() {
 
   return (
     <div className="container mx-auto px-6 py-12">
-      <h1 className="text-4xl font-bold text-gray-800 mb-8">My Hikes</h1>
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-4xl font-bold text-gray-800">My Hikes</h1>
+        <a
+          href="https://trails.giraycoskun.com/trails"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded shadow"
+        >
+          Go to Trails →
+        </a>
+      </div>
 
       {/* --- Top Stats Section --- */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
@@ -358,29 +322,28 @@ function Hikes() {
         return (
           <section className="mt-12">
             <h2 className="text-2xl font-bold mb-4">Hiking Blog</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {hikingPosts.length ? (
-                hikingPosts.map((p) => (
-                  <article className="bg-white rounded-lg shadow p-4" key={p.slug}>
-                    <h3 className="text-lg font-semibold">
-                      <Link to={`/blog/${p.slug}`} className="text-emerald-600 hover:underline">
-                        {p.title}
-                      </Link>
-                    </h3>
-                    <p className="text-xs text-gray-500 mt-1">{p.date}</p>
-                    <p className="mt-2 text-sm text-gray-700">{p.excerpt}</p>
-                  </article>
-                ))
-              ) : (
-                <p className="text-sm text-gray-500">No hiking posts yet.</p>
-              )}
-            </div>
+            {hikingPosts.length ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {hikingPosts.slice(0, 6).map((p, i) => (
+                  <BlogPostCard
+                    key={p.slug}
+                    post={p}
+                    featured={i === 0}
+                    onTagClick={() => {
+                      /* optional: implement tag filter/navigation if needed */
+                    }}
+                  />
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-gray-500">No hiking posts yet.</p>
+            )}
           </section>
         );
       })()}
 
       {/* --- Gallery Section (aggregated) --- */}
-      <Gallery sliceNumber={6} filterTag='hike'/>
+      <Gallery limit={4} tag="hike" />
     </div>
   );
 }

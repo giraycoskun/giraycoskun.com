@@ -1,152 +1,177 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { galleryData, gallerySlice } from "../data/gallery";
+import type { GalleryImage } from "../data/gallery";
+import { Link } from "react-router-dom";
 
-export const gallery_data = [
-	{
-		src: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=1",
-		alt: "Mountain trail",
-		tags: ["hike", "trail"],
-	},
-	{
-		src: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=2",
-		alt: "Summit view",
-		tags: ["hike", "mountain"],
-	},
-	{
-		src: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=3",
-		alt: "Forest path",
-		tags: ["hike", "trail"],
-	},
-	{
-		src: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=4",
-		alt: "Lake at dusk",
-		tags: ["hike", "dusk"],
-	},
-	{
-		src: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=5",
-		alt: "Rocky ridge",
-		tags: ["rock", "ridge"],
-	},
-	{
-		src: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=6",
-		alt: "Trail markers",
-		tags: ["trail", "markers"],
-	},
-	{
-		src: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=2",
-		alt: "Summit view 2",
-		tags: ["summit", "mountain"],
-	},
-	{
-		src: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=3",
-		alt: "Forest path 2",
-		tags: ["forest"],
-	},
-	{
-		src: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=4",
-		alt: "Lake at dusk 2",
-		tags: ["lake"],
-	},
-	{
-		src: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=5",
-		alt: "Rocky ridge 2",
-		tags: ["rock"],
-	},
-	{
-		src: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=6",
-		alt: "Trail markers 2",
-		tags: ["trail"],
-	},
-	// add more images here for the full gallery page
-];
+export function Gallery({ limit, tag }: { limit?: number; tag?: string } = {}) {
+  const images =
+    typeof limit === "number" || typeof tag === "string"
+      ? gallerySlice(limit ?? galleryData.length, tag)
+      : galleryData;
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
-export function Gallery({
-	sliceNumber,
-	filterTag,
-}: {
-	sliceNumber?: number;
-	filterTag?: string;
-}) {
-	const [lightbox, setLightbox] = useState<string | null>(null);
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (openIndex === null) return;
+      if (e.key === "Escape") setOpenIndex(null);
+      if (e.key === "ArrowRight")
+        setOpenIndex((i) => (i === null ? null : (i + 1) % images.length));
+      if (e.key === "ArrowLeft")
+        setOpenIndex((i) =>
+          i === null ? null : (i - 1 + images.length) % images.length
+        );
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [openIndex, images.length]);
 
-	// filter by tag when provided, otherwise use full dataset
-	const filtered = filterTag
-		? gallery_data.filter((g) => (g.tags || []).includes(filterTag))
-		: gallery_data;
+  useEffect(() => {
+    document.body.style.overflow = openIndex !== null ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [openIndex]);
 
-	const gallerySlice = filtered.slice(0, sliceNumber ?? filtered.length);
+  const open = (i: number) => setOpenIndex(i);
+  const close = () => setOpenIndex(null);
+  const prev = () =>
+    setOpenIndex((i) =>
+      i === null ? null : (i - 1 + images.length) % images.length
+    );
+  const next = () =>
+    setOpenIndex((i) => (i === null ? null : (i + 1) % images.length));
 
-	return (
-		<div className="container mx-auto px-6 py-12">
-			<div className="grid grid-cols-2 md:grid-cols-3 gap-4 auto-rows-[120px] md:auto-rows-[160px]">
-				{gallerySlice.map((img, idx) => {
-					const mosaic = [
-						"col-span-2 md:col-span-2 md:row-span-2", // large hero tile
-						"col-span-2 md:col-span-1",
-						"col-span-1 md:col-span-1",
-						"col-span-2 md:col-span-1",
-						"col-span-1 md:col-span-1",
-						"col-span-1 md:col-span-1",
-					];
-					const cls = mosaic[idx] ?? "col-span-1";
-					return (
-						<button
-							key={img.src + idx}
-							onClick={() => setLightbox(img.src)}
-							className={`${cls} relative overflow-hidden rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500`}
-							aria-label={`Open photo: ${img.alt}`}
-						>
-							<img
-								src={img.src}
-								alt={img.alt}
-								className="absolute inset-0 w-full h-full object-cover transform hover:scale-105 transition"
-								loading="lazy"
-							/>
-						</button>
-					);
-				})}
-			</div>
+  return (
+    <main className="container mx-auto px-2 py-12 max-w-7xl">
+      <Link to="/gallery">
+        <h1 className="text-4xl font-bold mb-12 text-gray-900 text-center">
+          Gallery
+        </h1>
+      </Link>
+      {/* Masonry Grid with varied sizes */}
+      <div className="w-full">
+        <div className="columns-2 sm:columns-3 lg:columns-4 xl:columns-5 gap-4">
+          {images.map((img: GalleryImage, i: number) => {
+            return (
+              <figure
+                key={i}
+                className="relative group break-inside-avoid cursor-pointer overflow-hidden rounded-lg transition-transform duration-300 hover:scale-[1.02] mb-4"
+                onClick={() => open(i)}
+              >
+                <img
+                  src={img.src}
+                  alt={img.alt}
+                  className="w-full h-auto object-cover"
+                  loading="lazy"
+                />
+                {/* Hover overlay with caption */}
+                <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+                  <figcaption className="p-4 w-full">
+                    <p className="text-white font-medium text-sm md:text-base">
+                      {img.alt}
+                    </p>
+                  </figcaption>
+                </div>
+              </figure>
+            );
+          })}
+        </div>
+      </div>
 
-			{/* lightbox */}
-			{lightbox && (
-				<div
-					className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 p-4"
-					role="dialog"
-					aria-modal="true"
-					aria-label="Image preview"
-					onClick={() => setLightbox(null)}
-				>
-					<div className="relative max-w-[90vw] max-h-[90vh]">
-						<img
-							src={lightbox}
-							alt="Selected"
-							className="w-full h-auto rounded-lg shadow-lg"
-						/>
-						<button
-							onClick={() => setLightbox(null)}
-							className="absolute -top-3 -right-3 bg-white text-gray-800 rounded-full p-2 shadow focus:outline-none"
-							aria-label="Close"
-						>
-							✕
-						</button>
-					</div>
-				</div>
-			)}
-		</div>
-	);
-}
+      {/* Lightbox modal */}
+      {openIndex !== null && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 p-4 md:p-6"
+          role="dialog"
+          aria-modal="true"
+          onClick={close}
+        >
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              close();
+            }}
+            className="absolute top-4 right-4 md:top-6 md:right-6 text-white/80 hover:text-white bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full w-10 h-10 flex items-center justify-center transition-all focus:outline-none focus:ring-2 focus:ring-white/50"
+            aria-label="Close"
+          >
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
 
-export function GalleryPage() {
-	return (
-		<main className="container mx-auto px-6 py-12">
-			<header className="mb-6">
-				<h1 className="text-3xl font-bold text-gray-800">Photo Gallery</h1>
-				<p className="text-sm text-gray-600 mt-2">
-					A curated collection of recent photos. Use filterTag prop to show a
-					subset.
-				</p>
-			</header>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              prev();
+            }}
+            className="absolute left-4 md:left-6 text-white/80 hover:text-white bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full w-10 h-10 flex items-center justify-center transition-all focus:outline-none focus:ring-2 focus:ring-white/50"
+            aria-label="Previous"
+          >
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+          </button>
 
-			<Gallery sliceNumber={gallery_data.length} />
-		</main>
-	);
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              next();
+            }}
+            className="absolute right-4 md:right-6 text-white/80 hover:text-white bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full w-10 h-10 flex items-center justify-center transition-all focus:outline-none focus:ring-2 focus:ring-white/50"
+            aria-label="Next"
+          >
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </button>
+
+          <figure
+            className="max-w-[180vw] max-h-[180vh] flex flex-col items-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={images[openIndex].src}
+              alt={images[openIndex].alt}
+              className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
+            />
+            <figcaption className="mt-4 text-center">
+              <h3 className="text-lg md:text-xl font-medium text-white/90">
+                {images[openIndex].alt}
+              </h3>
+            </figcaption>
+          </figure>
+        </div>
+      )}
+    </main>
+  );
 }

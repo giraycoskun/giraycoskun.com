@@ -10,4 +10,10 @@ export default defineConfig({
       "Cache-Control": "max-age=3600", // cache for 1 hour
     },
   },
+  build: {
+    target: "esnext", // modern JS output
+    cssCodeSplit: true,
+    minify: "esbuild",
+    sourcemap: false,
+  },
 });
