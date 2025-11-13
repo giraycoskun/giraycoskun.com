@@ -133,7 +133,7 @@ export function GitHubProfileCard() {
             {repositories.map((repo) => (
               <div
                 key={repo.id}
-                className="p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors border border-gray-200 cursor-pointer group"
+                className="p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors border border-gray-200 group"
               >
                 <div className="flex items-start justify-between mb-2">
                   <h4 className="font-semibold flex items-center gap-2">
