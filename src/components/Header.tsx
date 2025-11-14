@@ -92,11 +92,11 @@ function Header() {
             Home
           </Link>
           <Link
-            to="/hikes"
+            to="/gallery"
             onClick={() => setOpen(false)}
             className="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-emerald-500"
           >
-            Hikes
+            Gallery
           </Link>
           <Link
             to="/blog"
@@ -104,6 +104,20 @@ function Header() {
             className="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-emerald-500"
           >
             Blog
+          </Link>
+          <Link
+            to="/library"
+            onClick={() => setOpen(false)}
+            className="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-emerald-500"
+          >
+            Library
+          </Link>
+          <Link
+            to="/hikes"
+            onClick={() => setOpen(false)}
+            className="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-emerald-500"
+          >
+            Hikes
           </Link>
 
         </div>

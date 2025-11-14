@@ -46,10 +46,10 @@ export default function Blog() {
   };
 
   return (
-    <main className="container mx-auto px-6 py-12">
+    <main className="container mx-auto px-6 py-12 bg-white dark:bg-gray-900">
       <header className="mb-6">
-        <h1 className="text-3xl font-extrabold text-gray-900">Blog</h1>
-        <p className="text-sm text-gray-600 mt-2">
+        <h1 className="text-3xl font-extrabold text-gray-900 dark:text-gray-100">Blog</h1>
+        <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">
           Articles and notes — search, filter by tag or click a post to read
           more.
         </p>
@@ -65,7 +65,7 @@ export default function Blog() {
               setPage(1);
             }}
             placeholder="Search by title, excerpt or tag..."
-            className="w-full px-4 py-2 border border-gray-200 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-300"
+            className="w-full px-4 py-2 border border-gray-200 dark:border-gray-700 rounded shadow-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-emerald-300 dark:focus:ring-emerald-500"
             aria-label="Search posts"
           />
         </div>
@@ -76,7 +76,7 @@ export default function Blog() {
               setSelectedTag(null);
               setPage(1);
             }}
-            className={`text-sm px-3 py-1 rounded ${selectedTag ? "bg-white border" : "bg-emerald-600 text-white"}`}
+            className={`text-sm px-3 py-1 rounded ${selectedTag ? "bg-white dark:bg-gray-800 border dark:border-gray-700 text-gray-900 dark:text-gray-100" : "bg-emerald-600 dark:bg-emerald-700 text-white"}`}
             aria-pressed={!selectedTag}
             type="button"
           >
@@ -87,7 +87,7 @@ export default function Blog() {
             <button
               key={tag}
               onClick={() => onTagClick(tag)}
-              className={`text-sm px-3 py-1 rounded ${selectedTag === tag ? "bg-emerald-600 text-white" : "bg-white border"}`}
+              className={`text-sm px-3 py-1 rounded ${selectedTag === tag ? "bg-emerald-600 dark:bg-emerald-700 text-white" : "bg-white dark:bg-gray-800 border dark:border-gray-700 text-gray-900 dark:text-gray-100"}`}
               aria-pressed={selectedTag === tag}
               type="button"
             >
@@ -103,7 +103,7 @@ export default function Blog() {
             <BlogPostCard key={p.slug} post={p} onTagClick={onTagClick} />
           ))
         ) : (
-          <div className="md:col-span-3 p-6 bg-white rounded-lg shadow text-gray-600">
+          <div className="md:col-span-3 p-6 bg-white dark:bg-gray-800 rounded-lg shadow text-gray-600 dark:text-gray-300">
             No posts found. Try a different search or clear filters.
           </div>
         )}
@@ -114,7 +114,7 @@ export default function Blog() {
         <button
           onClick={() => setPage((n) => Math.max(1, n - 1))}
           disabled={page === 1}
-          className="px-3 py-2 bg-gray-200 text-gray-800 rounded disabled:opacity-40"
+          className="px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded disabled:opacity-40"
         >
           Prev
         </button>
@@ -124,7 +124,7 @@ export default function Blog() {
             <button
               key={n}
               onClick={() => setPage(n)}
-              className={`px-3 py-2 rounded ${n === page ? "bg-emerald-600 text-white" : "bg-white border"}`}
+              className={`px-3 py-2 rounded ${n === page ? "bg-emerald-600 dark:bg-emerald-700 text-white" : "bg-white dark:bg-gray-800 border dark:border-gray-700 text-gray-900 dark:text-gray-100"}`}
             >
               {n}
             </button>
@@ -134,7 +134,7 @@ export default function Blog() {
         <button
           onClick={() => setPage((n) => Math.min(totalPages, n + 1))}
           disabled={page === totalPages}
-          className="px-3 py-2 bg-gray-200 text-gray-800 rounded disabled:opacity-40"
+          className="px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded disabled:opacity-40"
         >
           Next
         </button>

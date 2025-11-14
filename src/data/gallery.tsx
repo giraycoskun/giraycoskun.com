@@ -55,6 +55,13 @@ export const galleryData: GalleryImage[] = [
         alt: "Hiking Gear Winter Tegernsee",
         tags: ["hike", "gear", "winter"],
         date: "2024-11-23"
+    },
+    {
+        id: "scuba-diving",
+        src: "https://images.unsplash.com/photo-1763161940665-d9fa2daa4e36?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=7",
+        alt: "Divers Underwater",
+        tags: ["scuba", "underwater"],
+        date: "2022-09-22"
     }
 ];
 
