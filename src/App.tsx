@@ -12,7 +12,7 @@ import Library from './pages/Library'; // added import
 
 function App() {
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
+    <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900">
       <Header />
       <main className="grow flex flex-col">
         <Routes> {/* Define all your application's routes */}

@@ -9,8 +9,8 @@ export const meta: PostMeta = {
   description:
     "Notes and photos from a day hike exploring coastal ridgelines and forests.",
   tags: ["hike", "guide"],
-  coverImage: getGalleryImageById("hiking-gear-winter-tegernsee") ?? 
-    "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1400&q=80",
+  coverImage:
+    getGalleryImageById("herzogstand-view"),
   author: {
     name: "Giray Coskun",
     avatar:
@@ -21,10 +21,10 @@ export const meta: PostMeta = {
 };
 
 export const HikePost: React.FC<{ className?: string }> = ({ className }) => (
-  <article className={`max-w-3xl mx-auto px-6 sm:px-8 lg:px-12 py-10 ${className ?? ""}`}>
+  <article className={`max-w-4xl mx-auto px-6 sm:px-8 lg:px-12 py-10 ${className ?? ""} text-black dark:text-gray-100`}>
     <header>
       {/* author avatar and tags ABOVE the cover image */}
-      <div className="mb-4 flex items-center justify-between rounded border-2 border-amber-600">
+      <div className="mb-4 flex items-center justify-between rounded border-2 border-amber-600 dark:border-amber-500">
         <div className="flex items-center gap-3 p-2">
           {meta.author?.avatar && (
             <img
@@ -34,8 +34,8 @@ export const HikePost: React.FC<{ className?: string }> = ({ className }) => (
             />
           )}
           <div>
-            <div className="font-medium text-gray-900">{meta.author?.name}</div>
-            <div className="text-sm text-gray-500 mt-0.5">{meta.readingTime}</div>
+            <div className="font-medium text-gray-900 dark:text-gray-100">{meta.author?.name}</div>
+            <div className="text-sm text-black dark:text-gray-300 mt-0.5">{meta.readingTime}</div>
           </div>
         </div>
 
@@ -43,7 +43,7 @@ export const HikePost: React.FC<{ className?: string }> = ({ className }) => (
           {meta.tags.map((t) => (
             <span
               key={t}
-              className="text-xs bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full shadow-sm"
+              className="text-xs bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200 px-3 py-1 rounded-full shadow-sm"
             >
               {t}
             </span>
@@ -59,7 +59,7 @@ export const HikePost: React.FC<{ className?: string }> = ({ className }) => (
             className="w-full rounded-lg object-cover h-56 md:h-64 lg:h-72"
             loading="eager"
           />
-          <figcaption className="mt-3 text-sm text-gray-600">
+          <figcaption className="mt-3 text-sm text-black dark:text-gray-300">
             Coastal ridgeline at golden hour — photo by {meta.author?.name} (Unsplash)
           </figcaption>
         </figure>
@@ -78,7 +78,7 @@ export const HikePost: React.FC<{ className?: string }> = ({ className }) => (
             )}
             <div className="text-center">
               <div className="font-medium text-gray-900">{meta.author?.name}</div>
-              <div className="text-gray-500">
+              <div className="text-black">
                 <time dateTime={meta.date}>{new Date(meta.date).toLocaleDateString()}</time>
                 {" • "}{meta.readingTime}
               </div>
@@ -92,56 +92,20 @@ export const HikePost: React.FC<{ className?: string }> = ({ className }) => (
     <section className="mb-8 max-w-prose mx-auto">
       <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg p-4">
         <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Contents</h3>
-        <ul className="mt-2 pl-4 list-disc text-sm text-gray-700 dark:text-gray-300">
+        <ul className="mt-2 pl-4 list-disc text-sm text-black dark:text-gray-300">
           <li><a href="#intro" className="hover:underline">Intro</a></li>
           <li><a href="#notes" className="hover:underline">Notes</a></li>
         </ul>
       </div>
     </section>
 
-    <div className="prose lg:prose-lg dark:prose-invert mx-auto mt-8">
+    <div className="prose lg:prose-lg prose-neutral mx-auto mt-8 text-black dark:text-gray-100 leading-relaxed">
       <section>
         <h2 id="intro" className="text-2xl md:text-3xl font-serif font-semibold text-gray-900 dark:text-gray-100 mt-8 mb-4 leading-tight">
           Intro
         </h2>
-        <p className="text-base md:text-lg text-gray-700 dark:text-gray-300 leading-relaxed max-w-prose">
+        <p className="text-base md:text-lg text-black dark:text-gray-200 leading-relaxed max-w-prose">
           As an hiker beginner, I want to take notes for the future.
-        </p>
-      </section>
-
-      <section>
-        <h2 id="equipment" className="text-2xl md:text-3xl font-serif font-semibold text-gray-900 dark:text-gray-100 mt-8 mb-4 leading-tight">
-          Equipment
-        </h2>
-        <p className="text-base md:text-lg text-gray-700 dark:text-gray-300 leading-relaxed max-w-prose">
-          Basic hiking gear including sturdy boots, layered clothing, a backpack with water and snacks, a map or GPS device, sunscreen, and a first aid kit.
-        </p>
-        <ul className="mt-3 pl-5 list-disc space-y-1 text-gray-700 dark:text-gray-300">
-          <li>Footwear: waterproof boots with good traction</li>
-          <li>Layers: moisture‑wicking base, insulating mid‑layer, wind/rain shell</li>
-          <li>Navigation: paper map + compass or GPS (offline maps)</li>
-          <li>Hydration & food: 2L water, electrolytes, calorie‑dense snacks</li>
-          <li>Sun protection: hat, sunglasses, SPF 30+</li>
-          <li>Safety: small first‑aid kit, whistle, multi‑tool, emergency blanket</li>
-          <li>Lighting: headlamp with spare batteries</li>
-        </ul>
-        <h3 id="winter-equipment" className="text-xl md:text-2xl font-serif font-semibold text-gray-600 dark:text-gray-100 mt-8 mb-4 leading-tight">
-          Winter Equipment
-        </h3>
-        <p className="text-base md:text-lg text-gray-700 dark:text-gray-300 leading-relaxed max-w-prose">
-          Cold and slippery conditions require extra gear for warmth and traction.
-        </p>
-        <ul className="mt-3 pl-5 list-disc space-y-1 text-gray-700 dark:text-gray-300">
-          <li>Insulated, waterproof boots + wool socks (carry a spare pair)</li>
-          <li>Traction: microspikes or light crampons; snowshoes if deep snow</li>
-          <li>Trekking poles with snow baskets; gaiters to keep snow out</li>
-          <li>Layering: wool/synthetic base, fleece mid‑layer, insulated puffy, hard shell</li>
-          <li>Extremities: beanie, neck gaiter, waterproof mitts + liner gloves</li>
-          <li>Thermos with hot drink; extra high‑calorie snacks</li>
-          <li>Emergency: bivy sack or space blanket, fire starter, backup power bank</li>
-        </ul>
-        <p className="mt-3 text-sm text-amber-700 dark:text-amber-300">
-          Check weather and avalanche reports, and turn back if conditions worsen.
         </p>
       </section>
 
@@ -150,17 +114,17 @@ export const HikePost: React.FC<{ className?: string }> = ({ className }) => (
           Notes
         </h2>
         <ul className="pl-5 space-y-2">
-          <li className="text-gray-700 dark:text-gray-300 leading-relaxed">Wildflowers are abundant in late spring; expect muddy sections after rain.</li>
-          <li className="text-gray-700 dark:text-gray-300 leading-relaxed">Dogs allowed but leash is recommended on the ridge.</li>
-          <li className="text-gray-700 dark:text-gray-300 leading-relaxed">Parking can fill on weekends — arrive early.</li>
+          <li className="text-black dark:text-gray-200 leading-relaxed">Wildflowers are abundant in late spring; expect muddy sections after rain.</li>
+          <li className="text-black dark:text-gray-200 leading-relaxed">Dogs allowed but leash is recommended on the ridge.</li>
+          <li className="text-black dark:text-gray-200 leading-relaxed">Parking can fill on weekends — arrive early.</li>
         </ul>
       </section>
     </div>
 
-    <footer className="mt-12 border-t border-gray-100 pt-6 text-sm text-gray-500">
+    <footer className="mt-12 border-t border-gray-100 dark:border-gray-700 pt-6 text-sm text-gray-500 dark:text-gray-400">
       <div className="flex flex-col sm:flex-row sm:justify-between gap-3">
-        <div className="opacity-90">Tags: {meta.tags.join(", ") || "—"}</div>
-        <div className="text-right">Photo credits: Unsplash • {meta.author?.name} • {new Date(meta.date).toLocaleDateString()}</div>
+        <div className="opacity-90 text-black dark:text-gray-300">Tags: {meta.tags.join(", ") || "—"}</div>
+        <div className="text-right text-black dark:text-gray-300">Photo credits: Unsplash • {meta.author?.name} • {new Date(meta.date).toLocaleDateString()}</div>
       </div>
     </footer>
   </article>

@@ -8,11 +8,11 @@ import type { Hike } from '../data/types';
 // Helper component for the stat cards
 function StatCard({ label, value, unit }: { label: string; value: string; unit: string }) {
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6 text-center">
-      <p className="text-sm font-medium text-gray-500">{label}</p>
-      <p className="mt-1 text-4xl font-bold text-indigo-600">
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 text-center">
+      <p className="text-sm font-medium text-gray-500 dark:text-gray-400">{label}</p>
+      <p className="mt-1 text-4xl font-bold text-indigo-600 dark:text-indigo-400">
         {value}
-        <span className="text-lg font-normal text-gray-600 ml-1">{unit}</span>
+        <span className="text-lg font-normal text-gray-600 dark:text-gray-400 ml-1">{unit}</span>
       </p>
     </div>
   );
@@ -39,14 +39,14 @@ function HikeTrack({ hike }: { hike: Hike }) {
   }, [hike.stravaId]);
 
   return (
-    <article className="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col min-h-0">
+    <article className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden flex flex-col min-h-0">
       <div className="p-6 shrink-0">
-        <h3 className="text-2xl font-semibold text-gray-900 mb-2">
+        <h3 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
           {hike.title}
         </h3>
 
-        <span className="text-sm font-medium text-gray-500 mb-2 block">
-          Region: <span className="text-gray-700">{hike.region}</span>
+        <span className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2 block">
+          Region: <span className="text-gray-700 dark:text-gray-300">{hike.region}</span>
         </span>
 
         {/* small image thumbnails (if any) */}
@@ -64,7 +64,7 @@ function HikeTrack({ hike }: { hike: Hike }) {
             ))}
 
             {hike.images.length > 3 && (
-              <span className="text-xs text-gray-500 ml-2">+{hike.images.length - 3} more</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">+{hike.images.length - 3} more</span>
             )}
           </div>
         ) : null}
@@ -72,26 +72,26 @@ function HikeTrack({ hike }: { hike: Hike }) {
         {/* --- Individual Stats --- */}
         <div className="flex space-x-6 mb-4">
           <p>
-            <span className="font-bold text-gray-800">{hike.distance}</span>
-            <span className="text-gray-600 ml-1">km</span>
+            <span className="font-bold text-gray-800 dark:text-gray-200">{hike.distance}</span>
+            <span className="text-gray-600 dark:text-gray-400 ml-1">km</span>
           </p>
           <p>
-            <span className="font-bold text-gray-800">{hike.elevation}</span>
-            <span className="text-gray-600 ml-1">m</span>
+            <span className="font-bold text-gray-800 dark:text-gray-200">{hike.elevation}</span>
+            <span className="text-gray-600 dark:text-gray-400 ml-1">m</span>
           </p>
         </div>
 
         <div className="flex flex-wrap gap-2">
           {hike.tags?.map((t) => (
-            <span key={t} className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">
+            <span key={t} className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1 rounded">
               {t}
             </span>
           ))}
         </div>
       </div>
 
-      {/* --- Media area (Strava embed) — increased height so track embeds render properly --- */}
-      <div className="bg-gray-100 relative grow min-h-[520px] overflow-hidden">
+      {/* --- Media area (Strava embed) --- */}
+      <div className="bg-gray-100 dark:bg-gray-700 relative grow min-h-[520px] overflow-hidden">
         {hike.stravaId ? (
           <div className="w-full h-full flex items-center justify-center p-6">
             <div
@@ -107,7 +107,7 @@ function HikeTrack({ hike }: { hike: Hike }) {
                 href={`https://www.strava.com/activities/${hike.stravaId}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs bg-white/90 text-gray-800 px-2 py-1 rounded shadow-sm hover:bg-white"
+                className="text-xs bg-white/90 dark:bg-gray-800/90 text-gray-800 dark:text-gray-200 px-2 py-1 rounded shadow-sm hover:bg-white dark:hover:bg-gray-800"
               >
                 Open on Strava
               </a>
@@ -129,14 +129,14 @@ function HikeTrack({ hike }: { hike: Hike }) {
                 href={hike.embedSrc}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs bg-white/90 text-gray-800 px-2 py-1 rounded shadow-sm hover:bg-white"
+                className="text-xs bg-white/90 dark:bg-gray-800/90 text-gray-800 dark:text-gray-200 px-2 py-1 rounded shadow-sm hover:bg-white dark:hover:bg-gray-800"
               >
                 Open original
               </a>
             </div>
           </>
         ) : (
-          <div className="p-6 text-center text-sm text-gray-500">No embed or photos available</div>
+          <div className="p-6 text-center text-sm text-gray-500 dark:text-gray-400">No embed or photos available</div>
         )}
       </div>
 
@@ -153,7 +153,7 @@ function HikeTrack({ hike }: { hike: Hike }) {
             <img src={openImg} alt="Preview" className="w-full h-auto rounded-lg shadow-lg" />
             <button
               onClick={() => setOpenImg(null)}
-              className="absolute -top-3 -right-3 bg-white text-gray-800 rounded-full p-2 shadow focus:outline-none"
+              className="absolute -top-3 -right-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-full p-2 shadow focus:outline-none"
               aria-label="Close"
             >
               ✕
@@ -204,14 +204,14 @@ function Hikes() {
   const goTo = (n: number) => setPage(() => Math.min(Math.max(1, n), totalPages));
 
   return (
-    <div className="container mx-auto px-6 py-12">
+    <div className="container mx-auto px-6 py-12 bg-white dark:bg-gray-900">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-4xl font-bold text-gray-800">My Hikes</h1>
+        <h1 className="text-4xl font-bold text-gray-800 dark:text-gray-100">My Hikes</h1>
         <a
           href="https://trails.giraycoskun.com/trails"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded shadow"
+          className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-700 dark:hover:bg-emerald-600 text-white px-4 py-2 rounded shadow"
         >
           Go to Trails →
         </a>
@@ -221,12 +221,12 @@ function Hikes() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <StatCard
           label="Total Distance"
-          value={totalDistance.toFixed(1)} // Format to 1 decimal place
+          value={totalDistance.toFixed(1)}
           unit="km"
         />
         <StatCard
           label="Total Elevation"
-          value={totalElevation.toLocaleString()} // Adds commas for thousands
+          value={totalElevation.toLocaleString()}
           unit="m"
         />
         <StatCard
@@ -239,11 +239,11 @@ function Hikes() {
       {/* --- Filters --- */}
       <div className="flex flex-col md:flex-row gap-4 items-start md:items-center mb-8">
         <div>
-          <label className="block text-sm text-gray-700 mb-1">Tag</label>
+          <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">Tag</label>
           <select
             value={selectedTag}
             onChange={(e) => setSelectedTag(e.target.value)}
-            className="rounded border-gray-200 px-3 py-2 bg-white"
+            className="rounded border-gray-200 dark:border-gray-700 px-3 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
           >
             {allTags.map((t) => (
               <option key={t} value={t}>
@@ -254,11 +254,11 @@ function Hikes() {
         </div>
 
         <div>
-          <label className="block text-sm text-gray-700 mb-1">Region</label>
+          <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">Region</label>
           <select
             value={selectedRegion}
             onChange={(e) => setSelectedRegion(e.target.value)}
-            className="rounded border-gray-200 px-3 py-2 bg-white"
+            className="rounded border-gray-200 dark:border-gray-700 px-3 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
           >
             {allRegions.map((r) => (
               <option key={r} value={r}>
@@ -269,14 +269,14 @@ function Hikes() {
         </div>
 
         <div className="ml-auto">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             Showing {startIndex + 1}-{endIndex} of {filteredHikes.length} matching tracks
           </p>
         </div>
       </div>
 
       {/* --- Hike List Section --- */}
-      <h2 className="text-3xl font-bold text-gray-800 mb-6">All Tracks</h2>
+      <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-6">All Tracks</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {paginated.map((hike) => (
           <HikeTrack key={`${hike.title}-${hike.year}`} hike={hike} />
@@ -288,7 +288,7 @@ function Hikes() {
         <button
           onClick={goPrev}
           disabled={page === 1}
-          className="px-3 py-2 bg-gray-200 text-gray-800 rounded disabled:opacity-40"
+          className="px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded disabled:opacity-40"
         >
           Previous
         </button>
@@ -299,7 +299,7 @@ function Hikes() {
             <button
               key={n}
               onClick={() => goTo(n)}
-              className={`px-3 py-2 rounded ${n === page ? 'bg-emerald-600 text-white' : 'bg-white text-gray-700 border'}`}
+              className={`px-3 py-2 rounded ${n === page ? 'bg-emerald-600 dark:bg-emerald-700 text-white' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border dark:border-gray-700'}`}
             >
               {n}
             </button>
@@ -309,7 +309,7 @@ function Hikes() {
         <button
           onClick={goNext}
           disabled={page === totalPages}
-          className="px-3 py-2 bg-gray-200 text-gray-800 rounded disabled:opacity-40"
+          className="px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded disabled:opacity-40"
         >
           Next
         </button>
@@ -321,7 +321,7 @@ function Hikes() {
 
         return (
           <section className="mt-12">
-            <h2 className="text-2xl font-bold mb-4">Hiking Blog</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Hiking Blog</h2>
             {hikingPosts.length ? (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {hikingPosts.slice(0, 6).map((p, i) => (
@@ -336,7 +336,7 @@ function Hikes() {
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-gray-500">No hiking posts yet.</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">No hiking posts yet.</p>
             )}
           </section>
         );
