@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 
 function Home() {
   return (
-    <>
+    <div className="flex-1 flex flex-col">
       {/* --- Hero Section --- */}
       <div className="bg-gray-200">
         <div className="container mx-auto px-6 py-24 text-center md:text-left">
@@ -51,7 +51,7 @@ function Home() {
       </div>
 
       {/* --- Small Photo Gallery --- */}
-      <div className="bg-gray-200">
+      <div className="bg-gray-200 py-12">
         <Gallery limit={5} />
       </div>
       {/* GitHub profile card (centered, constrained width) */}
@@ -60,7 +60,34 @@ function Home() {
           <GitHubProfileCard />
         </div>
       </div>
-    </>
+
+      {/* Spotify playlists Section (kept as the last child and pushed to bottom) */}
+      <div className="bg-gray-200 py-6 mt-auto">
+        <div className="container mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <iframe
+              data-testid="embed-iframe-1"
+              className="w-full rounded-xl border-0"
+              style={{ height: "352px" }}
+              src="https://open.spotify.com/embed/playlist/5Bdj3xYsHtdaQQxbcoYZfZ"
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              loading="lazy"
+              title="Spotify Playlist yan bastik"
+            />
+
+            <iframe
+              data-testid="embed-iframe-2"
+              className="w-full rounded-xl border-0"
+              style={{ height: "352px" }}
+              src="https://open.spotify.com/embed/playlist/3C29xT0NaEH7z3MGaPzsCE"
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              loading="lazy"
+              title="Spotify Playlist tinilar"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
