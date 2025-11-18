@@ -19,7 +19,7 @@ function StatCard({ label, value, unit }: { label: string; value: string; unit: 
 }
 
 function HikeTrack({ hike }: { hike: Hike }) {
-  const [openImg, setOpenImg] = useState<string | null>(null);
+  const [openImgIndex, setOpenImgIndex] = useState<number | null>(null);
 
   useEffect(() => {
     // load strava embed script once when a hike with stravaId is rendered
@@ -31,12 +31,20 @@ function HikeTrack({ hike }: { hike: Hike }) {
       s.async = true;
       document.body.appendChild(s);
     } else {
-      // If script exists, attempt to re-run initialization if provided by the embed script.
-      // Many embed scripts auto-init on load; if needed, re-dispatch a DOM event for compatibility.
       const ev = new Event('load');
       window.dispatchEvent(ev);
     }
   }, [hike.stravaId]);
+
+  const goToPrevImage = () => {
+    if (openImgIndex === null || !hike.images) return;
+    setOpenImgIndex((prev) => (prev! - 1 + hike.images!.length) % hike.images!.length);
+  };
+
+  const goToNextImage = () => {
+    if (openImgIndex === null || !hike.images) return;
+    setOpenImgIndex((prev) => (prev! + 1) % hike.images!.length);
+  };
 
   return (
     <article className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden flex flex-col min-h-0">
@@ -52,10 +60,10 @@ function HikeTrack({ hike }: { hike: Hike }) {
         {/* small image thumbnails (if any) */}
         {hike.images?.length ? (
           <div className="flex items-center gap-2 mb-4">
-            {hike.images.slice(0, 3).map((img) => (
+            {hike.images.slice(0, 3).map((img, idx) => (
               <button
                 key={img.src}
-                onClick={() => setOpenImg(img.src)}
+                onClick={() => setOpenImgIndex(idx)}
                 className="w-20 h-14 rounded overflow-hidden shrink-0 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 aria-label={`Open image ${img.alt ?? hike.title}`}
               >
@@ -140,24 +148,57 @@ function HikeTrack({ hike }: { hike: Hike }) {
         )}
       </div>
 
-      {/* image lightbox (per-card) */}
-      {openImg && (
+      {/* image lightbox (per-card) with navigation */}
+      {openImgIndex !== null && hike.images && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 p-4"
           role="dialog"
           aria-modal="true"
           aria-label="Image preview"
-          onClick={() => setOpenImg(null)}
+          onClick={() => setOpenImgIndex(null)}
         >
-          <div className="relative max-w-[90vw] max-h-[90vh]">
-            <img src={openImg} alt="Preview" className="w-full h-auto rounded-lg shadow-lg" />
+          <div className="relative max-w-[90vw] max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
+            <img 
+              src={hike.images[openImgIndex].src} 
+              alt={hike.images[openImgIndex].alt || "Preview"} 
+              className="w-full h-auto rounded-lg shadow-lg" 
+            />
+            
+            {/* Close button */}
             <button
-              onClick={() => setOpenImg(null)}
-              className="absolute -top-3 -right-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-full p-2 shadow focus:outline-none"
+              onClick={() => setOpenImgIndex(null)}
+              className="absolute -top-3 -right-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-full p-2 shadow focus:outline-none hover:bg-gray-100 dark:hover:bg-gray-700"
               aria-label="Close"
             >
               ✕
             </button>
+
+            {/* Previous button */}
+            {hike.images.length > 1 && (
+              <button
+                onClick={goToPrevImage}
+                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-full p-3 shadow focus:outline-none hover:bg-gray-100 dark:hover:bg-gray-700"
+                aria-label="Previous image"
+              >
+                ←
+              </button>
+            )}
+
+            {/* Next button */}
+            {hike.images.length > 1 && (
+              <button
+                onClick={goToNextImage}
+                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-full p-3 shadow focus:outline-none hover:bg-gray-100 dark:hover:bg-gray-700"
+                aria-label="Next image"
+              >
+                →
+              </button>
+            )}
+
+            {/* Image counter */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black bg-opacity-60 text-white px-3 py-1 rounded-full text-sm">
+              {openImgIndex + 1} / {hike.images.length}
+            </div>
           </div>
         </div>
       )}
