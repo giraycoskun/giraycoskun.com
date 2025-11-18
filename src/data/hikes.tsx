@@ -42,5 +42,18 @@ export const hikes: Hike[] = [
     season: 'autumn',
     images: [
     ],
-  }  
+  },
+  {
+    title: 'Tegernsee to Schliersee via Neureuth and Gindelalm',
+    distance: 12.87,
+    elevation: 567,
+    stravaId: '14848832200',
+    tags: ['easy'],
+    region: 'Tegernsee - Schliersee',
+    year: 2025,
+    season: 'summer',
+    images: [
+    ],
+    date: '2025-06-19',
+  }
 ];
