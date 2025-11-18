@@ -12,9 +12,9 @@ export const hikes: Hike[] = [
     year: 2025,
     season: 'autumn',
     images: [
-      { src: 'https://images.unsplash.com/photo-1763469595015-2222aa32ea01?q=80&w=1200&auto=format&fit=crop', alt: 'Mountain trail' },
-      { src: 'https://images.unsplash.com/photo-1763469716176-94fa9eb2d252?q=80&w=1200&auto=format&fit=crop', alt: 'Ridge Trail' },
-      { src: 'https://images.unsplash.com/photo-1763469762647-def023cb33d3?q=80&w=1200&auto=format&fit=crop', alt: 'Summit View' },
+      "schellschlicht-mountain-trail",
+      "schellschlicht-ridge-trail",
+      "schellschlicht-summit-view"
     ],
     date: '2025-10-15',
   },

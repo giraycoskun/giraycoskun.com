@@ -4,6 +4,7 @@ import { Gallery } from "./Gallery"; // import shared gallery data
 import BlogPostCard from "../components/BlogPostCard";
 import { hikes } from '../data/hikes';
 import type { Hike } from '../data/types';
+import { getGalleryImageById } from '../data/gallery';
 
 // Helper component for the stat cards
 function StatCard({ label, value, unit }: { label: string; value: string; unit: string }) {
@@ -21,6 +22,13 @@ function StatCard({ label, value, unit }: { label: string; value: string; unit: 
 function HikeTrack({ hike }: { hike: Hike }) {
   const [openImgIndex, setOpenImgIndex] = useState<number | null>(null);
 
+  // Convert image IDs to full objects with Unsplash URLs
+  const images = hike.images?.map(id => {
+    const url = getGalleryImageById(id);
+    const fullUrl = getGalleryImageById(id);
+    return url ? { id, src: url, fullSrc: fullUrl, alt: id } : null;
+  }).filter(Boolean) as Array<{ id: string; src: string; fullSrc: string; alt: string }>;
+
   useEffect(() => {
     // load strava embed script once when a hike with stravaId is rendered
     if (!hike.stravaId) return;
@@ -37,13 +45,13 @@ function HikeTrack({ hike }: { hike: Hike }) {
   }, [hike.stravaId]);
 
   const goToPrevImage = () => {
-    if (openImgIndex === null || !hike.images) return;
-    setOpenImgIndex((prev) => (prev! - 1 + hike.images!.length) % hike.images!.length);
+    if (openImgIndex === null || !images?.length) return;
+    setOpenImgIndex((prev) => (prev! - 1 + images.length) % images.length);
   };
 
   const goToNextImage = () => {
-    if (openImgIndex === null || !hike.images) return;
-    setOpenImgIndex((prev) => (prev! + 1) % hike.images!.length);
+    if (openImgIndex === null || !images?.length) return;
+    setOpenImgIndex((prev) => (prev! + 1) % images.length);
   };
 
   return (
@@ -58,11 +66,11 @@ function HikeTrack({ hike }: { hike: Hike }) {
         </span>
 
         {/* small image thumbnails (if any) */}
-        {hike.images?.length ? (
+        {images?.length ? (
           <div className="flex items-center gap-2 mb-4">
-            {hike.images.slice(0, 3).map((img, idx) => (
+            {images.slice(0, 3).map((img, idx) => (
               <button
-                key={img.src}
+                key={img.id}
                 onClick={() => setOpenImgIndex(idx)}
                 className="w-20 h-14 rounded overflow-hidden shrink-0 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 aria-label={`Open image ${img.alt ?? hike.title}`}
@@ -71,8 +79,8 @@ function HikeTrack({ hike }: { hike: Hike }) {
               </button>
             ))}
 
-            {hike.images.length > 3 && (
-              <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">+{hike.images.length - 3} more</span>
+            {images.length > 3 && (
+              <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">+{images.length - 3} more</span>
             )}
           </div>
         ) : null}
@@ -149,7 +157,7 @@ function HikeTrack({ hike }: { hike: Hike }) {
       </div>
 
       {/* image lightbox (per-card) with navigation */}
-      {openImgIndex !== null && hike.images && (
+      {openImgIndex !== null && images && images.length > 0 && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 p-4"
           role="dialog"
@@ -159,8 +167,8 @@ function HikeTrack({ hike }: { hike: Hike }) {
         >
           <div className="relative max-w-[90vw] max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
             <img 
-              src={hike.images[openImgIndex].src} 
-              alt={hike.images[openImgIndex].alt || "Preview"} 
+              src={images[openImgIndex].fullSrc || images[openImgIndex].src} 
+              alt={images[openImgIndex].alt || "Preview"} 
               className="w-full h-auto rounded-lg shadow-lg" 
             />
             
@@ -174,7 +182,7 @@ function HikeTrack({ hike }: { hike: Hike }) {
             </button>
 
             {/* Previous button */}
-            {hike.images.length > 1 && (
+            {images.length > 1 && (
               <button
                 onClick={goToPrevImage}
                 className="absolute left-4 top-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-full p-3 shadow focus:outline-none hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -185,7 +193,7 @@ function HikeTrack({ hike }: { hike: Hike }) {
             )}
 
             {/* Next button */}
-            {hike.images.length > 1 && (
+            {images.length > 1 && (
               <button
                 onClick={goToNextImage}
                 className="absolute right-4 top-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-full p-3 shadow focus:outline-none hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -197,7 +205,7 @@ function HikeTrack({ hike }: { hike: Hike }) {
 
             {/* Image counter */}
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black bg-opacity-60 text-white px-3 py-1 rounded-full text-sm">
-              {openImgIndex + 1} / {hike.images.length}
+              {openImgIndex + 1} / {images.length}
             </div>
           </div>
         </div>

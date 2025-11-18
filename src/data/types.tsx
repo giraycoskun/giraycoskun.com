@@ -23,6 +23,6 @@ export type Hike = {
   region: string;
   year: number;
   season: string;
-  images?: { src: string; alt?: string }[]; // added images
+  images?: string[]; // added images
   date?: string; // ISO date when the hike was added
 };

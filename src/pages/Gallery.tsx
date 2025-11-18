@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
-import { galleryData, gallerySlice } from "../data/gallery";
+import { galleryData, gallerySlice, getUnsplashUrl } from "../data/gallery";
 import type { GalleryImage } from "../data/gallery";
 import { Link } from "react-router-dom";
+
+
 
 export function Gallery({ limit, tag }: { limit?: number; tag?: string } = {}) {
   const images =
@@ -52,6 +54,8 @@ export function Gallery({ limit, tag }: { limit?: number; tag?: string } = {}) {
       <div className="w-full">
         <div className="columns-2 sm:columns-3 lg:columns-4 xl:columns-5 gap-4">
           {images.map((img: GalleryImage, i: number) => {
+            const thumbnailUrl = getUnsplashUrl(img.unsplashId);
+            
             return (
               <figure
                 key={i}
@@ -59,7 +63,7 @@ export function Gallery({ limit, tag }: { limit?: number; tag?: string } = {}) {
                 onClick={() => open(i)}
               >
                 <img
-                  src={img.src}
+                  src={thumbnailUrl}
                   alt={img.alt}
                   className="w-full h-auto object-cover"
                   loading="lazy"
@@ -160,7 +164,7 @@ export function Gallery({ limit, tag }: { limit?: number; tag?: string } = {}) {
             onClick={(e) => e.stopPropagation()}
           >
             <img
-              src={images[openIndex].src}
+              src={getUnsplashUrl(images[openIndex].unsplashId)}
               alt={images[openIndex].alt}
               className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
             />
