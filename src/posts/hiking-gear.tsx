@@ -5,7 +5,7 @@ import { getGalleryImageById } from "../data/gallery";
 export const meta: PostMeta = {
   title: "Hiking Gear",
   slug: "hiking-gear",
-  date: "2025-11-15",
+  date: "2025-11-14",
   description:
     "Notes and photos from a day hike exploring coastal ridgelines and forests.",
   tags: ["hike", "guide"],
@@ -17,7 +17,7 @@ export const meta: PostMeta = {
       "https://avatars.githubusercontent.com/u/37620872?s=400&u=3b9d821e80e76abc209441bc88b128956e77cbd2&v=4",
   },
   readingTime: "6 min",
-  excerpt: "A coastal loop hike with stunning ocean views and forest trails.",
+  excerpt: "Hiking gear checklist for day hikes.",
 };
 
 export const HikePost: React.FC<{ className?: string }> = ({ className }) => {

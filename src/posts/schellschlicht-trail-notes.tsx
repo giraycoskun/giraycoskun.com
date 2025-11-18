@@ -1,23 +1,24 @@
+
 import React from "react";
 import type { PostMeta } from "../data/types";
 import { getGalleryImageById } from "../data/gallery";
 
 export const meta: PostMeta = {
-  title: "Alpine Beginner Notes",
-  slug: "alpine-beginner-notes",
-  date: "2025-11-13",
+  title: "Schellschlicht Hike Trail Notes",
+  slug: "schellschlicht-trail-notes",
+  date: "2025-11-15",
   description:
-    "Notes and photos from a day hike exploring coastal ridgelines and forests.",
-  tags: ["hike", "guide"],
+    "Trail notes and tips from my Schellschlicht hike in Garmisch-Partenkirchen.",
+  tags: ["hike", "trail-notes"],
   coverImage:
-    getGalleryImageById("herzogstand-view"),
+    getGalleryImageById("schellschlicht-summit-view"),
   author: {
     name: "Giray Coskun",
     avatar:
       "https://avatars.githubusercontent.com/u/37620872?s=400&u=3b9d821e80e76abc209441bc88b128956e77cbd2&v=4",
   },
-  readingTime: "6 min",
-  excerpt: "Alpine hiking notes as a beginner.",
+  readingTime: "1 min",
+  excerpt: "Trail notes and tips from my Schellschlicht hike in Garmisch-Partenkirchen.",
 };
 
 export const HikePost: React.FC<{ className?: string }> = ({ className }) => (
@@ -60,7 +61,7 @@ export const HikePost: React.FC<{ className?: string }> = ({ className }) => (
             loading="eager"
           />
           <figcaption className="mt-3 text-sm text-black dark:text-gray-300">
-            Herzogstand view of Kochelsee and Walchensee — photo by {meta.author?.name} (Unsplash)
+            Schellschlicht mountain trail — photo by {meta.author?.name} (Unsplash)
           </figcaption>
         </figure>
       )}
@@ -93,8 +94,9 @@ export const HikePost: React.FC<{ className?: string }> = ({ className }) => (
       <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg p-4">
         <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Contents</h3>
         <ul className="mt-2 pl-4 list-disc text-sm text-black dark:text-gray-300">
-          <li><a href="#intro" className="hover:underline">Intro</a></li>
-          <li><a href="#notes" className="hover:underline">Notes</a></li>
+            <li><a href="#intro" className="hover:underline">Intro</a></li>
+            <li><a href="#notes" className="hover:underline">How to Arrive</a></li>
+            <li><a href="#equipment" className="hover:underline">Equipment and Technical Challenges</a></li>
         </ul>
       </div>
     </section>
@@ -105,20 +107,35 @@ export const HikePost: React.FC<{ className?: string }> = ({ className }) => (
           Intro
         </h2>
         <p className="text-base md:text-lg text-black dark:text-gray-200 leading-relaxed max-w-prose">
-          As an hiker beginner, I want to take notes for the future.
+          This is a spring to fall hike in the Bavarian Alps near Garmisch-Partenkirchen. The summit is just over 2000 meters anddirectly accross Zugspitze, offering views of beautiful Garmisch-Paternkirchen to Austria as part of the Ammergau Alps.
         </p>
       </section>
 
       <section>
         <h2 id="notes" className="text-2xl md:text-3xl font-serif font-semibold text-gray-900 dark:text-gray-100 mt-10 mb-4 leading-tight">
-          Notes
+          How to Arrive
         </h2>
-        <ul className="pl-5 space-y-2">
-          <li className="text-black dark:text-gray-200 leading-relaxed">Wildflowers are abundant in late spring; expect muddy sections after rain.</li>
-          <li className="text-black dark:text-gray-200 leading-relaxed">Dogs allowed but leash is recommended on the ridge.</li>
-          <li className="text-black dark:text-gray-200 leading-relaxed">Parking can fill on weekends — arrive early.</li>
+        <p className="text-base md:text-lg text-black dark:text-gray-200 leading-relaxed max-w-prose">
+          There is a <a href="https://maps.app.goo.gl/CVaSDCyVcLyo3HZQ6" className="font-semibold text-red-400 underline">parking lot</a> at the base of the trailhead, but it is also accessible via train RB 60 from Munich.
+        </p>
+      </section>
+
+      <section>
+        <h2 id="notes" className="text-2xl md:text-3xl font-serif font-semibold text-gray-900 dark:text-gray-100 mt-10 mb-4 leading-tight">
+          Equipment and Technical Challenges
+        </h2>
+      </section>
+
+      <section>
+        <h2 id="notes" className="text-2xl md:text-3xl font-serif font-semibold text-gray-900 dark:text-gray-100 mt-10 mb-4 leading-tight">
+          Useful Links
+        </h2>
+        <ul>
+            <li><a href="https://en.wikipedia.org/wiki/Ammergau_Alps" className="font-semibold text-indigo-900">Ammergau Alps - Wikipedia &rarr; </a> important to know terrain!</li>
+            <li><a href="https://www.alpine-bergtouren.de/touren/bergtour-schellschlicht-ueberschreitung-ammergauer-alpen.php" className="font-semibold text-indigo-900">Alpine-Bergtouren.de &rarr; </a> A good reference of difficulty.</li>
         </ul>
       </section>
+
     </div>
 
     <footer className="mt-12 border-t border-gray-100 dark:border-gray-700 pt-6 text-sm text-gray-500 dark:text-gray-400">

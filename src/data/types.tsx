@@ -25,4 +25,5 @@ export type Hike = {
   season: string;
   images?: string[]; // added images
   date?: string; // ISO date when the hike was added
+  blogSlug?: string; // optional link to blog post about the hike
 };

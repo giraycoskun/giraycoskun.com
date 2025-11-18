@@ -29,6 +29,12 @@ function HikeTrack({ hike }: { hike: Hike }) {
     return url ? { id, src: url, fullSrc: fullUrl, alt: id } : null;
   }).filter(Boolean) as Array<{ id: string; src: string; fullSrc: string; alt: string }>;
 
+  // Find related blog post
+  const relatedPost = posts.find(post => 
+    post.slug === hike.blogSlug || 
+    post.title.toLowerCase().includes(hike.title.toLowerCase())
+  );
+
   useEffect(() => {
     // load strava embed script once when a hike with stravaId is rendered
     if (!hike.stravaId) return;
@@ -57,13 +63,34 @@ function HikeTrack({ hike }: { hike: Hike }) {
   return (
     <article className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden flex flex-col min-h-0">
       <div className="p-6 shrink-0">
-        <h3 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
-          {hike.title}
-        </h3>
-
-        <span className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2 block">
-          Region: <span className="text-gray-700 dark:text-gray-300">{hike.region}</span>
-        </span>
+        <div className="flex items-start justify-between mb-2">
+          <div className="flex-1">
+            <h3 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+              {hike.title}
+            </h3>
+            
+            <div className="flex items-center gap-4">
+              <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                Region: <span className="text-gray-700 dark:text-gray-300">{hike.region}</span>
+              </span>
+              {hike.season && (
+                <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  Season: <span className="text-gray-700 dark:text-gray-300">{hike.season}</span>
+                </span>
+              )}
+            </div>
+          </div>
+          
+          {relatedPost && (
+            <a
+              href={`/blog/${relatedPost.slug}`}
+              className="ml-4 text-lg text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 hover:underline flex items-center gap-1 shrink-0"
+              title="Read blog post"
+            >
+              📝 Trail Notes
+            </a>
+          )}
+        </div>
 
         {/* small image thumbnails (if any) */}
         {images?.length ? (
@@ -228,7 +255,7 @@ function Hikes() {
   const allRegions = ['All', ...Array.from(new Set(hikes.map((h) => h.region).filter(Boolean)))];
 
   // pagination (button based)
-  const PAGE_SIZE = 6;
+  const PAGE_SIZE = 4;
   const [page, setPage] = useState(1);
 
   // compute filtered list

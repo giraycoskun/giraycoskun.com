@@ -10,13 +10,14 @@ export const hikes: Hike[] = [
     tags: ['moderate'],
     region: 'Garmisch-Partenkirchen',
     year: 2025,
-    season: 'autumn',
+    season: 'Autumn',
     images: [
       "schellschlicht-mountain-trail",
       "schellschlicht-ridge-trail",
       "schellschlicht-summit-view"
     ],
     date: '2025-10-15',
+    blogSlug: 'schellschlicht-trail-notes'
   },
   {
     title: 'Aueralm Loop',
@@ -25,9 +26,9 @@ export const hikes: Hike[] = [
     // Garmin embed removed — use Strava embed id instead
     stravaId: '16394630411',
     tags: ['easy', 'winter'],
-    region: 'Tegernsee',
+    region: 'Tegernsee - Schliersee',
     year: 2025,
-    season: 'autumn',
+    season: 'Autumn',
     images: [
     ],
   },
@@ -39,7 +40,7 @@ export const hikes: Hike[] = [
     tags: ['moderate'],
     region: 'Kochelsee - Walchensee',
     year: 2025,
-    season: 'autumn',
+    season: 'Autumn',
     images: [
     ],
   },
@@ -51,9 +52,9 @@ export const hikes: Hike[] = [
     tags: ['easy'],
     region: 'Tegernsee - Schliersee',
     year: 2025,
-    season: 'summer',
+    season: 'Summer',
     images: [
     ],
     date: '2025-06-19',
-  }
+  },
 ];
