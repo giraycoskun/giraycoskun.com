@@ -1,12 +1,6 @@
 import { Link } from "react-router-dom";
 import type { PostItem } from "../data/posts";
 
-function readingTime(text: string) {
-  const words = (text || "").trim().split(/\s+/).filter(Boolean).length;
-  const minutes = Math.max(1, Math.round(words / 200));
-  return `${minutes} min read`;
-}
-
 export default function BlogPostCard({
   post,
   onTagClick,
@@ -43,7 +37,7 @@ export default function BlogPostCard({
       <div className="p-6 flex flex-col justify-between h-72">
          <div className="text-blue w-full relative z-10">
           <Link to={`/blog/${post.slug}`}>
-            <h2 className="text-xl md:text-2xl font-bold leading-tight truncate">
+            <h2 className="text-xl md:text-2xl font-bold leading-tight text-wrap">
               {post.title}
             </h2>
           </Link>
@@ -52,7 +46,7 @@ export default function BlogPostCard({
             <span aria-hidden className="opacity-50">
               •
             </span>
-            <span>{post.readingTime ?? readingTime(post.excerpt ?? "")}</span>
+            <span>{post.readingTime ?? "5 min"}</span>
           </div>
         </div>
         <p className="text-gray-700 text-lg overflow-hidden line-clamp-4">

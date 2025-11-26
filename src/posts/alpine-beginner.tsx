@@ -16,7 +16,6 @@ export const meta: PostMeta = {
     avatar:
       "https://avatars.githubusercontent.com/u/37620872?s=400&u=3b9d821e80e76abc209441bc88b128956e77cbd2&v=4",
   },
-  readingTime: "6 min",
   excerpt: "Alpine hiking notes as a beginner.",
 };
 
