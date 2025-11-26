@@ -8,24 +8,10 @@ export type GalleryImage = {
 
 export const galleryData: GalleryImage[] = [
     {
-        id: "schellschlicht-mountain-trail",
-        unsplashId: "1763469595015-2222aa32ea01",
-        alt: "Schellschlicht Mountain Trail",
-        tags: ["hike", "trail" ],
-        date: "2025-10-15"
-    },
-    {
         id: "schellschlicht-ridge-trail",
         unsplashId: "1763469716176-94fa9eb2d252",
         alt: "Schellschlicht Ridge Trail",
         tags: ["hike", "trail" ],
-        date: "2025-10-15"
-    },
-    {
-        id: "schellschlicht-summit-view",
-        unsplashId: "1763469762647-def023cb33d3",
-        alt: "Schellschlicht Summit View",
-        tags: ["hike", "summit" ],
         date: "2025-10-15"
     },
     {
@@ -92,7 +78,16 @@ export const gallerySlice = (count = 6, tag?: string): GalleryImage[] => {
     const list = typeof tag === "string" && tag.length > 0
         ? galleryData.filter((img) => (img.tags || []).includes(tag))
         : galleryData;
-    return list.slice(0, count);
+    
+    // Sort by date (latest first), handling missing dates
+    const sorted = [...list].sort((a, b) => {
+        if (!a.date && !b.date) return 0;
+        if (!a.date) return 1;
+        if (!b.date) return -1;
+        return new Date(b.date).getTime() - new Date(a.date).getTime();
+    });
+    
+    return sorted.slice(0, count);
 };
 
 // Helper to get gallery image URL by ID

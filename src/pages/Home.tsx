@@ -1,24 +1,70 @@
 import { GitHubProfileCard } from "../components/ProfileCard";
-import { Gallery } from "./Gallery"; // import shared gallery data
+import { Gallery } from "./Gallery";
 import BlogPostCard from "../components/BlogPostCard";
 import posts from "../data/posts";
 import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 function Home() {
+  const [displayText, setDisplayText] = useState("");
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [charIndex, setCharIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const texts = ["Hello World,", "I am Giray Coskun.", "Follow the white rabbit!"];
+
+  useEffect(() => {
+    const currentText = texts[currentIndex];
+
+    if (!isDeleting && charIndex < currentText.length) {
+      const timeout = setTimeout(() => {
+        setDisplayText(currentText.slice(0, charIndex + 1));
+        setCharIndex(charIndex + 1);
+      }, 100);
+      return () => clearTimeout(timeout);
+    } else if (!isDeleting && charIndex === currentText.length) {
+      const timeout = setTimeout(() => {
+        setIsDeleting(true);
+      }, 2000);
+      return () => clearTimeout(timeout);
+    } else if (isDeleting && charIndex > 0) {
+      const timeout = setTimeout(() => {
+        setDisplayText(currentText.slice(0, charIndex - 1));
+        setCharIndex(charIndex - 1);
+      }, 50);
+      return () => clearTimeout(timeout);
+    } else if (isDeleting && charIndex === 0) {
+      setIsDeleting(false);
+      setCurrentIndex((currentIndex + 1) % texts.length);
+    }
+  }, [charIndex, isDeleting, currentIndex]);
+
   return (
     <div className="flex-1 flex flex-col">
       {/* --- Hero Section --- */}
       <div className="bg-gray-200">
-        <div className="container mx-auto px-6 py-24 text-center md:text-left">
-          <h1 className="text-5xl md:text-6xl font-extrabold text-gray-900">
-            Hello World,
-          </h1>
-          <p className="mt-6 text-lg md:text-xl text-gray-600 max-w-2xl mx-auto md:mx-0">
-            I am a Computer Scientist/Software Engineer, living in Munich.{" "}
-            <br />
-            I am also a CMAS 3* Scuba Diver and a hiking enthusiast. <br />
-            This is my personal website to write about my hobbies and trips.
-          </p>
+        <div className="container mx-auto px-6 py-24">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="flex-1 text-center md:text-left">
+              <h1 className="text-5xl md:text-6xl font-extrabold text-gray-900">
+                {displayText}
+                <span className="animate-pulse">|</span>
+              </h1>
+              <p className="mt-6 text-lg md:text-xl text-gray-600">
+                I am a Computer Scientist/Software Engineer, living in Munich.{" "}
+                <br />
+                I am also a CMAS 3* Scuba Diver and a hiking enthusiast. <br />
+                This is my personal website to write about my projects, hobbies and trips.
+              </p>
+            </div>
+            <div className="flex-1 max-w-md">
+              <img
+                src="https://wild-fire-136.linkyhost.com/?raw=true"
+                alt="Profile"
+                className="w-full h-auto rounded-lg shadow-lg"
+              />
+            </div>
+          </div>
         </div>
       </div>
 

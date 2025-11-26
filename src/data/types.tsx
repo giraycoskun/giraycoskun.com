@@ -5,6 +5,7 @@ export type PostMeta = {
   description: string;
   tags: string[];
   coverImage?: string;
+  coverImageUrl?: string;
   excerpt: string;
   author?: {
     name: string;

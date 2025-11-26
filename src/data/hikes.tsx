@@ -12,9 +12,7 @@ export const hikes: Hike[] = [
     year: 2025,
     season: 'Autumn',
     images: [
-      "schellschlicht-mountain-trail",
       "schellschlicht-ridge-trail",
-      "schellschlicht-summit-view"
     ],
     date: '2025-10-15',
     blogSlug: 'schellschlicht-trail-notes'

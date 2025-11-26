@@ -20,7 +20,7 @@ export const meta: PostMeta = {
   excerpt: "Hiking gear checklist for day hikes.",
 };
 
-export const HikePost: React.FC<{ className?: string }> = ({ className }) => {
+export const Post: React.FC<{ className?: string }> = ({ className }) => {
   const [checked, setChecked] = useState<Record<string, boolean>>({});
 
   const summerGear = [

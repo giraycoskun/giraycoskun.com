@@ -16,10 +16,11 @@ export function GitHubProfileCard() {
     },
     {
       id: 3,
-      name: "tvtime-scrapy-api",
-      tools: ["Docker", "Python", "Redis", "Celery"],
-      url: "https://github.com/giraycoskun/tvtime-scrapy-api",
+      name: "server.giraycoskun.dev",
+      tools: ["Nginx", "React", "TypeScript", "systemd"],
+      url: "https://github.com/giraycoskun/server.giraycoskun.dev",
     },
+
   ];
 
   const tools = [
@@ -70,7 +71,7 @@ export function GitHubProfileCard() {
       </div>
 
       {/* Tech Stack */}
-      <div className="md:w-2/3 p-6 flex flex-col items-start gap-4">
+      <div className="md:w-2/3 p-6 flex flex-col justify-between items-start gap-4">
         <div className="mb-8">
           <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
             <Code2 size={16} className="text-gray-500" />
@@ -104,16 +105,27 @@ export function GitHubProfileCard() {
           </p>
         </div>
         {/* local server CTA */}
-        <div className="mb-4">
+        <div className="mb-0 flex justify-between">
           <a
             href="https://server.giraycoskun.dev"
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-auto inline-flex items-center gap-2 text-sm bg-gray-300 hover:bg-white/20 text-gray-700 px-3 py-2 rounded border-2 border-black"
+            className="mt-auto inline-flex items-center gap-2 text-sm bg-gray-300 hover:bg-white/20 text-gray-700 px-3 py-2 rounded border-2 border-black mr-4"
             title="Visit server.giraycoskun.dev"
             aria-label="Visit server.giraycoskun.dev"
           >
-            Visit local server
+            Visit home server
+            <ExternalLink size={14} />
+          </a>
+          <a
+            href="https://status.giraycoskun.dev/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-auto inline-flex items-center gap-2 text-sm bg-indigo-300 hover:bg-white/20 text-gray-700 px-3 py-2 rounded border-2 border-black"
+            title="Visit server.giraycoskun.dev"
+            aria-label="Visit server.giraycoskun.dev"
+          >
+            Home server status
             <ExternalLink size={14} />
           </a>
         </div>

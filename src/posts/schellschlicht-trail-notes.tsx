@@ -11,7 +11,7 @@ export const meta: PostMeta = {
     "Trail notes and tips from my Schellschlicht hike in Garmisch-Partenkirchen.",
   tags: ["hike", "trail-notes"],
   coverImage:
-    getGalleryImageById("schellschlicht-summit-view"),
+    getGalleryImageById("schellschlicht-ridge-trail"),
   author: {
     name: "Giray Coskun",
     avatar:
@@ -21,7 +21,7 @@ export const meta: PostMeta = {
   excerpt: "Trail notes and tips from my Schellschlicht hike in Garmisch-Partenkirchen.",
 };
 
-export const HikePost: React.FC<{ className?: string }> = ({ className }) => (
+export const Post: React.FC<{ className?: string }> = ({ className }) => (
   <article className={`max-w-4xl mx-auto px-6 sm:px-8 lg:px-12 py-10 ${className ?? ""} text-black dark:text-gray-100`}>
     <header>
       {/* author avatar and tags ABOVE the cover image */}
