@@ -9,6 +9,8 @@ import Blog from './pages/BlogIndex';
 import BlogPost from './pages/BlogPost';
 import NotFound from './pages/404';
 import Library from './pages/Library'; // added import
+import WorkPage from './pages/Work';
+import ProjectPage from './pages/projects/project-one';
 
 function App() {
   return (
@@ -17,12 +19,13 @@ function App() {
       <main className="grow flex flex-col">
         <Routes> {/* Define all your application's routes */}
           <Route path="/" element={<Home />} />
+          <Route path="/work" element={<WorkPage />} />
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/hikes" element={<Hikes />} />
-          <Route path="/library" element={<Library />} /> {/* new route */}
-
+          <Route path="/library" element={<Library />} />
+          <Route path="/work/project-one" element={<ProjectPage />} />
           {/* explicit 404 route for testing */}
           <Route path="/404" element={<NotFound />} />
 
