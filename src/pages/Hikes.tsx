@@ -1,19 +1,33 @@
-import { useEffect, useState } from 'react';
-import posts from '../data/posts'; // Import your blog posts data
-import { Gallery } from "./Gallery"; // import shared gallery data
+import { useEffect, useState, lazy, Suspense } from "react";
+import posts from "../data/posts"; // Import your blog posts data
+// import Gallery from "./Gallery"; // import shared gallery data
 import BlogPostCard from "../components/BlogPostCard";
-import { hikes } from '../data/hikes';
-import type { Hike } from '../data/types';
-import { getGalleryImageById } from '../data/gallery';
+import { hikes } from "../data/hikes";
+import type { Hike } from "../data/types";
+import { getGalleryImageById } from "../data/gallery";
+
+const Gallery = lazy(() => import("./Gallery"));
 
 // Helper component for the stat cards
-function StatCard({ label, value, unit }: { label: string; value: string; unit: string }) {
+function StatCard({
+  label,
+  value,
+  unit,
+}: {
+  label: string;
+  value: string;
+  unit: string;
+}) {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 text-center">
-      <p className="text-sm font-medium text-gray-500 dark:text-gray-400">{label}</p>
+      <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+        {label}
+      </p>
       <p className="mt-1 text-4xl font-bold text-indigo-600 dark:text-indigo-400">
         {value}
-        <span className="text-lg font-normal text-gray-600 dark:text-gray-400 ml-1">{unit}</span>
+        <span className="text-lg font-normal text-gray-600 dark:text-gray-400 ml-1">
+          {unit}
+        </span>
       </p>
     </div>
   );
@@ -23,29 +37,37 @@ function HikeTrack({ hike }: { hike: Hike }) {
   const [openImgIndex, setOpenImgIndex] = useState<number | null>(null);
 
   // Convert image IDs to full objects with Unsplash URLs
-  const images = hike.images?.map(id => {
-    const url = getGalleryImageById(id);
-    const fullUrl = getGalleryImageById(id);
-    return url ? { id, src: url, fullSrc: fullUrl, alt: id } : null;
-  }).filter(Boolean) as Array<{ id: string; src: string; fullSrc: string; alt: string }>;
+  const images = hike.images
+    ?.map((id) => {
+      const url = getGalleryImageById(id);
+      const fullUrl = getGalleryImageById(id);
+      return url ? { id, src: url, fullSrc: fullUrl, alt: id } : null;
+    })
+    .filter(Boolean) as Array<{
+    id: string;
+    src: string;
+    fullSrc: string;
+    alt: string;
+  }>;
 
   // Find related blog post
-  const relatedPost = posts.find(post => 
-    post.slug === hike.blogSlug || 
-    post.title.toLowerCase().includes(hike.title.toLowerCase())
+  const relatedPost = posts.find(
+    (post) =>
+      post.slug === hike.blogSlug ||
+      post.title.toLowerCase().includes(hike.title.toLowerCase())
   );
 
   useEffect(() => {
     // load strava embed script once when a hike with stravaId is rendered
     if (!hike.stravaId) return;
-    const src = 'https://strava-embeds.com/embed.js';
+    const src = "https://strava-embeds.com/embed.js";
     if (!document.querySelector(`script[src="${src}"]`)) {
-      const s = document.createElement('script');
+      const s = document.createElement("script");
       s.src = src;
       s.async = true;
       document.body.appendChild(s);
     } else {
-      const ev = new Event('load');
+      const ev = new Event("load");
       window.dispatchEvent(ev);
     }
   }, [hike.stravaId]);
@@ -68,19 +90,25 @@ function HikeTrack({ hike }: { hike: Hike }) {
             <h3 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
               {hike.title}
             </h3>
-            
+
             <div className="flex items-center gap-4">
               <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                Region: <span className="text-gray-700 dark:text-gray-300">{hike.region}</span>
+                Region:{" "}
+                <span className="text-gray-700 dark:text-gray-300">
+                  {hike.region}
+                </span>
               </span>
               {hike.season && (
                 <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Season: <span className="text-gray-700 dark:text-gray-300">{hike.season}</span>
+                  Season:{" "}
+                  <span className="text-gray-700 dark:text-gray-300">
+                    {hike.season}
+                  </span>
                 </span>
               )}
             </div>
           </div>
-          
+
           {relatedPost && (
             <a
               href={`/blog/${relatedPost.slug}`}
@@ -102,12 +130,19 @@ function HikeTrack({ hike }: { hike: Hike }) {
                 className="w-20 h-14 rounded overflow-hidden shrink-0 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 aria-label={`Open image ${img.alt ?? hike.title}`}
               >
-                <img src={img.src} alt={img.alt} className="w-full h-full object-cover" loading="lazy" />
+                <img
+                  src={img.src}
+                  alt={img.alt}
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                />
               </button>
             ))}
 
             {images.length > 3 && (
-              <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">+{images.length - 3} more</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">
+                +{images.length - 3} more
+              </span>
             )}
           </div>
         ) : null}
@@ -115,18 +150,25 @@ function HikeTrack({ hike }: { hike: Hike }) {
         {/* --- Individual Stats --- */}
         <div className="flex space-x-6 mb-4">
           <p>
-            <span className="font-bold text-gray-800 dark:text-gray-200">{hike.distance}</span>
+            <span className="font-bold text-gray-800 dark:text-gray-200">
+              {hike.distance}
+            </span>
             <span className="text-gray-600 dark:text-gray-400 ml-1">km</span>
           </p>
           <p>
-            <span className="font-bold text-gray-800 dark:text-gray-200">{hike.elevation}</span>
+            <span className="font-bold text-gray-800 dark:text-gray-200">
+              {hike.elevation}
+            </span>
             <span className="text-gray-600 dark:text-gray-400 ml-1">m</span>
           </p>
         </div>
 
         <div className="flex flex-wrap gap-2">
           {hike.tags?.map((t) => (
-            <span key={t} className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1 rounded">
+            <span
+              key={t}
+              className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1 rounded"
+            >
               {t}
             </span>
           ))}
@@ -179,7 +221,9 @@ function HikeTrack({ hike }: { hike: Hike }) {
             </div>
           </>
         ) : (
-          <div className="p-6 text-center text-sm text-gray-500 dark:text-gray-400">No embed or photos available</div>
+          <div className="p-6 text-center text-sm text-gray-500 dark:text-gray-400">
+            No embed or photos available
+          </div>
         )}
       </div>
 
@@ -192,13 +236,16 @@ function HikeTrack({ hike }: { hike: Hike }) {
           aria-label="Image preview"
           onClick={() => setOpenImgIndex(null)}
         >
-          <div className="relative max-w-[90vw] max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
-            <img 
-              src={images[openImgIndex].fullSrc || images[openImgIndex].src} 
-              alt={images[openImgIndex].alt || "Preview"} 
-              className="w-full h-auto rounded-lg shadow-lg" 
+          <div
+            className="relative max-w-[90vw] max-h-[90vh]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={images[openImgIndex].fullSrc || images[openImgIndex].src}
+              alt={images[openImgIndex].alt || "Preview"}
+              className="w-full h-auto rounded-lg shadow-lg"
             />
-            
+
             {/* Close button */}
             <button
               onClick={() => setOpenImgIndex(null)}
@@ -248,11 +295,17 @@ function Hikes() {
   const totalHikes = hikes.length;
 
   // --- Filter state ---
-  const allTags = ['All', ...Array.from(new Set(hikes.flatMap((h) => h.tags || [])))];
-  const [selectedTag, setSelectedTag] = useState('All');
-  const [selectedRegion, setSelectedRegion] = useState('All');
+  const allTags = [
+    "All",
+    ...Array.from(new Set(hikes.flatMap((h) => h.tags || []))),
+  ];
+  const [selectedTag, setSelectedTag] = useState("All");
+  const [selectedRegion, setSelectedRegion] = useState("All");
   // gather regions from data (dedupe + keep "All")
-  const allRegions = ['All', ...Array.from(new Set(hikes.map((h) => h.region).filter(Boolean)))];
+  const allRegions = [
+    "All",
+    ...Array.from(new Set(hikes.map((h) => h.region).filter(Boolean))),
+  ];
 
   // pagination (button based)
   const PAGE_SIZE = 4;
@@ -260,8 +313,9 @@ function Hikes() {
 
   // compute filtered list
   const filteredHikes = hikes.filter((h) => {
-    const tagMatch = selectedTag === 'All' || (h.tags || []).includes(selectedTag);
-    const regionMatch = selectedRegion === 'All' || h.region === selectedRegion;
+    const tagMatch =
+      selectedTag === "All" || (h.tags || []).includes(selectedTag);
+    const regionMatch = selectedRegion === "All" || h.region === selectedRegion;
     return tagMatch && regionMatch;
   });
 
@@ -277,12 +331,15 @@ function Hikes() {
 
   const goPrev = () => setPage((p) => Math.max(1, p - 1));
   const goNext = () => setPage((p) => Math.min(totalPages, p + 1));
-  const goTo = (n: number) => setPage(() => Math.min(Math.max(1, n), totalPages));
+  const goTo = (n: number) =>
+    setPage(() => Math.min(Math.max(1, n), totalPages));
 
   return (
     <div className="container mx-auto px-6 py-12 bg-white dark:bg-gray-900">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-4xl font-bold text-gray-800 dark:text-gray-100">My Hikes</h1>
+        <h1 className="text-4xl font-bold text-gray-800 dark:text-gray-100">
+          My Hikes
+        </h1>
         <a
           href="https://trails.giraycoskun.com/trails"
           target="_blank"
@@ -315,7 +372,9 @@ function Hikes() {
       {/* --- Filters --- */}
       <div className="flex flex-col md:flex-row gap-4 items-start md:items-center mb-8">
         <div>
-          <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">Tag</label>
+          <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">
+            Tag
+          </label>
           <select
             value={selectedTag}
             onChange={(e) => setSelectedTag(e.target.value)}
@@ -330,7 +389,9 @@ function Hikes() {
         </div>
 
         <div>
-          <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">Region</label>
+          <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">
+            Region
+          </label>
           <select
             value={selectedRegion}
             onChange={(e) => setSelectedRegion(e.target.value)}
@@ -346,13 +407,16 @@ function Hikes() {
 
         <div className="ml-auto">
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            Showing {startIndex + 1}-{endIndex} of {filteredHikes.length} matching tracks
+            Showing {startIndex + 1}-{endIndex} of {filteredHikes.length}{" "}
+            matching tracks
           </p>
         </div>
       </div>
 
       {/* --- Hike List Section --- */}
-      <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-6">All Tracks</h2>
+      <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-6">
+        All Tracks
+      </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {paginated.map((hike) => (
           <HikeTrack key={`${hike.title}-${hike.year}`} hike={hike} />
@@ -375,7 +439,11 @@ function Hikes() {
             <button
               key={n}
               onClick={() => goTo(n)}
-              className={`px-3 py-2 rounded ${n === page ? 'bg-emerald-600 dark:bg-emerald-700 text-white' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border dark:border-gray-700'}`}
+              className={`px-3 py-2 rounded ${
+                n === page
+                  ? "bg-emerald-600 dark:bg-emerald-700 text-white"
+                  : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border dark:border-gray-700"
+              }`}
             >
               {n}
             </button>
@@ -393,11 +461,15 @@ function Hikes() {
 
       {/* --- Hiking-related blog posts --- */}
       {(() => {
-        const hikingPosts = posts.filter((p) => (p.tags || []).includes('hike'));
+        const hikingPosts = posts.filter((p) =>
+          (p.tags || []).includes("hike")
+        );
 
         return (
           <section className="mt-12">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Hiking Blog</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+              Hiking Blog
+            </h2>
             {hikingPosts.length ? (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {hikingPosts.slice(0, 6).map((p, i) => (
@@ -412,14 +484,17 @@ function Hikes() {
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-gray-500 dark:text-gray-400">No hiking posts yet.</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                No hiking posts yet.
+              </p>
             )}
           </section>
         );
       })()}
-
-      {/* --- Gallery Section (aggregated) --- */}
-      <Gallery limit={8} tag="hike" />
+      <Suspense fallback={<div>Loading...</div>}>
+        {/* --- Gallery Section (aggregated) --- */}
+        <Gallery limit={8} tag="hike" />
+      </Suspense>
     </div>
   );
 }

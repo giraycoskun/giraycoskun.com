@@ -1,9 +1,13 @@
+import { Suspense, lazy } from "react";
+
 import { GitHubProfileCard } from "../components/ProfileCard";
-import { Gallery } from "./Gallery";
+// import Gallery from "./Gallery";
 import BlogPostCard from "../components/BlogPostCard";
 import posts from "../data/posts";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
+
+const Gallery = lazy(() => import("./Gallery"));
 
 function Home() {
   const [displayText, setDisplayText] = useState("");
@@ -11,7 +15,11 @@ function Home() {
   const [charIndex, setCharIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const texts = ["Hello World,", "I am Giray Coskun.", "Follow the white rabbit!"];
+  const texts = [
+    "Hello World,",
+    "I am Giray Coskun.",
+    "Follow the white rabbit!",
+  ];
 
   useEffect(() => {
     const currentText = texts[currentIndex];
@@ -44,24 +52,38 @@ function Home() {
       {/* --- Hero Section --- */}
       <div className="bg-gray-200">
         <div className="container mx-auto px-6 py-24">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-            <div className="flex-1 text-center md:text-left">
-              <h1 className="text-5xl md:text-6xl font-extrabold text-gray-900">
-                {displayText}
-                <span className="animate-pulse">|</span>
+          <div className="flex flex-wrap items-center justify-between gap-8">
+            <div className="flex-1 min-w-[300px] text-center md:text-left">
+              <h1 className="relative text-5xl md:text-6xl font-extrabold text-gray-900 mb-15 min-h-[1.2em]">
+                {/* Width reserver (hidden but takes up space) */}
+                <span className="invisible whitespace-nowrap block">
+                  {texts.reduce((a, b) => (a.length > b.length ? a : b))}
+                </span>
+
+                {/* Actual animated text */}
+                <span className="absolute left-0 top-0 w-full overflow-hidden">
+                  <span className="inline-block">
+                    {displayText}
+                    <span className="animate-pulse">|</span>
+                  </span>
+                </span>
               </h1>
               <p className="mt-6 text-lg md:text-xl text-gray-600">
                 I am a Computer Scientist/Software Engineer, living in Munich.{" "}
                 <br />
                 I am also a CMAS 3* Scuba Diver and a hiking enthusiast. <br />
-                This is my personal website to write about my projects, hobbies and trips.
+                This is my personal website to write about my projects, hobbies
+                and trips.
               </p>
             </div>
-            <div className="flex-1 max-w-md">
+            <div className="flex-shrink-0 mx-auto">
               <img
                 src="https://wild-fire-136.linkyhost.com/?raw=true"
                 alt="Profile"
-                className="w-full h-auto rounded-lg shadow-lg"
+                className="w-[300px] md:w-[400px] h-auto rounded-lg shadow-lg"
+                width="400"
+                height="400"
+                loading="eager"
               />
             </div>
           </div>
@@ -98,7 +120,9 @@ function Home() {
 
       {/* --- Small Photo Gallery --- */}
       <div className="bg-gray-200 py-12">
-        <Gallery limit={5} />
+        <Suspense fallback={<div>Loading...</div>}>
+          <Gallery limit={6} random={true} />
+        </Suspense>
       </div>
       {/* GitHub profile card (centered, constrained width) */}
       <div className="bg-gray-100 py-12">

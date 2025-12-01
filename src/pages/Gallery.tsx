@@ -1,15 +1,20 @@
-import { useEffect, useState } from "react";
-import { galleryData, gallerySlice, getUnsplashUrl } from "../data/gallery";
+import { useEffect, useState, useMemo } from "react";
+import { galleryData, galleryRandom, gallerySlice, getUnsplashUrl } from "../data/gallery";
 import type { GalleryImage } from "../data/gallery";
 import { Link } from "react-router-dom";
 
 
 
-export function Gallery({ limit, tag }: { limit?: number; tag?: string } = {}) {
-  const images =
-    typeof limit === "number" || typeof tag === "string"
-      ? gallerySlice(limit ?? galleryData.length, tag)
-      : galleryData;
+function Gallery({ limit, tag, random }: { limit?: number; tag?: string, random?: boolean } = {}) {
+  const images = useMemo(() => {
+    if (typeof limit === "number" || typeof tag === "string") {
+      return random
+        ? galleryRandom(limit ?? galleryData.length, tag)
+        : gallerySlice(limit ?? galleryData.length, tag);
+    }
+    return galleryData;
+  }, [limit, tag, random]);
+
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   useEffect(() => {
@@ -59,7 +64,9 @@ export function Gallery({ limit, tag }: { limit?: number; tag?: string } = {}) {
             return (
               <figure
                 key={i}
-                className="relative group break-inside-avoid cursor-pointer overflow-hidden rounded-lg transition-transform duration-300 hover:scale-[1.02] mb-4"
+                // className="relative group break-inside-avoid cursor-pointer overflow-hidden rounded-lg transition-transform duration-300 hover:scale-[1.02] mb-4"
+                  className="relative group break-inside-avoid cursor-pointer overflow-hidden rounded-lg mb-4 aspect-4/3"
+
                 onClick={() => open(i)}
               >
                 <img
@@ -179,3 +186,5 @@ export function Gallery({ limit, tag }: { limit?: number; tag?: string } = {}) {
     </main>
   );
 }
+
+export default Gallery;

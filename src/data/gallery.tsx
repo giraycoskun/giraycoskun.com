@@ -72,6 +72,34 @@ export const galleryData: GalleryImage[] = [
     }
 ];
 
+// Helper to get gallery image URL by ID
+export const getGalleryImageById = (id: string): string | undefined => {
+    const unsplashId = galleryData.find(img => img.id === id)?.unsplashId;
+    return unsplashId ? getUnsplashUrl(unsplashId) : undefined;
+};
+
+// Helper function to construct Unsplash URL
+export function getUnsplashUrl(unsplashId: string): string {
+  return `https://images.unsplash.com/photo-${unsplashId}?q=80&w=1200&auto=format&fit=crop`;
+}
+
+// helper to get a random sample of the gallery
+// accepts optional tag to filter by before sampling
+export const galleryRandom = (count = 6, tag?: string): GalleryImage[] => {
+    const list = typeof tag === "string" && tag.length > 0
+        ? galleryData.filter((img) => (img.tags || []).includes(tag))
+        : galleryData;
+    
+    // Shuffle the array using Fisher-Yates algorithm
+    const shuffled = [...list];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    
+    return shuffled.slice(0, count);
+};
+
 // helper to get a slice of the gallery (latest first)
 // now accepts optional tag to filter by before slicing
 export const gallerySlice = (count = 6, tag?: string): GalleryImage[] => {
@@ -89,14 +117,3 @@ export const gallerySlice = (count = 6, tag?: string): GalleryImage[] => {
     
     return sorted.slice(0, count);
 };
-
-// Helper to get gallery image URL by ID
-export const getGalleryImageById = (id: string): string | undefined => {
-    const unsplashId = galleryData.find(img => img.id === id)?.unsplashId;
-    return unsplashId ? getUnsplashUrl(unsplashId) : undefined;
-};
-
-// Helper function to construct Unsplash URL
-export function getUnsplashUrl(unsplashId: string): string {
-  return `https://images.unsplash.com/photo-${unsplashId}?q=80&w=1200&auto=format&fit=crop`;
-}
