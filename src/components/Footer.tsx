@@ -3,7 +3,7 @@ function Footer() {
     <footer className="bg-gray-800 text-white py-6 mt-0">
       <div className="container mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="flex items-center space-x-4">
-          <a
+          {/* <a
             href="https://giraycoskun.dev"
             target="_blank"
             rel="noopener noreferrer"
@@ -19,7 +19,7 @@ function Footer() {
             >
               <path d="M12 2a10 10 0 100 20 10 10 0 000-20zM9.41 15.41L8 14l3-3-3-3 1.41-1.41L13.83 11l-4.42 4.41zM14 14h2v2h-2v-2z" />
             </svg>
-          </a>
+          </a> */}
 
           <a
             href="https://github.com/giraycoskun"

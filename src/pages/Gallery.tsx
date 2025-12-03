@@ -64,7 +64,7 @@ function Gallery({ limit, tag, random }: { limit?: number; tag?: string, random?
             return (
               <figure
                 key={i}
-                className="relative group cursor-pointer overflow-hidden rounded-lg mb-4 aspect-[4/3]"
+                className="relative group cursor-pointer overflow-hidden rounded-lg mb-4 aspect-4/3"
                 onClick={() => open(i)}
               >
                 <img

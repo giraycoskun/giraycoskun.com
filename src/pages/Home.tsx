@@ -76,7 +76,7 @@ function Home() {
                 and trips.
               </p>
             </div>
-            <div className="flex-shrink-0 mx-auto">
+            <div className="shrink-0 mx-auto">
               <img
                 src="https://wild-fire-136.linkyhost.com/?raw=true"
                 alt="Profile"
