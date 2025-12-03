@@ -78,7 +78,7 @@ function Home() {
             </div>
             <div className="shrink-0 mx-auto">
               <img
-                src="https://wild-fire-136.linkyhost.com/?raw=true"
+                src="/banner.jpeg"
                 alt="Profile"
                 className="w-[300px] md:w-[400px] h-auto rounded-lg shadow-lg"
                 width="400"
