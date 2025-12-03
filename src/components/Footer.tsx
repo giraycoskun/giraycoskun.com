@@ -3,7 +3,7 @@ function Footer() {
     <footer className="bg-gray-800 text-white py-6 mt-0">
       <div className="container mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="flex items-center space-x-4">
-          <a
+          {/* <a
             href="https://giraycoskun.dev"
             target="_blank"
             rel="noopener noreferrer"
@@ -19,7 +19,7 @@ function Footer() {
             >
               <path d="M12 2a10 10 0 100 20 10 10 0 000-20zM9.41 15.41L8 14l3-3-3-3 1.41-1.41L13.83 11l-4.42 4.41zM14 14h2v2h-2v-2z" />
             </svg>
-          </a>
+          </a> */}
 
           <a
             href="https://github.com/giraycoskun"
@@ -54,6 +54,24 @@ function Footer() {
               aria-hidden="true"
             >
               <path d="M4.98 3.5C3.88 3.5 3 4.38 3 5.48c0 1.1.88 1.98 1.98 1.98h.02C6.08 7.46 7 6.58 7 5.48 7 4.38 6.08 3.5 4.98 3.5zM3.5 8.99h3v11.01h-3V8.99zM9.49 8.99h2.88v1.5h.04c.4-.76 1.38-1.56 2.84-1.56 3.04 0 3.6 2 3.6 4.6v6.47h-3v-5.73c0-1.37-.02-3.13-1.91-3.13-1.91 0-2.2 1.5-2.2 3.03v5.83h-3V8.99z" />
+            </svg>
+          </a>
+
+          <a
+            href="mailto:giraycoskun.dev@gmail.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-300 hover:text-white"
+            aria-label="Gmail"
+            title="Gmail"
+          >
+            <svg
+              className="w-6 h-6"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z" />
             </svg>
           </a>
 

@@ -26,7 +26,7 @@ export default function BlogPost() {
   return (
     <main className="w-full mx-auto px-6 py-12 bg-white dark:bg-gray-900">
       <div className="max-w-5xl mx-auto">
-        <header className="mb-8">
+        <header className="mb-2">
           <Link to="/blog" className="text-sm text-emerald-600 dark:text-emerald-400 hover:underline">
             ← Back to Blog
           </Link>

@@ -1,6 +1,6 @@
 // src/Header.jsx
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState } from "react";
+import { Link } from "react-router-dom";
 
 function Header() {
   const [open, setOpen] = useState(false);
@@ -11,46 +11,86 @@ function Header() {
         <div className="flex justify-between items-center">
           {/* Desktop links */}
           <div className="hidden md:flex items-center font-bold text-xl">
-            
             {/* separator */}
-            <div className="w-px h-6 bg-white opacity-30 mx-3" aria-hidden="true" />
+            <div
+              className="w-px h-6 bg-white opacity-30 mx-3"
+              aria-hidden="true"
+            />
 
             <Link to="/" className="text-white hover:text-emerald-200 px-3">
               Home
             </Link>
 
             {/* separator */}
-            <div className="w-px h-6 bg-white opacity-30 mx-3" aria-hidden="true" />
+            <div
+              className="w-px h-6 bg-white opacity-30 mx-3"
+              aria-hidden="true"
+            />
 
-            <Link to="/gallery" className="text-white hover:text-emerald-200 px-3">
+            <Link
+              to="/work"
+              onClick={() => setOpen(false)}
+              className="text-white hover:text-emerald-200 px-3"
+            >
+              Work & Projects
+            </Link>
+
+            {/* separator */}
+            <div
+              className="w-px h-6 bg-white opacity-30 mx-3"
+              aria-hidden="true"
+            />
+
+            <Link
+              to="/gallery"
+              className="text-white hover:text-emerald-200 px-3"
+            >
               Gallery
             </Link>
 
             {/* separator */}
-            <div className="w-px h-6 bg-white opacity-30 mx-3" aria-hidden="true" />
+            <div
+              className="w-px h-6 bg-white opacity-30 mx-3"
+              aria-hidden="true"
+            />
 
             <Link to="/blog" className="text-white hover:text-emerald-200 px-3">
               Blog
             </Link>
 
-            {/* separator */}
-            <div className="w-px h-6 bg-white opacity-30 mx-3" aria-hidden="true" />
+            {/* separator
+            <div
+              className="w-px h-6 bg-white opacity-30 mx-3"
+              aria-hidden="true"
+            /> */}
 
-            <Link to="/library" className="text-white hover:text-emerald-200 px-3">
+            {/* <Link
+              to="/library"
+              className="text-white hover:text-emerald-200 px-3"
+            >
               Library
-            </Link>
-            
-            {/* separator */}
-            <div className="w-px h-6 bg-white opacity-30 mx-3" aria-hidden="true" />
+            </Link> */}
 
-            <Link to="/hikes" className="text-white hover:text-emerald-200 px-3">
+            {/* separator */}
+            <div
+              className="w-px h-6 bg-white opacity-30 mx-3"
+              aria-hidden="true"
+            />
+
+            <Link
+              to="/hikes"
+              className="text-white hover:text-emerald-200 px-3"
+            >
               Hikes
             </Link>
 
             {/* separator */}
-            <div className="w-px h-6 bg-white opacity-30 mx-3" aria-hidden="true" />
+            <div
+              className="w-px h-6 bg-white opacity-30 mx-3"
+              aria-hidden="true"
+            />
           </div>
-          
+
           {/* The logo/brand should also be a Link */}
           <Link to="/" className="text-xl font-medium text-white">
             giraycoskun
@@ -67,13 +107,35 @@ function Header() {
             <span className="sr-only">Open main menu</span>
             {open ? (
               /* X icon */
-              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             ) : (
               /* Hamburger icon */
-              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
               </svg>
             )}
           </button>
@@ -82,7 +144,9 @@ function Header() {
         {/* Mobile menu — collapsible */}
         <div
           id="mobile-menu"
-          className={`md:hidden mt-3 space-y-2 transition-max-h duration-200 ease-in-out overflow-hidden ${open ? 'max-h-96' : 'max-h-0'}`}
+          className={`md:hidden mt-3 space-y-2 transition-max-h duration-200 ease-in-out overflow-hidden ${
+            open ? "max-h-96" : "max-h-0"
+          }`}
         >
           <Link
             to="/"
@@ -91,6 +155,15 @@ function Header() {
           >
             Home
           </Link>
+
+          <Link
+            to="/work"
+            onClick={() => setOpen(false)}
+            className="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-emerald-500"
+          >
+            Work & Projects
+          </Link>
+
           <Link
             to="/gallery"
             onClick={() => setOpen(false)}
@@ -119,7 +192,6 @@ function Header() {
           >
             Hikes
           </Link>
-
         </div>
       </nav>
     </header>

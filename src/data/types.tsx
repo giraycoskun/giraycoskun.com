@@ -5,6 +5,7 @@ export type PostMeta = {
   description: string;
   tags: string[];
   coverImage?: string;
+  coverImageUrl?: string;
   excerpt: string;
   author?: {
     name: string;
@@ -23,5 +24,7 @@ export type Hike = {
   region: string;
   year: number;
   season: string;
-  images?: { src: string; alt?: string }[]; // added images
+  images?: string[]; // added images
+  date?: string; // ISO date when the hike was added
+  blogSlug?: string; // optional link to blog post about the hike
 };

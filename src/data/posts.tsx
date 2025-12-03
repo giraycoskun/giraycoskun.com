@@ -2,6 +2,7 @@
 
 import type { ComponentType } from "react";
 import type { PostMeta } from "../data/types";
+import { calculateReadingTime } from "../util/blogUtil";
 
 export type PostItem = PostMeta & {
   Component?: ComponentType<any>;
@@ -13,6 +14,7 @@ const modules = import.meta.glob("../posts/*.tsx", { eager: true }) as Record<st
 // map modules to a post list: use exported `meta` from each module and default or named export as React component
 const posts: PostItem[] = Object.entries(modules).map(([path, mod]) => {
   // prefer exported `meta`, but allow top-level exports as fallback (title, date, etc.)
+  
   const exportedMeta: Partial<PostMeta> =
     mod.meta ??
     ({
@@ -21,7 +23,7 @@ const posts: PostItem[] = Object.entries(modules).map(([path, mod]) => {
       date: mod.date,
       slug: mod.slug,
       tags: mod.tags,
-      coverImage: mod.cover ?? mod.coverImage ?? mod.coverUrl,
+      coverImage: mod.coverImage ?? mod.coverImageUrl,
       description: mod.description,
       author: mod.author,
       readingTime: mod.readingTime,
@@ -32,10 +34,7 @@ const posts: PostItem[] = Object.entries(modules).map(([path, mod]) => {
 
   // determine a component: default export, or common named exports, or first function export
   let Component: ComponentType<any> | undefined = 
-    mod.default ?? 
-    mod.HikePost ??
-    mod.Component ?? 
-    mod.Page ?? 
+    mod.default ??
     mod.Post;
   
   if (!Component) {
@@ -47,16 +46,23 @@ const posts: PostItem[] = Object.entries(modules).map(([path, mod]) => {
     }
   }
 
+  const calculatedReadingTime = Component 
+    ? calculateReadingTime(Component) 
+    : exportedMeta.readingTime ?? "— min read";
+
+  // Calculate reading time if not provided and component exists
+  
+  
   return {
     title: exportedMeta.title ?? slug,
     excerpt: exportedMeta.excerpt ?? exportedMeta.description ?? "",
     date: exportedMeta.date ?? "1970-01-01",
     slug,
     tags: exportedMeta.tags ?? [],
-    coverImage: exportedMeta.coverImage,
+    coverImage: exportedMeta.coverImage ?? exportedMeta.coverImageUrl,
     description: exportedMeta.description ?? exportedMeta.excerpt ?? "",
     author: exportedMeta.author,
-    readingTime: exportedMeta.readingTime,
+    readingTime: calculatedReadingTime,
     Component,
   };
 });
