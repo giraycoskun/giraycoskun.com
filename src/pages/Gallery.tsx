@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef, useCallback } from "react";
 import { galleryData, galleryRandom, gallerySlice, getUnsplashUrl } from "../data/gallery";
 import type { GalleryImage } from "../data/gallery";
 import { Link } from "react-router-dom";
@@ -16,6 +16,39 @@ function Gallery({ limit, tag, random }: { limit?: number; tag?: string, random?
   }, [limit, tag, random]);
 
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [visibleImages, setVisibleImages] = useState<Set<number>>(new Set());
+  const observerRef = useRef<IntersectionObserver | null>(null);
+
+  const imageRefs = useRef<(HTMLElement | null)[]>([]);
+
+  const setImageRef = useCallback((el: HTMLElement | null, index: number) => {
+    imageRefs.current[index] = el;
+  }, []);
+
+  useEffect(() => {
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const index = parseInt(entry.target.getAttribute("data-index") || "0", 10);
+            setVisibleImages((prev) => new Set(prev).add(index));
+          }
+        });
+      },
+      {
+        rootMargin: "50px",
+        threshold: 0.01,
+      }
+    );
+
+    imageRefs.current.forEach((ref) => {
+      if (ref) observerRef.current?.observe(ref);
+    });
+
+    return () => {
+      observerRef.current?.disconnect();
+    };
+  }, [images.length]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -60,27 +93,38 @@ function Gallery({ limit, tag, random }: { limit?: number; tag?: string, random?
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
           {images.map((img: GalleryImage, i: number) => {
             const thumbnailUrl = getUnsplashUrl(img.unsplashId);
+            const isVisible = visibleImages.has(i);
             
             return (
               <figure
                 key={i}
-                className="relative group cursor-pointer overflow-hidden rounded-lg mb-4 aspect-4/3"
+                ref={(el) => setImageRef(el, i)}
+                data-index={i}
+                className="relative group cursor-pointer overflow-hidden rounded-lg mb-4 aspect-4/3 bg-gray-200 dark:bg-gray-800"
                 onClick={() => open(i)}
               >
-                <img
-                  src={thumbnailUrl}
-                  alt={img.alt}
-                  className="w-full h-auto object-cover"
-                  loading="lazy"
-                />
+                {isVisible ? (
+                  <img
+                    src={thumbnailUrl}
+                    alt={img.alt}
+                    className="w-full h-auto object-cover"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <div className="animate-pulse text-gray-400">Loading...</div>
+                  </div>
+                )}
                 {/* Hover overlay with caption */}
-                <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
-                  <figcaption className="p-4 w-full">
-                    <p className="text-white font-medium text-sm md:text-base">
-                      {img.alt}
-                    </p>
-                  </figcaption>
-                </div>
+                {isVisible && (
+                  <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+                    <figcaption className="p-4 w-full">
+                      <p className="text-white font-medium text-sm md:text-base">
+                        {img.alt}
+                      </p>
+                    </figcaption>
+                  </div>
+                )}
               </figure>
             );
           })}
@@ -177,6 +221,15 @@ function Gallery({ limit, tag, random }: { limit?: number; tag?: string, random?
               <h3 className="text-lg md:text-xl font-medium text-white/90">
                 {images[openIndex].alt}
               </h3>
+              {images[openIndex].date && (
+                <p className="text-sm md:text-base text-white/70 mt-2">
+                  {new Date(images[openIndex].date).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
+                </p>
+              )}
             </figcaption>
           </figure>
         </div>
