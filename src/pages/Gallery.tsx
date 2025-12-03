@@ -51,22 +51,20 @@ function Gallery({ limit, tag, random }: { limit?: number; tag?: string, random?
   return (
     <main className="container mx-auto px-2 py-12 max-w-7xl">
       <Link to="/gallery">
-        <h1 className="text-4xl font-bold mb-12 text-gray-900 text-center">
+        <h1 className="text-4xl font-bold mb-12 text-gray-900 dark:text-gray-100 text-center">
           Gallery
         </h1>
       </Link>
       {/* Masonry Grid with varied sizes */}
       <div className="w-full">
-        <div className="columns-2 sm:columns-3 lg:columns-4 xl:columns-5 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
           {images.map((img: GalleryImage, i: number) => {
             const thumbnailUrl = getUnsplashUrl(img.unsplashId);
             
             return (
               <figure
                 key={i}
-                // className="relative group break-inside-avoid cursor-pointer overflow-hidden rounded-lg transition-transform duration-300 hover:scale-[1.02] mb-4"
-                  className="relative group break-inside-avoid cursor-pointer overflow-hidden rounded-lg mb-4 aspect-4/3"
-
+                className="relative group cursor-pointer overflow-hidden rounded-lg mb-4 aspect-[4/3]"
                 onClick={() => open(i)}
               >
                 <img
