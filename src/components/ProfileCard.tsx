@@ -20,7 +20,6 @@ export function GitHubProfileCard() {
       tools: ["Nginx", "React", "TypeScript", "systemd"],
       url: "https://github.com/giraycoskun/server.giraycoskun.dev",
     },
-
   ];
 
   const tools = [
@@ -72,7 +71,7 @@ export function GitHubProfileCard() {
 
       {/* Tech Stack */}
       <div className="md:w-2/3 p-6 flex flex-col justify-between items-start gap-4">
-        <div className="mb-8">
+        <div className="mb-2">
           <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
             <Code2 size={16} className="text-gray-500" />
             Tech Stack
@@ -100,8 +99,8 @@ export function GitHubProfileCard() {
             Interests
           </h3>
           <p>
-            Discrete Optimization <br />
-            Causality
+            Discrete Optimization, Causality <br />
+            Software & Cloud Architecture, Full Stack Development
           </p>
         </div>
         {/* local server CTA */}
@@ -172,13 +171,20 @@ export function GitHubProfileCard() {
               </div>
             ))}
           </div>
-
-          <a
-            href="https://github.com/giraycoskun?tab=repositories"
-            className="mt-4 inline-block text-sm text-blue-600 hover:text-blue-700 font-medium"
-          >
-            View all repositories →
-          </a>
+          <div className="flex flex-col md:flex-row md:items-center md:gap-6 mt-6">
+            <a
+              href="https://github.com/giraycoskun?tab=repositories"
+              className="mt-4 inline-block text-sm text-blue-600 hover:text-blue-700 font-medium"
+            >
+              View all repositories →
+            </a>
+            <a
+              href="https://giraycoskun.github.io/"
+              className="mt-4 inline-block text-sm text-blue-600 hover:text-blue-700 font-medium"
+            >
+              View repository docs →
+            </a>
+          </div>
         </div>
       </div>
     </div>

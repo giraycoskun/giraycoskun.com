@@ -1,5 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
+import Zoom from "yet-another-react-lightbox/plugins/zoom";
 
 interface Project {
   id: number;
@@ -24,16 +27,16 @@ interface Publication {
   abstract?: string;
 }
 
-interface Education {
-  id: number;
-  degree: string;
-  institution: string;
-  location: string;
-  startDate: string;
-  endDate: string;
-  description?: string[];
-  gpa?: string;
-}
+// interface Education {
+//   id: number;
+//   degree: string;
+//   institution: string;
+//   location: string;
+//   startDate: string;
+//   endDate: string;
+//   description?: string[];
+//   gpa?: string;
+// }
 
 interface WorkExperience {
   id: number;
@@ -46,27 +49,37 @@ interface WorkExperience {
   technologies?: string[];
 }
 
+interface SkillCategory {
+  category: string;
+  skills: Array<{
+    name: string;
+    icon: string; // URL to icon or badge
+  }>;
+}
+
 const WorkPage: React.FC = () => {
-  const education: Education[] = [
-    {
-      id: 1,
-      degree: "Master of Science in Computer Science",
-      institution: "Technical University of Munich",
-      location: "Munich, Germany",
-      startDate: "Sep 2024",
-      endDate: "Jun 2026",
-      description: [""],
-    },
-    {
-      id: 2,
-      degree: "Bachelor of Science in Computer Science and Engineering",
-      institution: "Sabanci University",
-      location: "Istanbul, Turkey",
-      startDate: "Sep 2017",
-      endDate: "Jun 2023",
-      description: ["Double Major in Economics", "Minor in Mathematics"],
-    },
-  ];
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+
+  // const education: Education[] = [
+  //   {
+  //     id: 1,
+  //     degree: "Master of Science in Computer Science",
+  //     institution: "Technical University of Munich",
+  //     location: "Munich, Germany",
+  //     startDate: "Sep 2024",
+  //     endDate: "Jun 2026",
+  //     description: [""],
+  //   },
+  //   {
+  //     id: 2,
+  //     degree: "Bachelor of Science in Computer Science and Engineering",
+  //     institution: "Sabanci University",
+  //     location: "Istanbul, Turkey",
+  //     startDate: "Sep 2017",
+  //     endDate: "Jun 2023",
+  //     description: ["Double Major in Economics", "Minor in Mathematics"],
+  //   },
+  // ];
 
   const workExperiences: WorkExperience[] = [
     {
@@ -204,7 +217,7 @@ const WorkPage: React.FC = () => {
         "Real-time metrics and system health monitoring",
         "Built with modern technologies and best practices",
       ],
-      technologies: ["React", "Node.js", "MongoDB"],
+      technologies: ["React", "Express.js", "TypeScript", "Nginx"],
       githubUrl: "https://github.com/giraycoskun/server.giraycoskun.dev",
       liveUrl: "https://server.giraycoskun.dev",
       blogSlug: "develop-server-landing-page",
@@ -214,7 +227,8 @@ const WorkPage: React.FC = () => {
       title: "Personal Website",
       projectUrl: "https://giraycoskun.com",
       description: [
-        "React and TypeScript-based personal website showcasing my projects and blog. Hosted on cloudflare pages.",
+        "React and TypeScript-based personal website showcasing my projects and blog.",
+        "Hosted on Cloudflare Pages.",
       ],
       technologies: [
         "React",
@@ -226,7 +240,118 @@ const WorkPage: React.FC = () => {
       githubUrl: "https://github.com/giraycoskun/giraycoskun.com",
       liveUrl: "https://giraycoskun.com",
     },
-    // Add more projects here
+    {
+      id: 3,
+      title: "Encryption in Assembly",
+      projectUrl: "https://github.com/giraycoskun/encryption-in-assembly",
+      description: [
+        "CS 401 - Computer Architecture Course Project",
+        "Implemented a custom AES-like encryption algorithms in x86-64 assembly language.",
+      ],
+      technologies: ["x86-64 Assembly", "AES"],
+      githubUrl: "https://github.com/giraycoskun/encryption-in-assembly"
+    },
+  ];
+
+  const skillCategories: SkillCategory[] = [
+    {
+      category: "Languages & Frameworks",
+      skills: [
+        {
+          name: "Python",
+          icon: "https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white",
+        },
+
+        {
+          name: "Go",
+          icon: "https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white",
+        },
+        {
+          name: "Java",
+          icon: "https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white",
+        },
+
+        {
+          name: "TypeScript",
+          icon: "https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white",
+        },
+        {
+          name: "JavaScript",
+          icon: "https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black",
+        },
+      ],
+    },
+    {
+      category: "Frameworks & Libraries",
+      skills: [
+        {
+          name: "FastAPI",
+          icon: "https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white",
+        },
+        {
+          name: "PyTorch",
+          icon: "https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white",
+        },
+        {
+          name: "Spring Boot",
+          icon: "https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white",
+        },
+        {
+          name: "React",
+          icon: "https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB",
+        },
+      ],
+    },
+    {
+      category: "Database & Cloud",
+      skills: [
+        {
+          name: "PostgreSQL",
+          icon: "https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white",
+        },
+        {
+          name: "MySQL",
+          icon: "https://img.shields.io/badge/MySQL-00000F?style=for-the-badge&logo=mysql&logoColor=white",
+        },
+        {
+          name: "MongoDB",
+          icon: "https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white",
+        },
+        {
+          name: "AWS",
+          icon: "https://img.shields.io/badge/Amazon_AWS-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white",
+        },
+      ],
+    },
+    {
+      category: "DevOps",
+      skills: [
+        {
+          name: "Git",
+          icon: "https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white",
+        },
+        {
+          name: "Docker",
+          icon: "https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white",
+        },
+        {
+          name: "Kubernetes",
+          icon: "https://img.shields.io/badge/Kubernetes-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white",
+        },
+        {
+          name: "Terraform",
+          icon: "https://img.shields.io/badge/Terraform-7B42BC?style=for-the-badge&logo=terraform&logoColor=white",
+        },
+        {
+          name: "Nginx",
+          icon: "https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white",
+        },
+        {
+          name: "Linux",
+          icon: "https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black",
+        },
+      ],
+    },
   ];
 
   // Helper: chunk array into rows of target size (generic version)
@@ -241,6 +366,14 @@ const WorkPage: React.FC = () => {
   // Compute rows for lg screens (2 per row)
   const workExperienceRowsLG = chunkIntoRows(workExperiences, 2);
   const projectRowsLG = chunkIntoRows(projects, 2);
+
+  // Add smooth scroll function
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
@@ -310,13 +443,90 @@ const WorkPage: React.FC = () => {
               </svg>
               LinkedIn
             </a>
+
+            <a
+              href="mailto:giraycoskun.dev@gmail.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              aria-label="Email"
+            >
+              <svg
+                className="w-6 h-6 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                />
+              </svg>
+              E-mail
+            </a>
           </div>
         </div>
 
         <hr className="border-gray-300 dark:border-gray-700 mb-12" />
 
-        {/* Projects Section */}
-        <div className="mb-12">
+        {/* Table of Contents */}
+        <div className="mb-12 bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mx-auto max-w-md">
+          <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center justify-center">
+            <svg
+              className="w-6 h-6 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+            Table of Contents
+          </h3>
+          <nav className="flex flex-col justify-center max-w-md mx-auto gap-3">
+            <button
+              onClick={() => scrollToSection("skills")}
+              className="px-4 py-2 rounded-lg bg-gray-50 dark:bg-gray-700 hover:bg-blue-50 dark:hover:bg-blue-900 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors whitespace-nowrap"
+            >
+              <span className="font-medium">Skills</span>
+            </button>
+            <button
+              onClick={() => scrollToSection("projects")}
+              className="px-4 py-2 rounded-lg bg-gray-50 dark:bg-gray-700 hover:bg-blue-50 dark:hover:bg-blue-900 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors whitespace-nowrap"
+            >
+              <span className="font-medium">Projects</span>
+            </button>
+            <button
+              onClick={() => scrollToSection("experience")}
+              className="px-4 py-2 rounded-lg bg-gray-50 dark:bg-gray-700 hover:bg-blue-50 dark:hover:bg-blue-900 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors whitespace-nowrap"
+            >
+              <span className="font-medium">Work Experience</span>
+            </button>
+            <button
+              onClick={() => scrollToSection("education")}
+              className="px-4 py-2 rounded-lg bg-gray-50 dark:bg-gray-700 hover:bg-blue-50 dark:hover:bg-blue-900 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors whitespace-nowrap"
+            >
+              <span className="font-medium">Education</span>
+            </button>
+            <button
+              onClick={() => scrollToSection("publications")}
+              className="px-4 py-2 rounded-lg bg-gray-50 dark:bg-gray-700 hover:bg-blue-50 dark:hover:bg-blue-900 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors whitespace-nowrap"
+            >
+              <span className="font-medium">Publications</span>
+            </button>
+          </nav>
+        </div>
+
+        <hr className="border-gray-300 dark:border-gray-700 mb-12" />
+
+        {/* Skills Section */}
+        <div id="skills" className="mb-12 scroll-mt-20">
           <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-6 flex items-center">
             <svg
               className="w-6 h-6 mr-2"
@@ -328,11 +538,69 @@ const WorkPage: React.FC = () => {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth={2}
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+                d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
               />
             </svg>
-            Projects
+            Skills
           </h3>
+          <div className="space-y-8">
+            {skillCategories.map((category, idx) => (
+              <div key={idx}>
+                <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">
+                  {category.category}
+                </h4>
+                <div className="flex flex-wrap gap-3">
+                  {category.skills.map((skill, skillIdx) => (
+                    <img
+                      key={skillIdx}
+                      src={skill.icon}
+                      alt={skill.name}
+                      className="h-7 transition-transform hover:scale-110"
+                    />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <hr className="border-gray-300 dark:border-gray-700 mb-12" />
+
+        {/* Projects Section */}
+        <div id="projects" className="mb-12 scroll-mt-20">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-2xl font-semibold text-gray-900 dark:text-white flex items-center">
+              <svg
+                className="w-6 h-6 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+                />
+              </svg>
+              Projects
+            </h3>
+            <a
+              href="https://giraycoskun.github.io/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-4 py-2 bg-gray-800 dark:bg-gray-700 text-white rounded-lg hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors"
+            >
+              <svg
+                className="w-5 h-5"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+              </svg>
+              View All Repos
+            </a>
+          </div>
 
           {/* Large screens: 2 per row */}
           <div className="hidden lg:flex lg:flex-col lg:gap-10">
@@ -617,7 +885,7 @@ const WorkPage: React.FC = () => {
         <hr className="border-gray-300 dark:border-gray-700 mb-12" />
 
         {/* Work Experience */}
-        <div className="mb-12">
+        <div id="experience" className="mb-12 scroll-mt-20">
           <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-6 flex items-center">
             <svg
               className="w-6 h-6 mr-2"
@@ -775,7 +1043,7 @@ const WorkPage: React.FC = () => {
         <hr className="border-gray-300 dark:border-gray-700 mb-12" />
 
         {/* Education */}
-        <div className="mb-12">
+        <div id="education" className="mb-12 scroll-mt-20">
           <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-6 flex items-center">
             <svg
               className="w-6 h-6 mr-2"
@@ -805,52 +1073,81 @@ const WorkPage: React.FC = () => {
             Education
           </h3>
           <div className="space-y-6">
-            {education.map((edu) => (
-              <div
-                key={edu.id}
-                className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-all duration-300 hover:scale-105"
-              >
-                <div className="flex justify-between items-start mb-2">
-                  <div>
-                    <h4 className="text-xl font-semibold text-gray-900 dark:text-white">
-                      {edu.degree}
-                    </h4>
-                    <p className="text-lg text-blue-600 dark:text-blue-400">
-                      {edu.institution}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-gray-600 dark:text-gray-400 text-sm">
-                      {edu.startDate} - {edu.endDate}
-                    </p>
-                    <p className="text-gray-500 dark:text-gray-500 text-sm">
-                      {edu.location}
-                    </p>
-                  </div>
-                </div>
-                {edu.description && edu.description.length > 0 && (
-                  <ul className="list-disc list-inside text-gray-600 dark:text-gray-400 mb-2 space-y-1">
-                    {edu.description
-                      .filter((d) => d && d.trim() !== "" && d.trim() !== ".")
-                      .map((d, idx) => (
-                        <li key={idx}>{d}</li>
-                      ))}
-                  </ul>
-                )}
-                {edu.gpa && (
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">
-                    GPA: {edu.gpa}
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-all duration-300 hover:scale-105">
+              <div className="flex justify-between items-start mb-2">
+                <div>
+                  <h4 className="text-xl font-semibold text-gray-900 dark:text-white">
+                    Master of Science in Computer Science
+                  </h4>
+                  <p className="text-lg text-blue-600 dark:text-blue-400">
+                    Technical University of Munich
                   </p>
-                )}
+                </div>
+                <div className="text-right">
+                  <p className="text-gray-600 dark:text-gray-400 text-sm">
+                    Sep, 2024 - Present
+                  </p>
+                  <p className="text-gray-500 dark:text-gray-500 text-sm">
+                    Munich, Germany
+                  </p>
+                </div>
               </div>
-            ))}
+            </div>
+
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-all duration-300 hover:scale-105">
+              <div className="flex justify-between items-start mb-2">
+                <div>
+                  <h4 className="text-xl font-semibold text-gray-900 dark:text-white">
+                    Bachelor of Science in Computer Science and Engineering
+                  </h4>
+                  <p className="text-lg text-blue-600 dark:text-blue-400">
+                    Sabanci University
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-gray-600 dark:text-gray-400 text-sm">
+                    Sep, 2017 - Jun, 2023
+                  </p>
+                  <p className="text-gray-500 dark:text-gray-500 text-sm">
+                    Istanbul, Turkey
+                  </p>
+                </div>
+              </div>
+
+              <ul className="list-disc list-inside text-gray-600 dark:text-gray-400 mb-2 space-y-1">
+                <li>Double Major in Economics</li>
+                <li>Minor in Mathematics</li>
+              </ul>
+              {/* Coursework Diagram */}
+              <div className="mt-4">
+                <button
+                  onClick={() => setIsLightboxOpen(true)}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-lg transition-colors flex items-center justify-center gap-2"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
+                  </svg>
+                  View Coursework Diagram
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
         <hr className="border-gray-300 dark:border-gray-700 mb-12" />
 
         {/* Publications Section */}
-        <div className="mb-16">
+        <div id="publications" className="mb-16 scroll-mt-20">
           <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-6 flex items-center">
             <svg
               className="w-6 h-6 mr-2"
@@ -941,6 +1238,35 @@ const WorkPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <Lightbox
+        open={isLightboxOpen}
+        close={() => setIsLightboxOpen(false)}
+        slides={[
+          {
+            src: "/coursework.drawio.png",
+            alt: "Coursework Diagram",
+          },
+        ]}
+        carousel={{ finite: true }}
+        controller={{ closeOnBackdropClick: true }}
+        render={{
+          buttonPrev: () => null,
+          buttonNext: () => null,
+        }}
+        plugins={[Zoom]}
+        zoom={{
+          maxZoomPixelRatio: 3,
+          zoomInMultiplier: 2,
+          doubleTapDelay: 300,
+          doubleClickDelay: 300,
+          doubleClickMaxStops: 2,
+          keyboardMoveDistance: 50,
+          wheelZoomDistanceFactor: 100,
+          pinchZoomDistanceFactor: 100,
+          scrollToZoom: true,
+        }}
+      />
     </div>
   );
 };
