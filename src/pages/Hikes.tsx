@@ -109,15 +109,28 @@ function HikeTrack({ hike }: { hike: Hike }) {
             </div>
           </div>
 
-          {relatedPost && (
-            <a
-              href={`/blog/${relatedPost.slug}`}
-              className="ml-4 text-lg text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 hover:underline flex items-center gap-1 shrink-0"
-              title="Read blog post"
-            >
-              📝 Trail Notes
-            </a>
-          )}
+          <div className="ml-4 flex flex-col gap-2 shrink-0">
+            {hike.wanderLogId && (
+              <a
+                href={`https://trails.giraycoskun.com/trail/view/@giraycoskun/${hike.wanderLogId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-lg text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 hover:underline flex items-center gap-1"
+                title="View on Wanderer"
+              >
+                🏔️ Trail Map
+              </a>
+            )}
+            {relatedPost && (
+              <a
+                href={`/blog/${relatedPost.slug}`}
+                className="text-lg text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 hover:underline flex items-center gap-1"
+                title="Read blog post"
+              >
+                📝 Trail Notes
+              </a>
+            )}
+          </div>
         </div>
 
         {/* small image thumbnails (if any) */}

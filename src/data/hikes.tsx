@@ -29,6 +29,7 @@ export const hikes: Hike[] = [
     season: 'Autumn',
     images: [
     ],
+    wanderLogId: "2a7970337eb1df0",
   },
   {
     title: 'Herzogstand - Heimgarten Loop',

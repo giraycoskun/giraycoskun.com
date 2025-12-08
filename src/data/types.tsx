@@ -26,5 +26,6 @@ export type Hike = {
   season: string;
   images?: string[]; // added images
   date?: string; // ISO date when the hike was added
+  wanderLogId?: string; // optional link to Wanderlog entry
   blogSlug?: string; // optional link to blog post about the hike
 };
