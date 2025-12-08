@@ -1,0 +1,39 @@
+name: Sync Dev to Main on Tag
+
+on:
+  push:
+    tags:
+      - 'v*' # Triggers on version tags like v1.0, v20.15.10, etc.
+
+jobs:
+  merge-dev-to-main:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Required to push the merge to the main branch
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Critical: Fetch full history so we can switch branches
+
+      - name: Configure Git User
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Merge Dev into Main
+        run: |
+          # 1. Fetch the latest info from remote
+          git fetch origin
+
+          # 2. Switch to main branch
+          git checkout main
+          git pull origin main
+
+          # 3. Merge the dev branch into main
+          # --no-edit accepts the default merge message automatically
+          git merge origin/dev --no-edit
+
+          # 4. Push changes back to GitHub
+          git push origin main
