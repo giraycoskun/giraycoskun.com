@@ -1,4 +1,28 @@
-# React + TypeScript + Vite
+# giraycoskun.com A Personal Website
+
+A modern, performant personal website built with React, TypeScript, and Vite. This site serves as a digital hub showcasing my hiking adventures, photography, blog posts, and projects as a developer.
+
+## Features
+
+- **Hiking Tracker**: Interactive hiking log with Strava integration, trail maps via self-hosted Wanderer instance, and photo galleries
+- **Photography Gallery**: Dynamic image gallery powered by Unsplash API with lazy loading and lightbox views
+- **Blog Platform**: A blog with reading time estimates, and tag filtering
+- **Project Showcase**: Portfolio of personal and professional projects
+- **Dark Mode**: Fully responsive design with dark/light theme support
+- **Performance Optimized**: Code splitting, lazy loading, and optimized builds with Vite
+
+## Tech Stack
+
+- **Framework**: React 19 with TypeScript
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS
+- **Routing**: React Router
+- **Embeddings**: 
+  - Strava (activity embeds)
+  - Unsplash (photo galleries)
+
+ 
+## React + TypeScript + Vite Notes
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
@@ -7,11 +31,11 @@ Currently, two official plugins are available:
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
 - [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## React Compiler
+### React Compiler
 
 The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-## Expanding the ESLint configuration
+### Expanding the ESLint configuration
 
 If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
@@ -74,6 +98,4 @@ export default defineConfig([
 
 ## References
 
-[lucide-react](https://piwigo.org/what-is-piwigo)
-
-https://images.unsplash.com/photo-1763032568957-4092c85ae1b2?q=80&w=1200&auto=format&fit=crop
+- [Vite Documentation](https://vite.dev/)
