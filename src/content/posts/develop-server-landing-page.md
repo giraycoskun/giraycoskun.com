@@ -1,6 +1,7 @@
 ---
 title: Develop Server Landing Page
 date: 2024-12-15
+id: develop-server-landing-page
 description: Building a custom landing page for my home server with React, Vite, and TypeScript, featuring automated deployment via GitHub webhooks.
 tags: [development, homeserver, react]
 coverImage: https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=1200

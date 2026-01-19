@@ -1,6 +1,7 @@
 ---
 title: Schellschlicht Hike Trail Notes
 date: 2025-11-15
+id: schellschlicht-trail-notes
 description: Trail notes and tips from my Schellschlicht hike in Garmisch-Partenkirchen with views of Zugspitze.
 tags: [hike, trail-notes]
 coverImage: https://images.unsplash.com/photo-1763469716176-94fa9eb2d252?q=80&w=1200

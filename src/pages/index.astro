@@ -5,7 +5,6 @@ import GalleryGrid from "../components/GalleryGrid.astro";
 import ProfileCard from "../components/ProfileCard.astro";
 import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
-import { hikes } from "../data/hikes";
 
 // Fetch latest 3 published posts
 const allPosts = (
@@ -14,6 +13,12 @@ const allPosts = (
   (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime(),
 );
 const latestPosts = allPosts.slice(0, 3);
+
+const texts = [
+    "Hello World,",
+    "I am Giray Coskun.",
+    "Follow the white rabbit!",
+  ];
 ---
 
 <Layout title="Home">
@@ -23,9 +28,13 @@ const latestPosts = allPosts.slice(0, 3);
       <div class="flex flex-wrap items-center justify-between gap-8">
         <div class="flex-1 min-w-75 text-center md:text-left">
           <h1
+            id="hero"
+            data-texts={JSON.stringify(texts)}
             class="text-5xl md:text-6xl font-extrabold text-gray-900 dark:text-gray-100 mb-6"
+            aria-live="polite"
           >
-            Hello World,
+            <span id="hero-text">Hello World,</span>
+            <span class="hero-cursor" aria-hidden="true">|</span>
           </h1>
           <p class="mt-6 text-lg md:text-xl text-gray-600 dark:text-gray-300">
             I am a Computer Scientist/Software Engineer, living in Munich. <br
@@ -149,6 +158,65 @@ const latestPosts = allPosts.slice(0, 3);
     >
     </div>
   </div>
+  <style>
+    .hero-cursor {
+      display: inline-block;
+      margin-left: 0.25rem;
+      animation: blink 1s step-end infinite;
+      color: inherit;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0 }
+    }
+  </style>
+
+  <script>
+    (function () {
+      const hero = document.getElementById('hero');
+      if (!hero) return;
+      let texts = [];
+      try { texts = JSON.parse(hero.dataset.texts || '[]'); } catch (e) { texts = []; }
+      if (!texts || texts.length === 0) return;
+
+      const el = document.getElementById('hero-text');
+      let txtIndex = 0;
+      let charIndex = 0;
+      let deleting = false;
+
+      const TYPING_SPEED = 80;
+      const DELETING_SPEED = 40;
+      const PAUSE_AFTER_FULL = 1600;
+
+      function tick() {
+        const current = texts[txtIndex] || '';
+        if (!deleting) {
+          el.textContent = current.substring(0, charIndex + 1);
+          charIndex++;
+          if (charIndex === current.length) {
+            deleting = true;
+            setTimeout(tick, PAUSE_AFTER_FULL);
+            return;
+          }
+          setTimeout(tick, TYPING_SPEED);
+        } else {
+          el.textContent = current.substring(0, charIndex - 1);
+          charIndex--;
+          if (charIndex === 0) {
+            deleting = false;
+            txtIndex = (txtIndex + 1) % texts.length;
+            setTimeout(tick, 500);
+            return;
+          }
+          setTimeout(tick, DELETING_SPEED);
+        }
+      }
+
+      // Kick off
+      tick();
+    })();
+  </script>
+
 </Layout>
 
 <script src="https://hardcoverembed.gouthamve.dev/static/widget.js"></script>

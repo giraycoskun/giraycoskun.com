@@ -1,6 +1,7 @@
 ---
 title: Homeserver Setup with Cloudflare, Traefik & Docker
 date: 2026-01-09
+id: homeserver-setup
 description: Complete guide to setting up a homeserver using Cloudflare Tunnel for TLS/SSL, Traefik as reverse proxy, Nginx, Docker services, and systemd integration.
 tags: [homeserver, docker, traefik, cloudflare, nginx, devops]
 author:

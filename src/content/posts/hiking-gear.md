@@ -1,6 +1,7 @@
 ---
 title: Hiking Gear
 date: 2025-11-14
+id: hiking-gear
 description: Essential hiking gear checklist for summer day hikes with tips and recommendations.
 tags: [hike, guide]
 coverImage: https://images.unsplash.com/photo-1551632811-561732d1e306?q=80&w=1200
