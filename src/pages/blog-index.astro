@@ -1,0 +1,347 @@
+---
+import Layout from '../layouts/Layout.astro';
+import BlogPostCard from '../components/BlogPostCard.astro';
+import { getCollection } from 'astro:content';
+
+// Get all posts and sort by date (newest first)
+const allPosts = await getCollection('posts');
+const sortedPosts = allPosts.sort((a, b) => 
+  new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+);
+
+// Get unique tags from all posts
+const allTags: string[] = [...new Set(sortedPosts.flatMap(post => (post.data.tags as string[]) || []))].sort() as string[];
+---
+
+<Layout 
+  title="Blog" 
+  description="Read my latest blog posts about hiking, development, and technology"
+>
+  <main class="min-h-screen bg-white dark:bg-gray-900 py-12 px-6">
+    <div class="max-w-6xl mx-auto">
+      {/* Header */}
+      <header class="mb-12 text-center">
+        <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-gray-100 mb-4">
+          Blog
+        </h1>
+        <p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+          Thoughts on hiking, development, and everything in between
+        </p>
+      </header>
+
+      {/* Tag Filter */}
+      {allTags.length > 0 && (
+        <section class="mb-8">
+          <div class="flex flex-wrap gap-2 justify-center items-center">
+            <span class="text-sm font-medium text-gray-700 dark:text-gray-300 mr-2">
+              Filter by tag:
+            </span>
+            <button
+              data-tag=""
+              class="tag-filter-btn px-4 py-2 rounded-full text-sm font-medium transition-colors bg-emerald-600 text-white dark:bg-emerald-500"
+            >
+              All
+            </button>
+            {allTags.map((tag) => (
+              <button
+                data-tag={tag}
+                class="tag-filter-btn px-4 py-2 rounded-full text-sm font-medium transition-colors bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Active filter indicator */}
+      <div id="filter-indicator" class="mb-6 text-center hidden">
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          Showing posts tagged with <span id="selected-tag-name" class="font-semibold text-emerald-600 dark:text-emerald-400"></span>
+          <button id="clear-filter" class="ml-2 text-emerald-600 dark:text-emerald-400 hover:underline">
+            Clear filter
+          </button>
+        </p>
+      </div>
+
+      {/* Posts Grid */}
+      <div id="posts-grid" class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        {sortedPosts.map((post) => (
+          <div class="post-card" data-tags={JSON.stringify(post.data.tags || [])}>
+            <BlogPostCard 
+              title={post.data.title}
+              description={post.data.description}
+              date={post.data.date}
+              slug={post.slug}
+              tags={post.data.tags}
+              coverImage={post.data.coverImage}
+              author={post.data.author}
+              draft={post.data.draft}
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* No posts message */}
+      <div id="no-posts-message" class="text-center py-12 hidden">
+        <p class="text-gray-600 dark:text-gray-400 text-lg">
+          No posts found with the selected tag
+        </p>
+        <button id="view-all-btn" class="mt-4 inline-block text-emerald-600 dark:text-emerald-400 hover:underline">
+          View all posts
+        </button>
+      </div>
+
+      {/* Pagination */}
+      <nav id="pagination" class="mt-12 flex justify-center items-center gap-2">
+        <button
+          id="prev-page"
+          class="px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          disabled
+        >
+          ← Previous
+        </button>
+        <div id="page-numbers" class="flex gap-1"></div>
+        <button
+          id="next-page"
+          class="px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        >
+          Next →
+        </button>
+      </nav>
+
+      {/* Post count */}
+      <div class="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
+        <span id="post-count">{sortedPosts.length}</span> {sortedPosts.length === 1 ? 'post' : 'posts'}
+        <span id="tag-suffix"></span>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<script>
+  const POSTS_PER_PAGE = 6;
+  
+  const tagButtons = document.querySelectorAll('.tag-filter-btn');
+  const postCards = Array.from(document.querySelectorAll('.post-card')) as HTMLElement[];
+  const filterIndicator = document.getElementById('filter-indicator');
+  const selectedTagName = document.getElementById('selected-tag-name');
+  const clearFilterBtn = document.getElementById('clear-filter');
+  const viewAllBtn = document.getElementById('view-all-btn');
+  const noPostsMessage = document.getElementById('no-posts-message');
+  const postCount = document.getElementById('post-count');
+  const tagSuffix = document.getElementById('tag-suffix');
+  const postsGrid = document.getElementById('posts-grid');
+  const pagination = document.getElementById('pagination');
+  const prevPageBtn = document.getElementById('prev-page') as HTMLButtonElement;
+  const nextPageBtn = document.getElementById('next-page') as HTMLButtonElement;
+  const pageNumbersContainer = document.getElementById('page-numbers');
+
+  let currentTag = '';
+  let currentPage = 1;
+
+  function getFilteredPosts(): HTMLElement[] {
+    return postCards.filter((card) => {
+      const cardTags = JSON.parse(card.getAttribute('data-tags') || '[]');
+      return !currentTag || cardTags.includes(currentTag);
+    });
+  }
+
+  function updateDisplay() {
+    const filteredPosts = getFilteredPosts();
+    const totalPages = Math.ceil(filteredPosts.length / POSTS_PER_PAGE);
+    
+    // Ensure current page is valid
+    if (currentPage > totalPages) currentPage = Math.max(1, totalPages);
+    
+    const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
+    const endIndex = startIndex + POSTS_PER_PAGE;
+
+    // Hide all posts first
+    postCards.forEach((card) => card.classList.add('hidden'));
+    
+    // Show only posts for current page
+    filteredPosts.slice(startIndex, endIndex).forEach((card) => {
+      card.classList.remove('hidden');
+    });
+
+    // Update tag buttons styles
+    tagButtons.forEach((btn) => {
+      const btnTag = btn.getAttribute('data-tag') || '';
+      if (btnTag === currentTag) {
+        btn.classList.remove('bg-gray-100', 'text-gray-700', 'hover:bg-gray-200', 'dark:bg-gray-800', 'dark:text-gray-300', 'dark:hover:bg-gray-700');
+        btn.classList.add('bg-emerald-600', 'text-white', 'dark:bg-emerald-500');
+      } else {
+        btn.classList.remove('bg-emerald-600', 'text-white', 'dark:bg-emerald-500');
+        btn.classList.add('bg-gray-100', 'text-gray-700', 'hover:bg-gray-200', 'dark:bg-gray-800', 'dark:text-gray-300', 'dark:hover:bg-gray-700');
+      }
+    });
+
+    // Update filter indicator
+    if (filterIndicator && selectedTagName) {
+      if (currentTag) {
+        filterIndicator.classList.remove('hidden');
+        selectedTagName.textContent = `"${currentTag}"`;
+      } else {
+        filterIndicator.classList.add('hidden');
+      }
+    }
+
+    // Update no posts message
+    if (noPostsMessage && postsGrid) {
+      if (filteredPosts.length === 0) {
+        noPostsMessage.classList.remove('hidden');
+        postsGrid.classList.add('hidden');
+      } else {
+        noPostsMessage.classList.add('hidden');
+        postsGrid.classList.remove('hidden');
+      }
+    }
+
+    // Update post count
+    if (postCount) {
+      postCount.textContent = filteredPosts.length.toString();
+    }
+    if (tagSuffix) {
+      tagSuffix.textContent = currentTag ? ` in "${currentTag}"` : '';
+    }
+
+    // Update pagination
+    updatePagination(totalPages);
+
+    // Update URL without reload
+    const url = new URL(window.location.href);
+    if (currentTag) {
+      url.searchParams.set('tag', currentTag);
+    } else {
+      url.searchParams.delete('tag');
+    }
+    if (currentPage > 1) {
+      url.searchParams.set('page', currentPage.toString());
+    } else {
+      url.searchParams.delete('page');
+    }
+    window.history.replaceState({}, '', url.toString());
+  }
+
+  function updatePagination(totalPages: number) {
+    if (!pagination || !pageNumbersContainer) return;
+
+    // Hide pagination if only one page
+    if (totalPages <= 1) {
+      pagination.classList.add('hidden');
+      return;
+    }
+    pagination.classList.remove('hidden');
+
+    // Update prev/next buttons
+    prevPageBtn.disabled = currentPage <= 1;
+    nextPageBtn.disabled = currentPage >= totalPages;
+
+    // Generate page numbers
+    pageNumbersContainer.innerHTML = '';
+    
+    const maxVisiblePages = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+    
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
+    // First page + ellipsis
+    if (startPage > 1) {
+      pageNumbersContainer.appendChild(createPageButton(1));
+      if (startPage > 2) {
+        const ellipsis = document.createElement('span');
+        ellipsis.className = 'px-2 text-gray-500 dark:text-gray-400';
+        ellipsis.textContent = '...';
+        pageNumbersContainer.appendChild(ellipsis);
+      }
+    }
+
+    // Page numbers
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbersContainer.appendChild(createPageButton(i));
+    }
+
+    // Last page + ellipsis
+    if (endPage < totalPages) {
+      if (endPage < totalPages - 1) {
+        const ellipsis = document.createElement('span');
+        ellipsis.className = 'px-2 text-gray-500 dark:text-gray-400';
+        ellipsis.textContent = '...';
+        pageNumbersContainer.appendChild(ellipsis);
+      }
+      pageNumbersContainer.appendChild(createPageButton(totalPages));
+    }
+  }
+
+  function createPageButton(page: number): HTMLButtonElement {
+    const btn = document.createElement('button');
+    btn.textContent = page.toString();
+    btn.className = page === currentPage
+      ? 'w-10 h-10 rounded-lg text-sm font-medium bg-emerald-600 text-white dark:bg-emerald-500'
+      : 'w-10 h-10 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors';
+    btn.addEventListener('click', () => setPage(page));
+    return btn;
+  }
+
+  function setPage(page: number) {
+    currentPage = page;
+    updateDisplay();
+    // Scroll to top of posts
+    postsGrid?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function setTag(tag: string) {
+    currentTag = tag;
+    currentPage = 1; // Reset to first page when filtering
+    updateDisplay();
+  }
+
+  // Add click handlers to tag buttons
+  tagButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const tag = btn.getAttribute('data-tag') || '';
+      setTag(tag);
+    });
+  });
+
+  // Pagination button handlers
+  prevPageBtn?.addEventListener('click', () => setPage(currentPage - 1));
+  nextPageBtn?.addEventListener('click', () => setPage(currentPage + 1));
+
+  // Clear filter button
+  if (clearFilterBtn) {
+    clearFilterBtn.addEventListener('click', () => setTag(''));
+  }
+
+  // View all button
+  if (viewAllBtn) {
+    viewAllBtn.addEventListener('click', () => setTag(''));
+  }
+
+  // Initialize from URL on page load
+  const urlParams = new URLSearchParams(window.location.search);
+  const initialTag = urlParams.get('tag') || '';
+  const initialPage = parseInt(urlParams.get('page') || '1', 10);
+  currentTag = initialTag;
+  currentPage = isNaN(initialPage) ? 1 : initialPage;
+  updateDisplay();
+</script>
+
+<style>
+  /* Smooth transitions for tag filters */
+  .tag-filter-btn {
+    transition: all 0.2s ease-in-out;
+  }
+
+  .post-card {
+    transition: opacity 0.2s ease-in-out;
+  }
+
+  .post-card.hidden {
+    display: none;
+  }
+</style>

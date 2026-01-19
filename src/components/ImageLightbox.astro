@@ -1,0 +1,162 @@
+---
+// Image Lightbox Component (client-side only)
+---
+
+<div
+  id="image-lightbox"
+  class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-75 p-4"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Image preview"
+>
+  <div class="relative max-w-[90vw] max-h-[90vh]">
+    <img
+      id="lightbox-image"
+      src=""
+      alt="Preview"
+      class="w-full h-auto rounded-lg shadow-lg"
+    />
+
+    {/* Close button */}
+    <button
+      id="lightbox-close"
+      class="absolute -top-3 -right-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-full p-2 shadow focus:outline-none hover:bg-gray-100 dark:hover:bg-gray-700"
+      aria-label="Close"
+    >
+      ✕
+    </button>
+
+    {/* Previous button */}
+    <button
+      id="lightbox-prev"
+      class="absolute left-4 top-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-full p-3 shadow focus:outline-none hover:bg-gray-100 dark:hover:bg-gray-700"
+      aria-label="Previous image"
+    >
+      ←
+    </button>
+
+    {/* Next button */}
+    <button
+      id="lightbox-next"
+      class="absolute right-4 top-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-full p-3 shadow focus:outline-none hover:bg-gray-100 dark:hover:bg-gray-700"
+      aria-label="Next image"
+    >
+      →
+    </button>
+
+    {/* Image counter */}
+    <div
+      id="lightbox-counter"
+      class="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black bg-opacity-60 text-white px-3 py-1 rounded-full text-sm"
+    >
+      1 / 1
+    </div>
+  </div>
+</div>
+
+<script>
+  let currentImages: Array<{ id: string; src: string; alt: string }> = [];
+  let currentIndex = 0;
+
+  const lightbox = document.getElementById('image-lightbox');
+  const lightboxImage = document.getElementById('lightbox-image') as HTMLImageElement;
+  const lightboxCounter = document.getElementById('lightbox-counter');
+  const closeBtn = document.getElementById('lightbox-close');
+  const prevBtn = document.getElementById('lightbox-prev');
+  const nextBtn = document.getElementById('lightbox-next');
+
+  function showImage(index: number) {
+    if (!currentImages.length) return;
+    
+    currentIndex = ((index % currentImages.length) + currentImages.length) % currentImages.length;
+    const img = currentImages[currentIndex];
+    
+    if (lightboxImage) {
+      lightboxImage.src = img.src;
+      lightboxImage.alt = img.alt;
+    }
+    
+    if (lightboxCounter) {
+      lightboxCounter.textContent = `${currentIndex + 1} / ${currentImages.length}`;
+    }
+
+    // Show/hide navigation buttons
+    if (prevBtn && nextBtn) {
+      if (currentImages.length <= 1) {
+        prevBtn.style.display = 'none';
+        nextBtn.style.display = 'none';
+      } else {
+        prevBtn.style.display = 'block';
+        nextBtn.style.display = 'block';
+      }
+    }
+  }
+
+  function openLightbox(images: Array<{ id: string; src: string; alt: string }>, index: number) {
+    currentImages = images;
+    currentIndex = index;
+    showImage(index);
+    
+    if (lightbox) {
+      lightbox.classList.remove('hidden');
+      lightbox.classList.add('flex');
+    }
+  }
+
+  function closeLightbox() {
+    if (lightbox) {
+      lightbox.classList.add('hidden');
+      lightbox.classList.remove('flex');
+    }
+    currentImages = [];
+    currentIndex = 0;
+  }
+
+  function goToPrev() {
+    showImage(currentIndex - 1);
+  }
+
+  function goToNext() {
+    showImage(currentIndex + 1);
+  }
+
+  // Event listeners
+  if (closeBtn) {
+    closeBtn.addEventListener('click', closeLightbox);
+  }
+
+  if (prevBtn) {
+    prevBtn.addEventListener('click', goToPrev);
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener('click', goToNext);
+  }
+
+  if (lightbox) {
+    // Close when clicking outside the image
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) {
+        closeLightbox();
+      }
+    });
+  }
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    if (!lightbox || lightbox.classList.contains('hidden')) return;
+    
+    if (e.key === 'Escape') {
+      closeLightbox();
+    } else if (e.key === 'ArrowLeft') {
+      goToPrev();
+    } else if (e.key === 'ArrowRight') {
+      goToNext();
+    }
+  });
+
+  // Listen for custom open-lightbox event
+  window.addEventListener('open-lightbox', ((e: CustomEvent) => {
+    openLightbox(e.detail.images, e.detail.index);
+  }) as EventListener);
+</script>

@@ -1,0 +1,72 @@
+---
+// Header component with navigation
+const currentPath = Astro.url.pathname;
+
+const navItems = [
+  { href: '/', label: 'Home' },
+  { href: '/work', label: 'Portfolio' },
+  { href: '/gallery', label: 'Gallery' },
+  { href: '/blog-index', label: 'Blog' },
+  { href: '/hikes', label: 'Hikes' },
+];
+---
+
+<header class="bg-gray-800 shadow-md">
+  <nav class="container mx-auto px-6 py-4">
+    <div class="flex justify-between items-center">
+      {/* Desktop links */}
+      <div class="hidden md:flex items-center font-bold text-xl">
+        <div class="w-px h-6 bg-white opacity-30 mx-3" aria-hidden="true"></div>
+        
+        {navItems.map((item) => (
+          <>
+            <a 
+              href={item.href} 
+              class={`text-white hover:text-emerald-200 px-3 ${currentPath === item.href ? 'text-emerald-300' : ''}`}
+            >
+              {item.label}
+            </a>
+            <div class="w-px h-6 bg-white opacity-30 mx-3" aria-hidden="true"></div>
+          </>
+        ))}
+      </div>
+
+      {/* Logo/Brand */}
+      <a href="/" class="text-xl font-medium text-white">
+        giraycoskun
+      </a>
+
+      {/* Mobile menu button */}
+      <button
+        id="mobile-menu-button"
+        class="md:hidden text-white hover:text-emerald-200"
+        aria-label="Toggle menu"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+    </div>
+
+    {/* Mobile menu */}
+    <div id="mobile-menu" class="hidden md:hidden mt-4">
+      {navItems.map((item) => (
+        <a 
+          href={item.href} 
+          class={`block text-white hover:text-emerald-200 py-2 ${currentPath === item.href ? 'text-emerald-300' : ''}`}
+        >
+          {item.label}
+        </a>
+      ))}
+    </div>
+  </nav>
+</header>
+
+<script>
+  const button = document.getElementById('mobile-menu-button');
+  const menu = document.getElementById('mobile-menu');
+  
+  button?.addEventListener('click', () => {
+    menu?.classList.toggle('hidden');
+  });
+</script>

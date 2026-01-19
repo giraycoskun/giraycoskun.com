@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+/* Root Variables */
+:root {
+  --color-text-primary: rgb(17 24 39);
+  --color-text-secondary: rgb(75 85 99);
+  --color-bg-primary: rgb(255 255 255);
+  --color-bg-secondary: rgb(249 250 251);
+  --color-border: rgb(229 231 235);
+  --color-accent: rgb(5 150 105);
+  --color-accent-hover: rgb(4 120 87);
+}
+
+.dark {
+  --color-text-primary: rgb(243 244 246);
+  --color-text-secondary: rgb(209 213 219);
+  --color-bg-primary: rgb(17 24 39);
+  --color-bg-secondary: rgb(31 41 55);
+  --color-border: rgb(75 85 99);
+  --color-accent: rgb(52 211 153);
+  --color-accent-hover: rgb(34 197 94);
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Base typography */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Code blocks */
+code {
+  font-family: 'Courier New', Courier, monospace;
+}
+
+/* Focus styles for accessibility */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-secondary);
+}
+
+/* Transitions */
+* {
+  transition-property: color, background-color, border-color;
+  transition-duration: 150ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Prevent transition on page load */
+.no-transition * {
+  transition: none !important;
+}

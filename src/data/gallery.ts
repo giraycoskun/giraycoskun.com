@@ -1,0 +1,123 @@
+import type { GalleryImage } from './types';
+
+export const galleryData: GalleryImage[] = [
+  {
+    id: "schellschlicht-ridge-trail",
+    unsplashId: "1763469716176-94fa9eb2d252",
+    alt: "Schellschlicht Ridge Trail",
+    tags: ["hike", "trail"],
+    date: "2025-10-15"
+  },
+  {
+    id: "herzogstand-view",
+    unsplashId: "1763032409368-d7e328013069",
+    alt: "Herzogstand view",
+    tags: ["hike", "mountain"],
+    date: "2025-09-21"
+  },
+  {
+    id: "andechser-kloster-trail",
+    unsplashId: "1763032122123-43f238df44f9",
+    alt: "Andechser Kloster trail",
+    tags: ["hike", "trail"],
+    date: "2025-06-09"
+  },
+  {
+    id: "jochberg-view-kochelsee",
+    unsplashId: "1763036374984-347fc6404202",
+    alt: "Jochberg view of Kochelsee",
+    tags: ["hike", "mountain", "lake"],
+    date: "2025-05-18"
+  },
+  {
+    id: "porto-old-cityscape",
+    unsplashId: "1763032568957-4092c85ae1b2",
+    alt: "Porto old cityscape",
+    tags: ["city", "porto"],
+    date: "2025-03-15"
+  },
+  {
+    id: "riederstein-winter-hike",
+    unsplashId: "1763035344099-6634c9625ebf",
+    alt: "Winter hike in Riederstein",
+    tags: ["hike", "winter"],
+    date: "2025-01-04"
+  },
+  {
+    id: "olympia-park-munich-night",
+    unsplashId: "1763035510732-c6ea617393e3",
+    alt: "Olympia Park Munich at Night",
+    tags: ["city", "munich", "night"],
+    date: "2024-12-25"
+  },
+  {
+    id: "hiking-gear-winter-tegernsee",
+    unsplashId: "1763041066439-3c5c0a16f022",
+    alt: "Hiking Gear Winter Tegernsee",
+    tags: ["hike", "gear", "winter"],
+    date: "2024-11-23"
+  },
+  {
+    id: "scuba-diving",
+    unsplashId: "1763161940665-d9fa2daa4e36",
+    alt: "Divers Underwater",
+    tags: ["scuba", "underwater"],
+    date: "2022-09-22"
+  },
+];
+
+// Helper function to construct Unsplash URL
+export function getUnsplashUrl(unsplashId: string, size: 'thumbnail' | 'medium' | 'large' = 'medium'): string {
+  const widths = {
+    thumbnail: 800,
+    medium: 1200,
+    large: 1600
+  };
+  return `https://images.unsplash.com/photo-${unsplashId}?q=80&w=${widths[size]}&auto=format&fit=crop`;
+}
+
+// Helper to get gallery image URL by ID
+export function getGalleryImageById(id: string): string | undefined {
+  const image = galleryData.find(img => img.id === id);
+  return image ? getUnsplashUrl(image.unsplashId) : undefined;
+}
+
+// Helper to filter gallery by tag
+export function getGalleryImagesByTag(tag: string): GalleryImage[] {
+  return galleryData.filter(img => img.tags.includes(tag));
+}
+
+// Helper to get a random sample of the gallery
+// Accepts optional tag to filter by before sampling
+export function galleryRandom(count = 6, tag?: string): GalleryImage[] {
+  const list = typeof tag === "string" && tag.length > 0
+    ? galleryData.filter((img) => img.tags.includes(tag))
+    : galleryData;
+  
+  // Shuffle the array using Fisher-Yates algorithm
+  const shuffled = [...list];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  
+  return shuffled.slice(0, count);
+}
+
+// Helper to get a slice of the gallery (latest first)
+// Accepts optional tag to filter by before slicing
+export function gallerySlice(count = 6, tag?: string): GalleryImage[] {
+  const list = typeof tag === "string" && tag.length > 0
+    ? galleryData.filter((img) => img.tags.includes(tag))
+    : galleryData;
+  
+  // Sort by date (latest first), handling missing dates
+  const sorted = [...list].sort((a, b) => {
+    if (!a.date && !b.date) return 0;
+    if (!a.date) return 1;
+    if (!b.date) return -1;
+    return new Date(b.date).getTime() - new Date(a.date).getTime();
+  });
+  
+  return sorted.slice(0, count);
+}

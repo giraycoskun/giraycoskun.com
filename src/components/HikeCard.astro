@@ -1,0 +1,210 @@
+---
+import type { Hike } from '../data/types';
+import { getGalleryImageById } from '../data/gallery';
+import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+
+interface Props {
+  hike: Hike;
+  relatedPost?: CollectionEntry<'posts'>;
+}
+
+const { hike, relatedPost } = Astro.props;
+
+// Convert image IDs to full objects with Unsplash URLs
+const images = hike.images
+  ?.map((id) => {
+    const url = getGalleryImageById(id);
+    return url ? { id, src: url, alt: id } : null;
+  })
+  .filter((img): img is { id: string; src: string; alt: string } => img !== null) || [];
+---
+
+<article class="bg-gray-100 dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden flex flex-col h-240 hike-card">
+  <div class="p-6 shrink-0 h-65 flex flex-col">
+    <div class="flex items-start justify-between mb-2">
+      <div class="flex-1">
+        <h3 class="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+          {hike.title}
+        </h3>
+
+        <div class="flex items-center gap-4">
+          <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
+            Region:{' '}
+            <span class="text-gray-700 dark:text-gray-300">{hike.region}</span>
+          </span>
+          {hike.season && (
+            <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
+              Season:{' '}
+              <span class="text-gray-700 dark:text-gray-300">{hike.season}</span>
+            </span>
+          )}
+        </div>
+      </div>
+
+      <div class="ml-4 flex flex-col gap-2 shrink-0">
+        {hike.wanderLogId && (
+          <a
+            href={`https://trails.giraycoskun.com/trail/view/@giraycoskun/${hike.wanderLogId}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-lg text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 hover:underline flex items-center gap-1"
+            title="View on Wanderer"
+          >
+            🏔️ Trail Map
+          </a>
+        )}
+        {relatedPost && (
+          <a
+            href={`/posts/${relatedPost.slug}`}
+            class="text-lg text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 hover:underline flex items-center gap-1"
+            title="Read blog post"
+          >
+            📝 Trail Notes
+          </a>
+        )}
+      </div>
+    </div>
+
+    {/* small image thumbnails - fixed height container */}
+    <div class="h-14 mb-4">
+      {images.length > 0 ? (
+        <div class="flex items-center gap-2">
+          {images.slice(0, 3).map((img, idx) => (
+            <button
+              data-image-index={idx}
+              class="image-thumbnail w-20 h-14 rounded overflow-hidden shrink-0 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              aria-label={`Open image ${img.alt ?? hike.title}`}
+            >
+              <Image
+                src={img.src}
+                alt={img.alt}
+                width={80}
+                height={56}
+                class="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </button>
+          ))}
+
+          {images.length > 3 && (
+            <span class="text-xs text-gray-500 dark:text-gray-400 ml-2">
+              +{images.length - 3} more
+            </span>
+          )}
+        </div>
+      ) : (
+        <div class="h-14"></div>
+      )}
+    </div>
+
+    {/* --- Individual Stats --- */}
+    <div class="flex space-x-6 mb-4">
+      <p>
+        <span class="font-bold text-gray-800 dark:text-gray-200">
+          {hike.distance}
+        </span>
+        <span class="text-gray-600 dark:text-gray-400 ml-1">km</span>
+      </p>
+      <p>
+        <span class="font-bold text-gray-800 dark:text-gray-200">
+          {hike.elevation}
+        </span>
+        <span class="text-gray-600 dark:text-gray-400 ml-1">m</span>
+      </p>
+    </div>
+
+    <div class="flex flex-wrap gap-2 mt-auto">
+      {hike.tags?.map((t) => (
+        <span
+          class="text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1 rounded"
+        >
+          {t}
+        </span>
+      ))}
+    </div>
+  </div>
+
+  {/* --- Media area (Strava embed) --- */}
+  <div class="bg-gray-100 dark:bg-gray-700 relative flex-1 overflow-hidden">
+    {hike.stravaId ? (
+      <div class="w-full h-full flex items-center justify-center p-6">
+        <div
+          class="strava-embed-placeholder w-full h-full"
+          data-embed-type="activity"
+          data-embed-id={String(hike.stravaId)}
+          data-style="standard"
+          data-from-embed="false"
+        />
+        {/* fallback link */}
+        <div class="absolute right-3 top-3">
+          <a
+            href={`https://www.strava.com/activities/${hike.stravaId}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-xs bg-white/90 dark:bg-gray-800/90 text-gray-800 dark:text-gray-200 px-2 py-1 rounded shadow-sm hover:bg-white dark:hover:bg-gray-800"
+          >
+            Open on Strava
+          </a>
+        </div>
+      </div>
+    ) : (
+      <div class="p-6 text-center text-sm text-gray-500 dark:text-gray-400">
+        No embed or photos available
+      </div>
+    )}
+  </div>
+
+  {/* Image data for lightbox (hidden) */}
+  {images.length > 0 && (
+    <script
+      type="application/json"
+      class="hike-images-data"
+      set:html={JSON.stringify(images)}
+    />
+  )}
+</article>
+
+<script>
+  // Load Strava embed script
+  function loadStravaScript() {
+    const src = 'https://strava-embeds.com/embed.js';
+    if (!document.querySelector(`script[src="${src}"]`)) {
+      const s = document.createElement('script');
+      s.src = src;
+      s.async = true;
+      document.body.appendChild(s);
+    } else {
+      const ev = new Event('load');
+      window.dispatchEvent(ev);
+    }
+  }
+
+  // Initialize on page load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', loadStravaScript);
+  } else {
+    loadStravaScript();
+  }
+
+  // Handle image thumbnail clicks
+  document.querySelectorAll('.hike-card').forEach((card) => {
+    const dataScript = card.querySelector('.hike-images-data');
+    if (!dataScript) return;
+
+    const images = JSON.parse(dataScript.textContent || '[]');
+    if (images.length === 0) return;
+
+    const thumbnails = card.querySelectorAll('.image-thumbnail');
+    thumbnails.forEach((thumb) => {
+      thumb.addEventListener('click', () => {
+        const index = parseInt(thumb.getAttribute('data-image-index') || '0', 10);
+        // Dispatch custom event to open lightbox
+        const event = new CustomEvent('open-lightbox', {
+          detail: { images, index },
+        });
+        window.dispatchEvent(event);
+      });
+    });
+  });
+</script>

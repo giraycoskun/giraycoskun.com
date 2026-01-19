@@ -1,0 +1,215 @@
+---
+import { Image } from 'astro:assets';
+
+const repositories = [
+  {
+    id: 1,
+    name: 'ChewPy',
+    tools: ['Python', 'uv', 'CLI Tool'],
+    url: 'https://github.com/giraycoskun/ChewPy',
+  },
+  {
+    id: 2,
+    name: 'automated-reasoning',
+    tools: ['Python', 'Go', 'FastAPI', 'Docker'],
+    url: 'https://github.com/giraycoskun/automated-reasoning',
+  },
+  {
+    id: 3,
+    name: 'server.giraycoskun.dev',
+    tools: ['Nginx', 'React', 'TypeScript', 'systemd'],
+    url: 'https://github.com/giraycoskun/server.giraycoskun.dev',
+  },
+];
+
+const tools = [
+  { name: 'Python', icon: 'https://skillicons.dev/icons?i=python' },
+  { name: 'FastAPI', icon: 'https://skillicons.dev/icons?i=fastapi' },
+  { name: 'Go', icon: 'https://skillicons.dev/icons?i=go' },
+  { name: 'JavaScript', icon: 'https://skillicons.dev/icons?i=javascript' },
+  { name: 'Node.js', icon: 'https://skillicons.dev/icons?i=nodejs' },
+  { name: 'React', icon: 'https://skillicons.dev/icons?i=react' },
+  { name: 'PostgreSQL', icon: 'https://skillicons.dev/icons?i=postgresql' },
+  { name: 'Redis', icon: 'https://skillicons.dev/icons?i=redis' },
+  { name: 'Docker', icon: 'https://skillicons.dev/icons?i=docker' },
+  { name: 'AWS', icon: 'https://skillicons.dev/icons?i=aws' },
+];
+---
+
+<div class="flex flex-col md:flex-row bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+  {/* Avatar + Meta */}
+  <div class="md:w-1/3 bg-linear-to-r from-purple-600 to-blue-600 p-6 flex flex-col items-start gap-4">
+    <Image
+      src="https://avatars.githubusercontent.com/u/37620872?s=400&u=3b9d821e80e76abc209441bc88b128956e77cbd2&v=4"
+      alt="giraycoskun avatar"
+      class="w-20 h-20 rounded-full border-4 border-white shadow-lg"
+      width={80}
+      height={80}
+      loading="lazy"
+    />
+    <div class="text-white">
+      <h2 class="text-lg md:text-xl font-bold leading-tight">
+        Giray Coskun
+      </h2>
+      <p class="text-purple-100 text-sm mt-1">@giraycoskun</p>
+    </div>
+    <p class="text-white/90 mt-3 text-sm">
+      Software Engineer <br /> MSc Computer Science @ TUM <br /> Sabanci
+      University @ 2022
+    </p>
+
+    {/* developer website CTA */}
+    <a
+      href="https://giraycoskun.dev"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="mt-auto inline-flex items-center gap-2 text-sm bg-white/10 hover:bg-white/20 text-white px-3 py-2 rounded border-2 border-white transition-colors"
+      title="Visit giraycoskun.dev"
+      aria-label="Visit giraycoskun.dev"
+    >
+      Visit developer site
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+        <polyline points="15 3 21 3 21 9"></polyline>
+        <line x1="10" y1="14" x2="21" y2="3"></line>
+      </svg>
+    </a>
+  </div>
+
+  {/* Tech Stack & Interests */}
+  <div class="md:w-2/3 p-6 flex flex-col justify-between items-start gap-4">
+    <div class="mb-2">
+      <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500">
+          <polyline points="16 18 22 12 16 6"></polyline>
+          <polyline points="8 6 2 12 8 18"></polyline>
+        </svg>
+        Tech Stack
+      </h3>
+      <div class="flex flex-wrap gap-2">
+        {tools.map((tool) => (
+          <div class="px-3 py-1.5 bg-linear-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 border border-purple-200 dark:border-purple-700 rounded-full text-sm font-medium text-gray-700 dark:text-gray-300 hover:shadow-md transition-shadow flex items-center gap-2">
+            <Image
+              src={tool.icon}
+              alt={tool.name}
+              class="w-4 h-4"
+              width={16}
+              height={16}
+              loading="lazy"
+            />
+            <span>{tool.name}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+    <div class="mb-4">
+      <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M3 7V5a2 2 0 0 1 2-2h2"></path>
+          <path d="M17 3h2a2 2 0 0 1 2 2v2"></path>
+          <path d="M21 17v2a2 2 0 0 1-2 2h-2"></path>
+          <path d="M7 21H5a2 2 0 0 1-2-2v-2"></path>
+        </svg>
+        Interests
+      </h3>
+      <p class="text-gray-700 dark:text-gray-300 text-sm">
+        Discrete Optimization, Causality <br />
+        Software & Cloud Architecture, Full Stack Development
+      </p>
+    </div>
+    {/* local server CTAs */}
+    <div class="mb-0 flex flex-wrap gap-4">
+      <a
+        href="https://server.giraycoskun.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center gap-2 text-sm bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-200 px-3 py-2 rounded border-2 border-black dark:border-gray-400 transition-colors"
+        title="Visit server.giraycoskun.com"
+        aria-label="Visit server.giraycoskun.com"
+      >
+        Visit home server
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+          <polyline points="15 3 21 3 21 9"></polyline>
+          <line x1="10" y1="14" x2="21" y2="3"></line>
+        </svg>
+      </a>
+      <a
+        href="https://status.giraycoskun.dev/"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center gap-2 text-sm bg-indigo-300 dark:bg-indigo-600 hover:bg-indigo-400 dark:hover:bg-indigo-500 text-gray-700 dark:text-gray-200 px-3 py-2 rounded border-2 border-black dark:border-gray-400 transition-colors"
+        title="Home server status"
+        aria-label="Home server status"
+      >
+        Home server status
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+          <polyline points="15 3 21 3 21 9"></polyline>
+          <line x1="10" y1="14" x2="21" y2="3"></line>
+        </svg>
+      </a>
+    </div>
+  </div>
+
+  {/* Repositories */}
+  <div class="md:w-2/3 p-6 flex flex-col">
+    <div class="flex-1">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">
+          Favourite Repositories
+        </h3>
+        <span class="text-sm text-gray-500 dark:text-gray-400">20 total</span>
+      </div>
+
+      <div class="space-y-3">
+        {repositories.map((repo) => (
+          <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors border border-gray-200 dark:border-gray-600 group">
+            <div class="flex items-start justify-between mb-2">
+              <h4 class="font-semibold flex items-center gap-2">
+                <a
+                  href={repo.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-blue-600 dark:text-blue-400 group-hover:text-blue-700 dark:group-hover:text-blue-300 flex items-center gap-2"
+                >
+                  <span class="inline-block truncate max-w-[18rem]">
+                    {repo.name}
+                  </span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-hover:opacity-100 transition-opacity">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                  </svg>
+                </a>
+              </h4>
+            </div>
+
+            <div class="flex items-center gap-4 text-xs text-gray-600 dark:text-gray-400">
+              <span class="font-medium">{repo.tools.join(', ')}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div class="flex flex-col md:flex-row md:items-center md:gap-6 mt-6">
+        <a
+          href="https://github.com/giraycoskun?tab=repositories"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-block text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
+        >
+          View all repositories →
+        </a>
+        <a
+          href="https://giraycoskun.github.io/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-block text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium mt-2 md:mt-0"
+        >
+          View repository docs →
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

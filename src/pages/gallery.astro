@@ -1,0 +1,364 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Image } from 'astro:assets';
+import { galleryData, getUnsplashUrl } from '../data/gallery';
+
+// Sort newest first for a nicer masonry feed
+const images = [...galleryData].sort((a, b) => {
+	if (!a.date && !b.date) return 0;
+	if (!a.date) return 1;
+	if (!b.date) return -1;
+	return new Date(b.date).getTime() - new Date(a.date).getTime();
+});
+---
+
+<Layout title="Gallery - Giray Coskun" description="Photo gallery of hikes, trips, and travels">
+	<main class="container mx-auto px-2 py-12 max-w-7xl">
+		<h1 class="text-4xl font-bold mb-12 text-gray-900 dark:text-gray-100 text-center">
+			Gallery
+		</h1>
+
+		<div class="w-full">
+			<div id="gallery-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
+				{images.map((img, i) => {
+					const thumbnailUrl = getUnsplashUrl(img.unsplashId, 'thumbnail');
+					const fullUrl = getUnsplashUrl(img.unsplashId, 'large');
+					
+					return (
+						<figure
+							data-index={i}
+							data-lightbox-src={fullUrl}
+							data-lightbox-alt={img.alt}
+							data-lightbox-date={img.date ?? ''}
+							class="relative group cursor-pointer overflow-hidden rounded-lg mb-4 bg-gray-200 dark:bg-gray-800 gallery-figure gallery-item"
+						>
+							<Image
+								src={thumbnailUrl}
+								alt={img.alt}
+								width={800}
+								height={600}
+								loading={i < 9 ? "eager" : "lazy"}
+								decoding="async"
+								format="webp"
+								quality={80}
+								fetchpriority={i < 9 ? "high" : "auto"}
+								class="w-full h-full object-cover transition-opacity duration-300"
+							/>
+							<div class="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+							<figcaption class="absolute bottom-0 left-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+								<p class="text-white font-medium text-sm md:text-base">
+									{img.alt}
+								</p>
+								<div class="flex gap-2 mt-2 flex-wrap">
+									{img.tags.map((tag) => (
+										<span class="text-xs bg-emerald-600 text-white px-2 py-1 rounded">#{tag}</span>
+									))}
+								</div>
+								{img.date && (
+									<p class="text-white/80 text-xs mt-2">
+										{new Date(img.date).toLocaleDateString()}
+									</p>
+								)}
+							</figcaption>
+						</figure>
+					);
+				})}
+			</div>
+		</div>
+
+		{/* Pagination */}
+		<nav id="gallery-pagination" class="mt-12 flex justify-center items-center gap-2">
+			<button
+				id="gallery-prev"
+				class="px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+				disabled
+			>
+				← Previous
+			</button>
+			<div id="gallery-page-numbers" class="flex gap-1"></div>
+			<button
+				id="gallery-next"
+				class="px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+			>
+				Next →
+			</button>
+		</nav>
+
+		{/* Image count */}
+		<div class="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
+			<span id="image-count">{images.length}</span> images
+		</div>
+	</main>
+
+	<div
+		id="lightbox"
+		class="fixed inset-0 z-50 hidden items-center justify-center bg-black/95 p-4 md:p-6"
+		role="dialog"
+		aria-modal="true"
+	>
+		<button
+			id="lightbox-close"
+			class="absolute top-4 right-4 md:top-6 md:right-6 text-white/80 hover:text-white bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full w-10 h-10 flex items-center justify-center transition-all focus:outline-none focus:ring-2 focus:ring-white/50"
+			aria-label="Close"
+			type="button"
+		>
+			<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+			</svg>
+		</button>
+
+		<button
+			id="lightbox-prev"
+			class="absolute left-4 md:left-6 text-white/80 hover:text-white bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full w-10 h-10 flex items-center justify-center transition-all focus:outline-none focus:ring-2 focus:ring-white/50"
+			aria-label="Previous"
+			type="button"
+		>
+			<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+			</svg>
+		</button>
+
+		<button
+			id="lightbox-next"
+			class="absolute right-4 md:right-6 text-white/80 hover:text-white bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full w-10 h-10 flex items-center justify-center transition-all focus:outline-none focus:ring-2 focus:ring-white/50"
+			aria-label="Next"
+			type="button"
+		>
+			<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+			</svg>
+		</button>
+
+		<figure class="max-w-[95vw] max-h-[90vh] flex flex-col items-center">
+			<img
+				id="lightbox-image"
+				src=""
+				alt=""
+				class="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
+			/>
+			<figcaption class="mt-4 text-center">
+				<h3 id="lightbox-caption" class="text-lg md:text-xl font-medium text-white/90"></h3>
+				<p id="lightbox-date" class="text-sm md:text-base text-white/70 mt-2"></p>
+			</figcaption>
+		</figure>
+	</div>
+
+	<script>
+		const IMAGES_PER_PAGE = 12;
+		
+		const initGallery = () => {
+			const galleryItems = Array.from(document.querySelectorAll('.gallery-item')) as HTMLElement[];
+			const lightbox = document.getElementById('lightbox');
+			const imgEl = document.getElementById('lightbox-image') as HTMLImageElement | null;
+			const captionEl = document.getElementById('lightbox-caption');
+			const dateEl = document.getElementById('lightbox-date');
+			const closeBtn = document.getElementById('lightbox-close');
+			const prevBtn = document.getElementById('lightbox-prev');
+			const nextBtn = document.getElementById('lightbox-next');
+			const pagination = document.getElementById('gallery-pagination');
+			const prevPageBtn = document.getElementById('gallery-prev') as HTMLButtonElement;
+			const nextPageBtn = document.getElementById('gallery-next') as HTMLButtonElement;
+			const pageNumbersContainer = document.getElementById('gallery-page-numbers');
+			const imageCountEl = document.getElementById('image-count');
+			const galleryGrid = document.getElementById('gallery-grid');
+
+			if (!(lightbox && imgEl && captionEl && dateEl) || galleryItems.length === 0) return;
+
+			let currentIndex = null as number | null;
+			let currentPage = 1;
+			const totalImages = galleryItems.length;
+			const totalPages = Math.ceil(totalImages / IMAGES_PER_PAGE);
+
+			const formatDate = (dateString: string) => {
+				if (!dateString) return '';
+				const date = new Date(dateString);
+				if (isNaN(date.getTime())) return '';
+				return date.toLocaleDateString();
+			};
+
+			const getVisibleItems = (): HTMLElement[] => {
+				const startIndex = (currentPage - 1) * IMAGES_PER_PAGE;
+				const endIndex = startIndex + IMAGES_PER_PAGE;
+				return galleryItems.slice(startIndex, endIndex);
+			};
+
+			const updatePagination = () => {
+				if (!pagination || !pageNumbersContainer) return;
+
+				// Hide pagination if only one page
+				if (totalPages <= 1) {
+					pagination.classList.add('hidden');
+					return;
+				}
+				pagination.classList.remove('hidden');
+
+				// Update prev/next buttons
+				prevPageBtn.disabled = currentPage <= 1;
+				nextPageBtn.disabled = currentPage >= totalPages;
+
+				// Generate page numbers
+				pageNumbersContainer.innerHTML = '';
+				
+				const maxVisiblePages = 5;
+				let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+				let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+				
+				if (endPage - startPage + 1 < maxVisiblePages) {
+					startPage = Math.max(1, endPage - maxVisiblePages + 1);
+				}
+
+				// First page + ellipsis
+				if (startPage > 1) {
+					pageNumbersContainer.appendChild(createPageButton(1));
+					if (startPage > 2) {
+						const ellipsis = document.createElement('span');
+						ellipsis.className = 'px-2 text-gray-500 dark:text-gray-400';
+						ellipsis.textContent = '...';
+						pageNumbersContainer.appendChild(ellipsis);
+					}
+				}
+
+				// Page numbers
+				for (let i = startPage; i <= endPage; i++) {
+					pageNumbersContainer.appendChild(createPageButton(i));
+				}
+
+				// Last page + ellipsis
+				if (endPage < totalPages) {
+					if (endPage < totalPages - 1) {
+						const ellipsis = document.createElement('span');
+						ellipsis.className = 'px-2 text-gray-500 dark:text-gray-400';
+						ellipsis.textContent = '...';
+						pageNumbersContainer.appendChild(ellipsis);
+					}
+					pageNumbersContainer.appendChild(createPageButton(totalPages));
+				}
+			};
+
+			const createPageButton = (page: number): HTMLButtonElement => {
+				const btn = document.createElement('button');
+				btn.textContent = page.toString();
+				btn.className = page === currentPage
+					? 'w-10 h-10 rounded-lg text-sm font-medium bg-emerald-600 text-white dark:bg-emerald-500'
+					: 'w-10 h-10 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors';
+				btn.addEventListener('click', () => setPage(page));
+				return btn;
+			};
+
+			const updateDisplay = () => {
+				// Hide all items first
+				galleryItems.forEach((item) => item.classList.add('hidden'));
+				
+				// Show only items for current page
+				getVisibleItems().forEach((item) => item.classList.remove('hidden'));
+
+				updatePagination();
+
+				// Update URL without reload
+				const url = new URL(window.location.href);
+				if (currentPage > 1) {
+					url.searchParams.set('page', currentPage.toString());
+				} else {
+					url.searchParams.delete('page');
+				}
+				window.history.replaceState({}, '', url.toString());
+			};
+
+			const setPage = (page: number) => {
+				currentPage = page;
+				updateDisplay();
+				// Scroll to top of gallery
+				galleryGrid?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+			};
+
+			// Pagination button handlers
+			prevPageBtn?.addEventListener('click', () => setPage(currentPage - 1));
+			nextPageBtn?.addEventListener('click', () => setPage(currentPage + 1));
+
+			const showImage = (index: number) => {
+				const figure = galleryItems[index];
+				if (!figure) return;
+
+				const src = figure.dataset.lightboxSrc || '';
+				const alt = figure.dataset.lightboxAlt || '';
+				const date = figure.dataset.lightboxDate || '';
+
+				imgEl.src = src;
+				imgEl.alt = alt;
+				captionEl.textContent = alt;
+				dateEl.textContent = formatDate(date);
+
+				currentIndex = index;
+				lightbox.classList.remove('hidden');
+				lightbox.classList.add('flex');
+				document.body.style.overflow = 'hidden';
+			};
+
+			const hideImage = () => {
+				currentIndex = null;
+				lightbox.classList.add('hidden');
+				lightbox.classList.remove('flex');
+				document.body.style.overflow = '';
+			};
+
+			const nextImage = () => {
+				if (currentIndex === null) return;
+				currentIndex = (currentIndex + 1) % galleryItems.length;
+				showImage(currentIndex);
+			};
+
+			const prevImage = () => {
+				if (currentIndex === null) return;
+				currentIndex = (currentIndex - 1 + galleryItems.length) % galleryItems.length;
+				showImage(currentIndex);
+			};
+
+			galleryItems.forEach((figure) => {
+				figure.addEventListener('click', () => {
+					const index = parseInt(figure.dataset.index || '0', 10);
+					if (!isNaN(index)) {
+						showImage(index);
+					}
+				});
+			});
+
+			closeBtn?.addEventListener('click', hideImage);
+			lightbox.addEventListener('click', (e) => {
+				if (e.target === lightbox) hideImage();
+			});
+			nextBtn?.addEventListener('click', (e) => {
+				e.stopPropagation();
+				nextImage();
+			});
+			prevBtn?.addEventListener('click', (e) => {
+				e.stopPropagation();
+				prevImage();
+			});
+
+			document.addEventListener('keydown', (e) => {
+				if (currentIndex === null) return;
+				if (e.key === 'Escape') hideImage();
+				if (e.key === 'ArrowRight') nextImage();
+				if (e.key === 'ArrowLeft') prevImage();
+			});
+
+			// Initialize from URL
+			const urlParams = new URLSearchParams(window.location.search);
+			const initialPage = parseInt(urlParams.get('page') || '1', 10);
+			currentPage = isNaN(initialPage) ? 1 : Math.min(Math.max(1, initialPage), totalPages);
+			updateDisplay();
+		};
+
+		if (document.readyState === 'loading') {
+			document.addEventListener('DOMContentLoaded', initGallery, { once: true });
+		} else {
+			initGallery();
+		}
+	</script>
+</Layout>
+
+<style>
+	.gallery-figure {
+		aspect-ratio: 4 / 3;
+	}
+</style>

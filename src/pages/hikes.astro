@@ -1,0 +1,326 @@
+---
+import Layout from '../layouts/Layout.astro';
+import BlogPostCard from '../components/BlogPostCard.astro';
+import HikeCard from '../components/HikeCard.astro';
+import StatCard from '../components/StatCard.astro';
+import ImageLightbox from '../components/ImageLightbox.astro';
+import GalleryGrid from '../components/GalleryGrid.astro';
+import { getCollection } from 'astro:content';
+import { hikes } from '../data/hikes';
+import { 
+	calculateTotalDistance, 
+	calculateTotalElevation,
+	getAllTags,
+	getAllRegions
+} from '../utils/hikeUtil';
+
+// Calculate statistics
+const totalDistance = calculateTotalDistance(hikes);
+const totalElevation = calculateTotalElevation(hikes);
+const totalHikes = hikes.length;
+
+// Get all tags and regions for filters
+const allTags = ['All', ...getAllTags(hikes)];
+const allRegions = ['All', ...getAllRegions(hikes)];
+
+// Fetch all published posts
+const allPosts = await getCollection('posts', (entry) => !entry.data.draft);
+
+// Find related posts for each hike
+const hikesWithPosts = hikes.map(hike => {
+	const relatedPost = allPosts.find(post => 
+		post.slug === hike.blogSlug || 
+		post.data.title.toLowerCase().includes(hike.title.toLowerCase())
+	);
+	return { hike, relatedPost };
+});
+
+// Fetch hiking blog posts
+const hikePosts = allPosts
+	.filter(entry => entry.data.tags?.includes('hike'))
+	.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
+	.slice(0, 6);
+---
+
+<Layout title="Hikes - Giray Coskun" description="Hiking trails and adventures in Bavaria and beyond">
+	<div class="container mx-auto px-6 py-12 bg-white dark:bg-gray-900">
+		<div class="flex items-center justify-between mb-8">
+			<h1 class="text-4xl font-bold text-gray-800 dark:text-gray-100">
+				My Hikes
+			</h1>
+			<a
+				href="https://trails.giraycoskun.com/trails"
+				target="_blank"
+				rel="noopener noreferrer"
+				class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-700 dark:hover:bg-emerald-600 text-white px-4 py-2 rounded shadow"
+			>
+				Go to Trails →
+			</a>
+		</div>
+
+		{/* Statistics Section */}
+		<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+			<StatCard
+				label="Total Distance"
+				value={totalDistance.toFixed(1)}
+				unit="km"
+			/>
+			<StatCard
+				label="Total Elevation"
+				value={totalElevation.toLocaleString()}
+				unit="m"
+			/>
+			<StatCard
+				label="Total Hikes"
+				value={totalHikes.toString()}
+				unit="tracks"
+			/>
+		</div>
+
+		{/* Filters Section */}
+		<div class="flex flex-col md:flex-row gap-4 items-start md:items-end mb-8">
+			<div>
+				<label for="tag-filter" class="block text-sm text-gray-700 dark:text-gray-300 mb-1">
+					Tag
+				</label>
+				<select
+					id="tag-filter"
+					class="rounded border-gray-200 dark:border-gray-700 px-3 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+				>
+					{allTags.map((tag) => (
+						<option value={tag}>{tag}</option>
+					))}
+				</select>
+			</div>
+
+			<div>
+				<label for="region-filter" class="block text-sm text-gray-700 dark:text-gray-300 mb-1">
+					Region
+				</label>
+				<select
+					id="region-filter"
+					class="rounded border-gray-200 dark:border-gray-700 px-3 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+				>
+					{allRegions.map((region) => (
+						<option value={region}>{region}</option>
+					))}
+				</select>
+			</div>
+
+			<div class="ml-auto">
+				<p id="filter-count" class="text-sm text-gray-600 dark:text-gray-400">
+					Showing {hikes.length} tracks
+				</p>
+			</div>
+		</div>
+
+		{/* Hikes Section */}
+		<h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-6">
+			All Tracks
+		</h2>
+		<div id="hikes-container" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+			{hikesWithPosts.map(({ hike, relatedPost }, index) => (
+				<div 
+					class="hike-card-wrapper"
+					data-index={index}
+					data-tags={JSON.stringify(hike.tags || [])}
+					data-region={hike.region || ''}
+				>
+					<HikeCard hike={hike} relatedPost={relatedPost} />
+				</div>
+			))}
+		</div>
+
+		{/* Pagination Controls */}
+		<div id="pagination" class="mt-8 flex items-center justify-center gap-3">
+			<button
+				id="prev-btn"
+				class="px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded disabled:opacity-40"
+			>
+				Previous
+			</button>
+
+			<div id="page-buttons" class="flex items-center gap-2">
+				{/* Page buttons will be injected by JavaScript */}
+			</div>
+
+			<button
+				id="next-btn"
+				class="px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded disabled:opacity-40"
+			>
+				Next
+			</button>
+		</div>
+
+		{/* Hiking Blog Posts Section */}
+		{hikePosts.length > 0 && (
+			<section class="mt-12">
+				<h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+					Hiking Blog
+				</h2>
+				<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+					{hikePosts.map((post, i) => (
+						<BlogPostCard
+							title={post.data.title}
+							slug={post.slug}
+							date={post.data.date}
+							description={post.data.description}
+							tags={post.data.tags}
+							author={{
+								name: post.data.author.name,
+								avatar: post.data.author.avatar,
+							}}
+							coverImage={post.data.coverImage}
+						/>
+					))}
+				</div>
+			</section>
+		)}
+
+		{/* Gallery Section */}
+		<section class="mt-12">
+			<h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+				Hiking Gallery
+			</h2>
+			<GalleryGrid limit={8} tag="hike" />
+		</section>
+
+		{/* Image Lightbox */}
+		<ImageLightbox />
+	</div>
+</Layout>
+
+<script>
+	// Client-side filtering and pagination
+	const PAGE_SIZE = 4;
+	let currentPage = 1;
+	let selectedTag = 'All';
+	let selectedRegion = 'All';
+
+	const tagFilter = document.getElementById('tag-filter') as HTMLSelectElement;
+	const regionFilter = document.getElementById('region-filter') as HTMLSelectElement;
+	const filterCount = document.getElementById('filter-count');
+	const hikesContainer = document.getElementById('hikes-container');
+	const prevBtn = document.getElementById('prev-btn') as HTMLButtonElement;
+	const nextBtn = document.getElementById('next-btn') as HTMLButtonElement;
+	const pageButtons = document.getElementById('page-buttons');
+	const allCards = Array.from(document.querySelectorAll('.hike-card-wrapper')) as HTMLElement[];
+
+	function getFilteredCards(): HTMLElement[] {
+		return allCards.filter((card) => {
+			const cardTags = JSON.parse(card.dataset.tags || '[]');
+			const cardRegion = card.dataset.region || '';
+			const tagMatch = selectedTag === 'All' || cardTags.includes(selectedTag);
+			const regionMatch = selectedRegion === 'All' || cardRegion === selectedRegion;
+			return tagMatch && regionMatch;
+		});
+	}
+
+	function updateDisplay() {
+		const filteredCards = getFilteredCards();
+		const totalPages = Math.max(1, Math.ceil(filteredCards.length / PAGE_SIZE));
+		
+		// Ensure current page is valid
+		if (currentPage > totalPages) currentPage = Math.max(1, totalPages);
+		
+		const startIndex = (currentPage - 1) * PAGE_SIZE;
+		const endIndex = Math.min(filteredCards.length, currentPage * PAGE_SIZE);
+		const paginatedCards = filteredCards.slice(startIndex, endIndex);
+
+		// Update filter count
+		if (filterCount) {
+			if (filteredCards.length === 0) {
+				filterCount.textContent = 'No matching tracks';
+			} else {
+				filterCount.textContent = `Showing ${startIndex + 1}-${endIndex} of ${filteredCards.length} matching tracks`;
+			}
+		}
+
+		// Hide all cards first
+		allCards.forEach((card) => card.style.display = 'none');
+		
+		// Show only paginated cards
+		paginatedCards.forEach((card) => card.style.display = 'block');
+
+		// Update pagination buttons
+		if (prevBtn) {
+			prevBtn.disabled = currentPage <= 1;
+		}
+		if (nextBtn) {
+			nextBtn.disabled = currentPage >= totalPages;
+		}
+
+		// Update page buttons
+		if (pageButtons) {
+			pageButtons.innerHTML = '';
+			
+			if (totalPages <= 1) {
+				return; // No pagination needed
+			}
+			
+			for (let i = 1; i <= totalPages; i++) {
+				const btn = document.createElement('button');
+				btn.textContent = i.toString();
+				btn.className = `px-3 py-2 rounded ${
+					i === currentPage
+						? 'bg-emerald-600 dark:bg-emerald-700 text-white'
+						: 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border dark:border-gray-700'
+				}`;
+				btn.addEventListener('click', () => {
+					currentPage = i;
+					updateDisplay();
+					scrollToHikes();
+				});
+				pageButtons.appendChild(btn);
+			}
+		}
+	}
+
+	function scrollToHikes() {
+		if (hikesContainer) {
+			hikesContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+		}
+	}
+
+	// Event listeners
+	if (tagFilter) {
+		tagFilter.addEventListener('change', () => {
+			selectedTag = tagFilter.value;
+			currentPage = 1;
+			updateDisplay();
+		});
+	}
+
+	if (regionFilter) {
+		regionFilter.addEventListener('change', () => {
+			selectedRegion = regionFilter.value;
+			currentPage = 1;
+			updateDisplay();
+		});
+	}
+
+	if (prevBtn) {
+		prevBtn.addEventListener('click', () => {
+			if (currentPage > 1) {
+				currentPage--;
+				updateDisplay();
+				scrollToHikes();
+			}
+		});
+	}
+
+	if (nextBtn) {
+		nextBtn.addEventListener('click', () => {
+			const filteredCards = getFilteredCards();
+			const totalPages = Math.max(1, Math.ceil(filteredCards.length / PAGE_SIZE));
+			if (currentPage < totalPages) {
+				currentPage++;
+				updateDisplay();
+				scrollToHikes();
+			}
+		});
+	}
+
+	// Initial display
+	updateDisplay();
+</script>

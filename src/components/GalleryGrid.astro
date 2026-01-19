@@ -1,0 +1,67 @@
+---
+import type { GalleryImage } from '../data/types';
+import { galleryData, galleryRandom, gallerySlice, getUnsplashUrl } from '../data/gallery';
+import { Image } from 'astro:assets';
+
+interface Props {
+	limit?: number;
+	tag?: string;
+	random?: boolean;
+	showTitle?: boolean;
+	eagerCount?: number;
+}
+
+const { limit, tag, random = false, showTitle = false, eagerCount = 0 } = Astro.props;
+
+// Determine which images to display
+let images: GalleryImage[];
+if (typeof limit === "number" || typeof tag === "string") {
+	images = random
+		? galleryRandom(limit ?? galleryData.length, tag)
+		: gallerySlice(limit ?? galleryData.length, tag);
+} else {
+	// Sort newest first if no filtering
+	images = [...galleryData].sort((a, b) => {
+		if (!a.date && !b.date) return 0;
+		if (!a.date) return 1;
+		if (!b.date) return -1;
+		return new Date(b.date).getTime() - new Date(a.date).getTime();
+	});
+}
+---
+
+<div class="w-full">
+	{showTitle && (
+		<div class="flex items-center justify-between mb-6">
+			<h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Gallery</h2>
+			<a href="/gallery" class="text-sm text-emerald-600 dark:text-emerald-400 hover:underline">
+				View full gallery →
+			</a>
+		</div>
+	)}
+
+	<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+		{images.map((img, index) => (
+			<a href="/gallery" class="group relative overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-shadow aspect-4/3 bg-gray-200 dark:bg-gray-800">
+				<Image
+					src={getUnsplashUrl(img.unsplashId, 'thumbnail')}
+					alt={img.alt}
+					width={400}
+					height={300}
+					class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+					loading={index < eagerCount ? "eager" : "lazy"}
+				/>
+				<div class="absolute inset-0 bg-linear-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+					<div class="absolute bottom-0 left-0 right-0 p-4">
+						<p class="text-white text-sm font-medium">{img.alt}</p>
+						<div class="flex gap-2 mt-2 flex-wrap">
+							{img.tags.slice(0, 2).map((tag) => (
+								<span class="text-xs bg-emerald-600 text-white px-2 py-1 rounded">#{tag}</span>
+							))}
+						</div>
+					</div>
+				</div>
+			</a>
+		))}
+	</div>
+</div>
