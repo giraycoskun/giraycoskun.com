@@ -15,10 +15,10 @@ const allPosts = (
 const latestPosts = allPosts.slice(0, 3);
 
 const texts = [
-    "Hello World,",
-    "I am Giray Coskun.",
-    "Follow the white rabbit!",
-  ];
+  "Hello World,",
+  "I am Giray Coskun.",
+  "Follow the white rabbit!",
+];
 ---
 
 <Layout title="Home">
@@ -65,7 +65,7 @@ const texts = [
           Latest posts
         </h2>
         <a
-          href="/blog-index"
+          href="/blog"
           class="text-sm text-emerald-600 dark:text-emerald-400 hover:underline"
         >
           View all posts →
@@ -94,7 +94,7 @@ const texts = [
           <div class="text-gray-600 dark:text-gray-400">
             Check out the{" "}
             <a
-              href="/blog-index"
+              href="/blog"
               class="text-emerald-600 dark:text-emerald-400 hover:underline"
             >
               blog page
@@ -121,7 +121,7 @@ const texts = [
   </div>
 
   {/* Spotify Playlists */}
-  <div class="bg-gray-200 dark:bg-gray-700 py-12">
+  <div class="hidden md:block bg-gray-200 dark:bg-gray-700 py-12">
     <div class="container mx-auto px-6">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <iframe
@@ -144,17 +144,22 @@ const texts = [
   {/* Hardcover Bookcase */}
   <div class="bg-gray-100 dark:bg-gray-800 py-12">
     <div class="text-center mb-5">
-      <a href="https://hardcover.app/@giraycoskun/books/currently-reading" class="text-2xl font-bold text-gray-900 dark:text-gray-100">Currently Reading</a>
+      <a
+        href="https://hardcover.app/@giraycoskun/books/currently-reading"
+        class="text-2xl font-bold text-gray-900 dark:text-gray-100"
+        >Currently Reading</a
+      >
     </div>
     <div
       data-hardcover-widget
+      id="hardcover-widget"
       data-api-url="https://hardcoverembed.gouthamve.dev"
       data-username="giraycoskun"
-      data-max-width="1000px"
-      data-columns="4"
+      data-max-width="800px"
       data-show-powered-by="false"
-      data-min-column-width="200px"
+      data-min-column-width="180px"
       data-gap="0.5rem"
+      data-limit="4"
     >
     </div>
   </div>
@@ -167,19 +172,27 @@ const texts = [
     }
 
     @keyframes blink {
-      50% { opacity: 0 }
+      50% {
+        opacity: 0;
+      }
     }
   </style>
 
   <script>
     (function () {
-      const hero = document.getElementById('hero');
+      const hero = document.getElementById("hero");
       if (!hero) return;
-      let texts = [];
-      try { texts = JSON.parse(hero.dataset.texts || '[]'); } catch (e) { texts = []; }
+      let texts: string[] = [];
+      try {
+        texts = JSON.parse(hero.dataset.texts || "[]");
+      } catch (e) {
+        texts = [];
+      }
       if (!texts || texts.length === 0) return;
 
-      const el = document.getElementById('hero-text');
+      const elRaw = document.getElementById("hero-text");
+      if (!elRaw) return;
+      const el = elRaw as HTMLElement;
       let txtIndex = 0;
       let charIndex = 0;
       let deleting = false;
@@ -189,7 +202,7 @@ const texts = [
       const PAUSE_AFTER_FULL = 1600;
 
       function tick() {
-        const current = texts[txtIndex] || '';
+        const current = texts[txtIndex] || "";
         if (!deleting) {
           el.textContent = current.substring(0, charIndex + 1);
           charIndex++;
@@ -216,7 +229,5 @@ const texts = [
       tick();
     })();
   </script>
-
+  <script is:inline src="/hardcover-widget.js"></script>
 </Layout>
-
-<script src="https://hardcoverembed.gouthamve.dev/static/widget.js"></script>
