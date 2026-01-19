@@ -9,19 +9,11 @@ author:
 draft: true
 ---
 
-## Contents
-
-1. [Intro](#intro)
-2. [Package Manager: uv](#setup-uv)
-3. [Lint & Format](#lint-format)
-4. [Create Docs](#docs)
-5. [Versioning](#versioning)
-
-## Intro {#intro}
+## Intro
 
 This template captures a minimal, modern setup for Python projects: dependency & environment management with uv, linting and formatting with ruff, documentation with MkDocs + mkdocstrings, and versioning via Git tags (optionally automated with bump-my-version). Copy commands as-is and adapt names to your project.
 
-## Package Manager: uv {#setup-uv}
+## Package Manager: uv
 
 uv manages virtual environments and dependencies fast. Recommended on macOS:
 
@@ -48,7 +40,7 @@ source .venv/bin/activate
 uv add --dev ruff mkdocs mkdocstrings mkdocstrings-python bump-my-version
 ```
 
-## Lint & Format {#lint-format}
+## Lint & Format
 
 Use ruff for both linting and formatting to keep things simple.
 
@@ -76,7 +68,7 @@ uv run ruff check .
 uv run ruff format .
 ```
 
-## Create Docs {#docs}
+## Create Docs
 
 MkDocs + mkdocstrings generates clean docs from your code and docstrings.
 
@@ -158,7 +150,3 @@ filename = "pyproject.toml"
 # usage
 uv run bump-my-version bump minor   # 0.1.0 -> 0.2.0
 ```
-
----
-
-*Tags: python, developer*

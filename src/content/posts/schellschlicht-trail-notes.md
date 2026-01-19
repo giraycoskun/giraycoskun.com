@@ -7,17 +7,10 @@ coverImage: https://images.unsplash.com/photo-1763469716176-94fa9eb2d252?q=80&w=
 author:
   name: Giray Coskun
   avatar: https://avatars.githubusercontent.com/u/37620872?s=400&u=3b9d821e80e76abc209441bc88b128956e77cbd2&v=4
+draft: true
 ---
 
-## Contents
-
-- [Intro](#intro)
-- [How to Arrive](#arrival)
-- [Equipment and Technical Challenges](#equipment)
-- [Useful Links](#links)
-
-## Intro {#intro}
-
+## Intro
 This is a spring to fall hike in the Bavarian Alps near Garmisch-Partenkirchen. The summit is just over 2000 meters and directly across from Zugspitze, offering breathtaking views of beautiful Garmisch-Partenkirchen extending to Austria as part of the Ammergau Alps.
 
 ### Trail Stats

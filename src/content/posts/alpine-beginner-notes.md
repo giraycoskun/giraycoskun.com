@@ -7,23 +7,15 @@ coverImage: https://images.unsplash.com/photo-1763032409368-d7e328013069?q=80&w=
 author:
   name: Giray Coskun
   avatar: https://avatars.githubusercontent.com/u/37620872?s=400&u=3b9d821e80e76abc209441bc88b128956e77cbd2&v=4
+draft: true
 ---
 
-## Contents
-
-- [Intro](#intro)
-- [Essential Tips](#notes)
-- [Gear Recommendations](#gear)
-- [Trail Safety](#safety)
-
-## Intro {#intro}
-
+## Intro
 Welcome to my alpine hiking notes as a beginner. This post shares essential tips, gear recommendations, and lessons learned from hiking around Bavaria's beautiful alpine regions.
 
 The Alps offer stunning views and rewarding trails, but they also present unique challenges for beginners. Proper preparation, respect for the environment, and understanding your limits are key to safe and enjoyable hiking.
 
-## Essential Tips {#notes}
-
+## Essential Tips
 ### Before You Go
 
 - **Start early**: Begin your hike early in the morning to avoid afternoon thunderstorms and have plenty of daylight
@@ -59,7 +51,7 @@ Alpine weather is unpredictable. Even on sunny days:
 - Start with fewer layers and add as needed
 - Be prepared for temperature drops at higher elevations
 
-## Trail Safety {#safety}
+## Trail Safety
 
 ### Common Hazards
 
@@ -82,4 +74,3 @@ Alpine weather is unpredictable. Even on sunny days:
 3. **Blomberg**: Family-friendly with well-maintained trails and mountain huts
 
 Happy hiking! Remember: The mountain will always be there tomorrow. It's okay to turn back.
-
