@@ -15,15 +15,15 @@
 
   // Default configuration
   const defaultConfig = {
-    apiUrl: "http://localhost:8080",
-    username: null,
+    apiUrl: "https://hardcoverembed.gouthamve.dev",
+    username: "giraycoskun",
     bookType: "currently-reading",
     maxWidth: "800px",
     columns: "auto-fill",
     minColumnWidth: "120px",
     gap: "1rem",
-    showPoweredBy: true,
-    limit: 10, // Add this - null means no limit
+    showPoweredBy: false,
+    limit: 4, // Add this - null means no limit
   };
 
   // Widget styles
