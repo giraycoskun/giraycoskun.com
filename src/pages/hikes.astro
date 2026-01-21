@@ -24,7 +24,7 @@ const allTags = ['All', ...getAllTags(hikes)];
 const allRegions = ['All', ...getAllRegions(hikes)];
 
 // Fetch all published posts
-const allPosts = await getCollection('posts', (entry) => !entry.data.draft);
+const allPosts = await getCollection('blog', (entry) => !entry.data.draft);
 
 // Find related posts for each hike
 const hikesWithPosts = hikes.map(hike => {

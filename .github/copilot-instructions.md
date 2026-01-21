@@ -8,7 +8,7 @@ This is a personal website built with Astro 5.x, using file-based routing and st
 ### Directory Structure
 - **src/pages/**: File-based routing - each `.astro` file becomes a page route
 	- `index.astro` - Homepage with hero, gallery preview, profile card
-	- `blog-index.astro` - Blog listing page
+	- `/blog/[...page].astro` - Blog listing page
 	- `gallery.astro` - Photo gallery from hikes and travels
 	- `hikes.astro` - Hiking trail records with Strava integration
 	- `work.astro` - Professional experience and projects

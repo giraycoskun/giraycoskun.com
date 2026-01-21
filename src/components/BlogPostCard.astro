@@ -56,7 +56,7 @@ const formattedDate = new Intl.DateTimeFormat('en-GB', {
       <div class="flex flex-wrap gap-2 mb-3">
         {tags.map((tag) => (
           <a
-            href={`/blog?tag=${encodeURIComponent(tag)}`}
+            href={`/blog/tag/${encodeURIComponent(tag)}`}
             class="text-xs bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200 px-2 py-1 rounded-full hover:bg-emerald-200 dark:hover:bg-emerald-800 transition-colors"
           >
             {tag}
@@ -67,7 +67,7 @@ const formattedDate = new Intl.DateTimeFormat('en-GB', {
 
     {/* Title */}
     <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors line-clamp-2">
-      <a href={`/posts/${slug}`} class="hover:underline">
+      <a href={`/blog/${slug}`} class="hover:underline">
         {title}
       </a>
     </h2>
@@ -116,7 +116,7 @@ const formattedDate = new Intl.DateTimeFormat('en-GB', {
 
     {/* Read More Link */}
     <a
-      href={`/posts/${slug}`}
+      href={`/blog/${slug}`}
       class="mt-4 inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 hover:underline font-medium text-sm group/link"
     >
       Read more

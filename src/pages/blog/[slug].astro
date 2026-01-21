@@ -7,11 +7,11 @@ import { calculateReadingTime } from '../../utils/blogUtil';
 import type { CollectionEntry } from 'astro:content';
 
 interface Props {
-  post: CollectionEntry<'posts'>;
+  post: CollectionEntry<'blog'>;
 }
 
 export async function getStaticPaths() {
-  const posts = await getCollection('posts');
+  const posts = await getCollection('blog');
   return posts.map((post) => ({
     params: { slug: post.slug },
     props: { post },
@@ -53,9 +53,9 @@ const formattedDate = new Intl.DateTimeFormat('en-GB', {
     <div class="max-w-4xl mx-auto">
       <header class="mb-8">
         <a
-          href="/blog-index"
+          href="/blog"
           class="inline-flex items-center gap-2 text-sm text-emerald-600 dark:text-emerald-400 hover:underline mb-6 transition-colors"
-          aria-label="Back to blog index"
+          aria-label="Back to blog"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M15 19l-7-7 7-7" />
@@ -96,7 +96,7 @@ const formattedDate = new Intl.DateTimeFormat('en-GB', {
           <div class="flex gap-2 flex-wrap">
             {post.data.tags && post.data.tags.map((tag) => (
               <a 
-                href={`/blog-index?tag=${encodeURIComponent(tag)}`}
+                href={`/blog/tag/${encodeURIComponent(tag)}`}
                 class="text-xs bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200 px-3 py-1 rounded-full shadow-sm hover:bg-emerald-200 dark:hover:bg-emerald-800 transition-colors"
               >
                 {tag}
@@ -171,7 +171,7 @@ const formattedDate = new Intl.DateTimeFormat('en-GB', {
         </div>
         <div class="mt-6 text-center">
           <a
-            href="/blog-index"
+            href="/blog"
             class="inline-flex items-center gap-2 text-sm text-emerald-600 dark:text-emerald-400 hover:underline font-medium transition-colors"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

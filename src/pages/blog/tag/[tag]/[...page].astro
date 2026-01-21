@@ -1,0 +1,177 @@
+---
+import Layout from '../../../../layouts/Layout.astro';
+import BlogPostCard from '../../../../components/BlogPostCard.astro';
+import { getCollection } from 'astro:content';
+import type { GetStaticPaths, Page } from 'astro';
+import type { CollectionEntry } from 'astro:content';
+
+export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
+  const allPosts = await getCollection('blog');
+  const sortedPosts = allPosts.sort(
+    (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+  );
+
+  // Get all unique tags
+  const allTags = [...new Set(sortedPosts.flatMap(post => post.data.tags || []))];
+
+  // Generate paginated paths for each tag
+  return allTags.flatMap((tag) => {
+    const filteredPosts = sortedPosts.filter(post => 
+      post.data.tags?.includes(tag)
+    );
+    return paginate(filteredPosts, {
+      params: { tag },
+      pageSize: 6,
+    });
+  });
+};
+
+interface Props {
+  page: Page<CollectionEntry<'blog'>>;
+}
+
+const { page } = Astro.props;
+const { tag } = Astro.params;
+
+// Get unique tags from all posts for the filter
+const allPosts = await getCollection('blog');
+const allTags = [...new Set(allPosts.flatMap(post => post.data.tags || []))].sort();
+---
+
+<Layout 
+  title={page.currentPage === 1 ? `Blog - ${tag}` : `Blog - ${tag} - Page ${page.currentPage}`}
+  description={`Blog posts tagged with "${tag}"`}
+>
+  <main class="min-h-screen bg-white dark:bg-gray-800 py-12 px-6">
+    <div class="max-w-6xl mx-auto">
+      {/* Header */}
+      <header class="mb-12 text-center">
+        <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-gray-100 mb-4">
+          Blog
+        </h1>
+        <p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+          Thoughts on hiking, development, and everything in between
+        </p>
+      </header>
+
+      {/* Tag Filter */}
+      {allTags.length > 0 && (
+        <section class="mb-8">
+          <div class="flex flex-wrap gap-2 justify-center items-center">
+            <span class="text-sm font-medium text-gray-700 dark:text-gray-300 mr-2">
+              Filter by tag:
+            </span>
+            <a
+              href="/blog"
+              class="px-4 py-2 rounded-full text-sm font-medium transition-colors bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+            >
+              All
+            </a>
+            {allTags.map((t) => (
+              <a
+                href={`/blog/tag/${encodeURIComponent(t)}`}
+                class={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                  t === tag
+                    ? 'bg-emerald-600 text-white dark:bg-emerald-500'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+                }`}
+              >
+                {t}
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Active filter indicator */}
+      <div class="mb-6 text-center">
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          Showing posts tagged with <span class="font-semibold text-emerald-600 dark:text-emerald-400">"{tag}"</span>
+          <a href="/blog" class="ml-2 text-emerald-600 dark:text-emerald-400 hover:underline">
+            Clear filter
+          </a>
+        </p>
+      </div>
+
+      {/* Posts Grid */}
+      <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        {page.data.map((post) => (
+          <BlogPostCard 
+            title={post.data.title}
+            description={post.data.description}
+            date={post.data.date}
+            slug={post.slug}
+            tags={post.data.tags}
+            coverImage={post.data.coverImage}
+            author={post.data.author}
+            draft={post.data.draft}
+          />
+        ))}
+      </div>
+
+      {/* No posts message */}
+      {page.data.length === 0 && (
+        <div class="text-center py-12">
+          <p class="text-gray-600 dark:text-gray-400 text-lg">
+            No posts found with the tag "{tag}"
+          </p>
+          <a href="/blog" class="mt-4 inline-block text-emerald-600 dark:text-emerald-400 hover:underline">
+            View all posts
+          </a>
+        </div>
+      )}
+
+      {/* Pagination */}
+      {page.lastPage > 1 && (
+        <nav class="mt-12 flex justify-center items-center gap-2" aria-label="Blog pagination">
+          {page.url.prev ? (
+            <a
+              href={page.url.prev}
+              class="px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors"
+            >
+              ← Previous
+            </a>
+          ) : (
+            <span class="px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500 cursor-not-allowed">
+              ← Previous
+            </span>
+          )}
+
+          <div class="flex gap-1">
+            {Array.from({ length: page.lastPage }, (_, i) => i + 1).map((num) => (
+              <a
+                href={num === 1 ? `/blog/tag/${tag}` : `/blog/tag/${tag}/${num}`}
+                class={`w-10 h-10 flex items-center justify-center rounded-lg text-sm font-medium transition-colors ${
+                  num === page.currentPage
+                    ? 'bg-emerald-600 text-white dark:bg-emerald-500'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+                }`}
+                aria-current={num === page.currentPage ? 'page' : undefined}
+              >
+                {num}
+              </a>
+            ))}
+          </div>
+
+          {page.url.next ? (
+            <a
+              href={page.url.next}
+              class="px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors"
+            >
+              Next →
+            </a>
+          ) : (
+            <span class="px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500 cursor-not-allowed">
+              Next →
+            </span>
+          )}
+        </nav>
+      )}
+
+      {/* Post count */}
+      <div class="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
+        {page.total} {page.total === 1 ? 'post' : 'posts'} in "{tag}"
+      </div>
+    </div>
+  </main>
+</Layout>

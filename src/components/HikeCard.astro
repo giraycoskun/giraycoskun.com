@@ -6,7 +6,7 @@ import { Image } from 'astro:assets';
 
 interface Props {
   hike: Hike;
-  relatedPost?: CollectionEntry<'posts'>;
+  relatedPost?: CollectionEntry<'blog'>;
 }
 
 const { hike, relatedPost } = Astro.props;
@@ -56,7 +56,7 @@ const images = hike.images
         )}
         {relatedPost && (
           <a
-            href={`/posts/${relatedPost.slug}`}
+            href={`/blog/${relatedPost.slug}`}
             class="text-lg text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 hover:underline flex items-center gap-1"
             title="Read blog post"
           >
