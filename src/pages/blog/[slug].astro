@@ -35,7 +35,7 @@ const formattedDate = new Intl.DateTimeFormat('en-GB', {
   image={post.data.coverImage}
   type="article"
 >
-  <main class="w-full mx-auto px-6 sm:px-8 lg:px-12 py-10 bg-white dark:bg-gray-900">
+  <main class="w-full mx-auto  py-10 bg-white dark:bg-gray-900">
     {/* Draft Banner */}
     {post.data.draft && (
       <div class="max-w-4xl mx-auto mb-6">
@@ -113,7 +113,7 @@ const formattedDate = new Intl.DateTimeFormat('en-GB', {
               alt={post.data.title}
               width={1200}
               height={600}
-              class="w-full rounded-lg object-cover h-56 md:h-64 lg:h-72 shadow-lg"
+              class="w-full rounded-lg object-cover object-top h-56 md:h-64 lg:h-72 shadow-lg"
               loading="eager"
               decoding="async"
               fetchpriority="high"
@@ -464,4 +464,7 @@ const formattedDate = new Intl.DateTimeFormat('en-GB', {
       color: rgb(243 244 246) !important;
     }
   }
+
+
+
 </style>
