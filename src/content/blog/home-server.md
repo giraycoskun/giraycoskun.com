@@ -115,6 +115,18 @@ I am using [Cronitor's dashboard](https://crontab.guru/dashboard.html) (self-hos
 
 ![reading-flow.drawio.png](https://images.giraycoskun.dev/reading-flow.drawio.png)
 
+```
+Reading from KOReader → Push Progress to Booklore → Sync with Hardcover.app
+
+Listening from AudioBooth → Sync with Audiobookshelf
+                                    ↓
+                              Shelfbridge Sync  → Sync with Hardcover.app
+
+Reading from Booklore → Pull progress from KOReader
+                ↓
+    Sync with Hardcover.app
+```
+
 ### Nginx Setup
 
 Nginx for now is used to serve 3 main things:
