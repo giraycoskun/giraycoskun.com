@@ -50,8 +50,11 @@ const formattedDate = new Intl.DateTimeFormat('en-GB', {
       </div>
     )}
 
-    <div class="max-w-4xl mx-auto">
-      <header class="mb-8">
+    <div class="max-w-7xl mx-auto px-4 lg:px-8">
+      <div class="lg:grid lg:grid-cols-[1fr_280px] lg:gap-8">
+        {/* Main content column */}
+        <div class="max-w-4xl">
+          <header class="mb-8">
         <a
           href="/blog"
           class="inline-flex items-center gap-2 text-sm text-emerald-600 dark:text-emerald-400 hover:underline mb-6 transition-colors"
@@ -139,28 +142,7 @@ const formattedDate = new Intl.DateTimeFormat('en-GB', {
         </h1>
       </header>
 
-      {/* Table of Contents for long posts */}
-      {headings.length > 2 && (
-        <nav class="mb-8 max-w-prose mx-auto" aria-label="Table of contents">
-          <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-            <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">
-              Contents
-            </h2>
-            <ul class="space-y-2 list-none pl-0">
-              {headings.filter(h => h.depth <= 3).map((heading) => (
-                <li style={`margin-left: ${(heading.depth - 2) * 1}rem`} class="my-0">
-                  <a
-                    href={`#${heading.slug}`}
-                    class="text-xl text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors hover:underline block py-1"
-                  >
-                    {heading.text}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </nav>
-      )}
+
 
       {/* Content */}
       <article class="prose prose-xl lg:prose-2xl max-w-none mx-auto mt-8 text-gray-900 dark:text-gray-100" id="blog-content">
@@ -197,12 +179,96 @@ const formattedDate = new Intl.DateTimeFormat('en-GB', {
           </a>
         </div>
       </footer>
+        </div>
+
+        {/* Sticky Table of Contents - Right Sidebar */}
+        {headings.length > 2 && (
+          <aside class="hidden lg:block">
+            <nav class="sticky top-24" aria-label="Table of contents" id="toc-nav">
+              <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3 uppercase tracking-wide">
+                  On this page
+                </h2>
+                <ul class="space-y-2 list-none pl-0" id="toc-list">
+                  {headings.filter(h => h.depth <= 3).map((heading) => (
+                    <li style={`margin-left: ${(heading.depth - 2) * 0.75}rem`} class="my-0">
+                      <a
+                        href={`#${heading.slug}`}
+                        data-toc-link
+                        data-target={heading.slug}
+                        class="toc-link text-base text-gray-600 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors block py-1.5 border-l-2 border-transparent pl-3 -ml-px"
+                      >
+                        {heading.text}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </nav>
+          </aside>
+        )}
+      </div>
     </div>
   </main>
   <CopyButton />
 </Layout>
 
+<script>
+  function initTocScrollSpy() {
+    const tocLinks = document.querySelectorAll('[data-toc-link]');
+    if (tocLinks.length === 0) return;
+
+    const headingElements: HTMLElement[] = [];
+    tocLinks.forEach(link => {
+      const target = link.getAttribute('data-target');
+      if (target) {
+        const heading = document.getElementById(target);
+        if (heading) headingElements.push(heading);
+      }
+    });
+
+    function updateActiveLink() {
+      const scrollPosition = window.scrollY + 100;
+      
+      let currentActive = '';
+      
+      for (const heading of headingElements) {
+        if (heading.offsetTop <= scrollPosition) {
+          currentActive = heading.id;
+        }
+      }
+
+      tocLinks.forEach(link => {
+        const target = link.getAttribute('data-target');
+        if (target === currentActive) {
+          link.classList.add('toc-active');
+        } else {
+          link.classList.remove('toc-active');
+        }
+      });
+    }
+
+    window.addEventListener('scroll', updateActiveLink, { passive: true });
+    updateActiveLink();
+  }
+
+  document.addEventListener('DOMContentLoaded', initTocScrollSpy);
+  document.addEventListener('astro:page-load', initTocScrollSpy);
+</script>
+
 <style is:global>
+  /* TOC active state styles */
+  .toc-link.toc-active {
+    color: rgb(5 150 105);
+    border-left-color: rgb(5 150 105);
+    font-weight: 500;
+  }
+  
+  :is(.dark, [data-theme="dark"]) .toc-link.toc-active {
+    color: rgb(52 211 153);
+    border-left-color: rgb(52 211 153);
+  }
+
   /* Fix prose styles for better rendering */
   .prose {
     color: inherit;
