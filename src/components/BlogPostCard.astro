@@ -36,7 +36,7 @@ const formattedDate = new Intl.DateTimeFormat('en-GB', {
 
   {/* Cover Image */}
   {coverImage && (
-    <div class="aspect-video overflow-hidden bg-gray-100 dark:bg-gray-700">
+    <a href={`/blog/${slug}`} class="block aspect-video overflow-hidden bg-gray-100 dark:bg-gray-700">
       <Image
         src={coverImage}
         alt={title}
@@ -46,7 +46,7 @@ const formattedDate = new Intl.DateTimeFormat('en-GB', {
         loading="lazy"
         decoding="async"
       />
-    </div>
+    </a>
   )}
 
   {/* Content */}
