@@ -6,7 +6,7 @@ description: Essential hiking gear checklist for summer day hikes with tips and 
 tags: [hike, guide]
 coverImage: https://images.unsplash.com/photo-1763041066439-3c5c0a16f022?q=80&w=1200
 imageCredit:
-  name: "Giray - Hosted @unsplash"
+  name: "Giray - Hosted@unsplash"
 author:
   name: Giray Coskun
   avatar: https://avatars.githubusercontent.com/u/37620872?s=400&u=3b9d821e80e76abc209441bc88b128956e77cbd2&v=4

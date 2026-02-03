@@ -6,7 +6,7 @@ description: Trail notes and tips from my Schellschlicht hike in Garmisch-Parten
 tags: [hike, trail-notes]
 coverImage: https://images.unsplash.com/photo-1763469716176-94fa9eb2d252?q=80&w=1200
 imageCredit:
-  name: "Giray - Hosted @unsplash"
+  name: "Giray - Hosted@unsplash"
 author:
   name: Giray Coskun
   avatar: https://avatars.githubusercontent.com/u/37620872?s=400&u=3b9d821e80e76abc209441bc88b128956e77cbd2&v=4
@@ -34,7 +34,7 @@ There is a [parking lot at the trailhead](https://maps.app.goo.gl/CVaSDCyVcLyo3H
 - The lot is free but limited in capacity
 - Alternative parking available in nearby Oberammergau
 
-## Equipment and Technical Challenges {#equipment}
+## Equipment and Technical Challenges
 
 ### Recommended Gear
 
@@ -61,7 +61,7 @@ There is a [parking lot at the trailhead](https://maps.app.goo.gl/CVaSDCyVcLyo3H
 - Watch for marmots and chamois
 - Keep distance from grazing cattle
 
-## Useful Links {#links}
+## Useful Links
 
 - [Ammergau Alps - Wikipedia](https://en.wikipedia.org/wiki/Ammergau_Alps) - Important to know the terrain!
 - [Alpine-Bergtouren.de](https://www.alpine-bergtouren.de/touren/bergtour-schellschlicht-ueberschreitung-ammergauer-alpen.php) - Good reference for difficulty assessment

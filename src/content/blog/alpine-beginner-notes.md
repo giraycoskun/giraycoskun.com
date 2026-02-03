@@ -4,6 +4,8 @@ date: 2025-11-13
 description: Essential tips and guidance for beginner alpine hikers exploring Bavaria's mountains.
 tags: [hike, guide]
 coverImage: https://images.unsplash.com/photo-1763032409368-d7e328013069?q=80&w=1200
+imageCredit:
+  name: "Giray - Hosted@unsplash"
 author:
   name: Giray Coskun
   avatar: https://avatars.githubusercontent.com/u/37620872?s=400&u=3b9d821e80e76abc209441bc88b128956e77cbd2&v=4
