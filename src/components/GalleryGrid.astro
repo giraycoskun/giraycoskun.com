@@ -40,9 +40,17 @@ if (typeof limit === "number" || typeof tag === "string") {
 		</div>
 	)}
 
-	<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+	<div id="gallery-grid-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
 		{images.map((img, index) => (
-			<a href="/gallery" class="group relative overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-shadow aspect-4/3 bg-gray-200 dark:bg-gray-800">
+			<button
+				type="button"
+				data-index={index}
+				data-lightbox-src={getUnsplashUrl(img.unsplashId, 'large')}
+				data-lightbox-alt={img.alt}
+				data-lightbox-date={img.date ?? ''}
+				data-lightbox-tags={JSON.stringify(img.tags)}
+				class="group relative overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-shadow aspect-4/3 bg-gray-200 dark:bg-gray-800 cursor-pointer"
+			>
 				<Image
 					src={getUnsplashUrl(img.unsplashId, 'thumbnail')}
 					alt={img.alt}
@@ -61,7 +69,161 @@ if (typeof limit === "number" || typeof tag === "string") {
 						</div>
 					</div>
 				</div>
-			</a>
+			</button>
 		))}
 	</div>
+
+	{/* Lightbox Modal */}
+	<div
+		id="gallery-lightbox"
+		class="fixed inset-0 z-50 hidden items-center justify-center bg-black/95 p-4 md:p-6"
+		role="dialog"
+		aria-modal="true"
+	>
+		<button
+			id="gallery-lightbox-close"
+			class="absolute top-4 right-4 md:top-6 md:right-6 text-white/80 hover:text-white bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full w-10 h-10 flex items-center justify-center transition-all focus:outline-none focus:ring-2 focus:ring-white/50"
+			aria-label="Close"
+			type="button"
+		>
+			<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+			</svg>
+		</button>
+
+		<button
+			id="gallery-lightbox-prev"
+			class="absolute left-4 md:left-6 text-white/80 hover:text-white bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full w-10 h-10 flex items-center justify-center transition-all focus:outline-none focus:ring-2 focus:ring-white/50"
+			aria-label="Previous"
+			type="button"
+		>
+			<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+			</svg>
+		</button>
+
+		<button
+			id="gallery-lightbox-next"
+			class="absolute right-4 md:right-6 text-white/80 hover:text-white bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full w-10 h-10 flex items-center justify-center transition-all focus:outline-none focus:ring-2 focus:ring-white/50"
+			aria-label="Next"
+			type="button"
+		>
+			<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+			</svg>
+		</button>
+
+		<figure class="max-w-[95vw] max-h-[90vh] flex flex-col items-center">
+			<img
+				id="gallery-lightbox-image"
+				src=""
+				alt=""
+				class="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
+			/>
+			<figcaption class="mt-4 text-center">
+				<h3 id="gallery-lightbox-caption" class="text-lg md:text-xl font-medium text-white/90"></h3>
+				<p id="gallery-lightbox-date" class="text-sm md:text-base text-white/70 mt-2"></p>
+			</figcaption>
+		</figure>
+	</div>
+
+	<script>
+		const initGalleryGridLightbox = () => {
+			const gridItems = Array.from(document.querySelectorAll('#gallery-grid-container button[data-index]')) as HTMLElement[];
+			const lightbox = document.getElementById('gallery-lightbox');
+			const imgEl = document.getElementById('gallery-lightbox-image') as HTMLImageElement | null;
+			const captionEl = document.getElementById('gallery-lightbox-caption');
+			const dateEl = document.getElementById('gallery-lightbox-date');
+			const closeBtn = document.getElementById('gallery-lightbox-close');
+			const prevBtn = document.getElementById('gallery-lightbox-prev');
+			const nextBtn = document.getElementById('gallery-lightbox-next');
+
+			if (!(lightbox && imgEl && captionEl && dateEl) || gridItems.length === 0) return;
+
+			let currentIndex: number | null = null;
+
+			const formatDate = (dateString: string) => {
+				if (!dateString) return '';
+				const date = new Date(dateString);
+				if (isNaN(date.getTime())) return '';
+				return date.toLocaleDateString();
+			};
+
+			const showImage = (index: number) => {
+				const item = gridItems[index];
+				if (!item) return;
+
+				const src = item.dataset.lightboxSrc || '';
+				const alt = item.dataset.lightboxAlt || '';
+				const date = item.dataset.lightboxDate || '';
+
+				imgEl.src = src;
+				imgEl.alt = alt;
+				captionEl.textContent = alt;
+				dateEl.textContent = formatDate(date);
+
+				currentIndex = index;
+				lightbox.classList.remove('hidden');
+				lightbox.classList.add('flex');
+				document.body.style.overflow = 'hidden';
+			};
+
+			const hideImage = () => {
+				currentIndex = null;
+				lightbox.classList.add('hidden');
+				lightbox.classList.remove('flex');
+				document.body.style.overflow = '';
+			};
+
+			const nextImage = () => {
+				if (currentIndex === null) return;
+				currentIndex = (currentIndex + 1) % gridItems.length;
+				showImage(currentIndex);
+			};
+
+			const prevImage = () => {
+				if (currentIndex === null) return;
+				currentIndex = (currentIndex - 1 + gridItems.length) % gridItems.length;
+				showImage(currentIndex);
+			};
+
+			// Click handlers for grid items
+			gridItems.forEach((item) => {
+				item.addEventListener('click', () => {
+					const index = parseInt(item.dataset.index || '0', 10);
+					if (!isNaN(index)) {
+						showImage(index);
+					}
+				});
+			});
+
+			// Lightbox controls
+			closeBtn?.addEventListener('click', hideImage);
+			lightbox.addEventListener('click', (e) => {
+				if (e.target === lightbox) hideImage();
+			});
+			nextBtn?.addEventListener('click', (e) => {
+				e.stopPropagation();
+				nextImage();
+			});
+			prevBtn?.addEventListener('click', (e) => {
+				e.stopPropagation();
+				prevImage();
+			});
+
+			// Keyboard navigation
+			document.addEventListener('keydown', (e) => {
+				if (currentIndex === null) return;
+				if (e.key === 'Escape') hideImage();
+				if (e.key === 'ArrowRight') nextImage();
+				if (e.key === 'ArrowLeft') prevImage();
+			});
+		};
+
+		if (document.readyState === 'loading') {
+			document.addEventListener('DOMContentLoaded', initGalleryGridLightbox, { once: true });
+		} else {
+			initGalleryGridLightbox();
+		}
+	</script>
 </div>
