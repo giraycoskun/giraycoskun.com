@@ -64,7 +64,3 @@ There is a [parking lot at the trailhead](https://maps.app.goo.gl/CVaSDCyVcLyo3H
 - [Ammergau Alps - Wikipedia](https://en.wikipedia.org/wiki/Ammergau_Alps) - Important to know the terrain!
 - [Alpine-Bergtouren.de](https://www.alpine-bergtouren.de/touren/bergtour-schellschlicht-ueberschreitung-ammergauer-alpen.php) - Good reference for difficulty assessment
 - [Weather Forecast](https://www.bergfex.com/sommer/garmisch-partenkirchen/wetter/) - Check before heading out
-
----
-
-*Photo credits: Unsplash*

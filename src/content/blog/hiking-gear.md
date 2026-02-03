@@ -4,23 +4,18 @@ date: 2025-11-14
 id: hiking-gear
 description: Essential hiking gear checklist for summer day hikes with tips and recommendations.
 tags: [hike, guide]
-coverImage: https://images.unsplash.com/photo-1551632811-561732d1e306?q=80&w=1200
+coverImage: https://images.unsplash.com/photo-1763041066439-3c5c0a16f022?q=80&w=1200
 author:
   name: Giray Coskun
   avatar: https://avatars.githubusercontent.com/u/37620872?s=400&u=3b9d821e80e76abc209441bc88b128956e77cbd2&v=4
 draft: true
 ---
 
-## Contents
-
-- [Intro](#intro)
-- [Summer Hiking Gear](#summer-gear)
-
-## Intro {#intro}
+## Intro
 
 Proper gear makes all the difference on a day hike. This guide covers essential equipment for summer hiking in varied terrain, from coastal trails to alpine ridges.
 
-## Summer Hiking Gear {#summer-gear}
+## Summer Hiking Gear
 
 Lightweight essentials for warm-weather day hikes:
 
@@ -48,6 +43,3 @@ Lightweight essentials for warm-weather day hikes:
 - Note key landmarks and trail markers
 - Track your progress and time to estimate return
 
----
-
-*Photo credits: Unsplash*
