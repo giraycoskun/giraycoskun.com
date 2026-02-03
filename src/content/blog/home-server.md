@@ -5,6 +5,8 @@ id: home-server
 description: Journey to building a home server with Ubuntu, Docker, Traefik, and Cloudflare Tunnel for hosting personal projects and services.
 tags: [homeserver, docker, network, linux]
 coverImage: "https://images.giraycoskun.dev/server-landing-page.png"
+imageCredit:
+  name: "Giray Coskun"
 author:
   name: Giray Coskun
   avatar: https://avatars.githubusercontent.com/u/37620872?s=400&u=3b9d821e80e76abc209441bc88b128956e77cbd2&v=4

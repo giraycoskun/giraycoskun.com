@@ -4,6 +4,8 @@ date: 2026-02-04
 description: A practical template for starting, linting, documenting, and versioning Python projects using uv, ruff, MkDocs etc.
 tags: [python, developer]
 coverImage:  "https://images.giraycoskun.dev/blog-banner-how-start-python-project.png"
+imageCredit:
+  name: "Gemini"
 author:
   name: Giray Coskun
   avatar: https://avatars.githubusercontent.com/u/37620872?s=400&u=3b9d821e80e76abc209441bc88b128956e77cbd2&v=4

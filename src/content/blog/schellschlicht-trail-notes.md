@@ -5,6 +5,8 @@ id: schellschlicht-trail-notes
 description: Trail notes and tips from my Schellschlicht hike in Garmisch-Partenkirchen, Bavaria, including gear recommendations and route details.
 tags: [hike, trail-notes]
 coverImage: https://images.unsplash.com/photo-1763469716176-94fa9eb2d252?q=80&w=1200
+imageCredit:
+  name: "Giray - Hosted @unsplash"
 author:
   name: Giray Coskun
   avatar: https://avatars.githubusercontent.com/u/37620872?s=400&u=3b9d821e80e76abc209441bc88b128956e77cbd2&v=4
