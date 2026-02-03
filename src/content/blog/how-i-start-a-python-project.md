@@ -1,12 +1,12 @@
 ---
 title: How I start a Python project
-date: 2026-01-09
+date: 2026-02-04
 description: A practical template for starting, linting, documenting, and versioning Python projects using uv, ruff, MkDocs etc.
 tags: [python, developer]
 author:
   name: Giray Coskun
   avatar: https://avatars.githubusercontent.com/u/37620872?s=400&u=3b9d821e80e76abc209441bc88b128956e77cbd2&v=4
-draft: true
+draft: false
 ---
 
 ## Intro
@@ -15,40 +15,33 @@ This template captures a minimal, modern setup for Python projects: dependency &
 
 ## Package Manager: uv
 
-uv manages virtual environments and dependencies fast. Recommended on macOS:
-
-### Install uv
-
-```bash
-curl -Ls https://astral.sh/uv/install.sh | sh
-# or via Homebrew
-brew install uv
-```
+[uv](https://docs.astral.sh/uv/) manages virtual environments and dependencies. There are many choices from plain old pip to more complex tools like Poetry. However I prefer uv for its simplicity and speed. And it can also manage Python installations.
 
 ### Initialize a new project
 
 ```bash
 mkdir my-python-project && cd my-python-project
-uv init
-uv venv
-source .venv/bin/activate
+uv init --app .
+uv venv --python 3.14
 ```
 
-### Add core tools
+### Add Dependencies
 
 ```bash
-uv add --dev ruff mkdocs mkdocstrings mkdocstrings-python bump-my-version
+uv add requests numpy pandas         # runtime dependencies
+uv add --dev ruff mkdocs-material
+uv sync
 ```
 
 ## Lint & Format
 
-Use ruff for both linting and formatting to keep things simple.
+I use [ruff](https://docs.astral.sh/ruff/) for both linting and formatting to keep things simple.
 
-### pyproject.toml (ruff)
 
 ```toml
+# pyproject.toml (ruff)
 [tool.ruff]
-line-length = 100
+line-length = 120
 target-version = "py312"
 
 [tool.ruff.lint]
@@ -61,20 +54,19 @@ indent-style = "space"
 skip-magic-trailing-comma = false
 ```
 
-### Run checks
-
 ```bash
-uv run ruff check .
+uv run ruff check --fix .
 uv run ruff format .
 ```
 
+
 ## Create Docs
 
-MkDocs + mkdocstrings generates clean docs from your code and docstrings.
+[mkdocs](https://www.mkdocs.org/) with [mkdocs-material](https://squidfunk.github.io/mkdocs-material/) are my favorite tools for creating project documentation. One of the best plugins is [mkdocstrings](https://mkdocstrings.github.io/) which can automatically generate API reference docs from your code, type hints and docstrings.
 
-### Bootstrap docs
 
 ```bash
+uv add --dev mkdocs-material mkdocstrings
 uv run mkdocs new .
 # creates mkdocs.yml and docs/index.md
 ```
@@ -125,28 +117,11 @@ authors = [{ name = "Giray Coskun" }]
 readme = "README.md"
 ```
 
-### Manual release flow
-
-```bash
-# update version in pyproject.toml
-git add pyproject.toml && git commit -m "chore: release v0.2.0"
-git tag -a v0.2.0 -m "Release v0.2.0"
-git push && git push --tags
-```
-
-### Automated bumping (bump-my-version)
-
-```toml
-[tool.bumpversion]
-current_version = "0.1.0"
-commit = true
-tag = true
-
-[[tool.bumpversion.files]]
-filename = "pyproject.toml"
-```
+### Version Bump
 
 ```bash
 # usage
-uv run bump-my-version bump minor   # 0.1.0 -> 0.2.0
+uv version --bump minor   # 0.1.0 -> 0.2.0 (major, minor, patch, pre)
+git add . && git commit -m "chore: release v0.2.0"
+git push && git push --tags
 ```
