@@ -2,8 +2,8 @@
 title: Home Server
 date: 2026-01-03
 id: home-server
-description: Building a custom landing page for my home server with React, Vite, and TypeScript, featuring automated deployment via GitHub webhooks.
-tags: [homeserver, systemd, docker, network, linux]
+description: Journey to building a home server with Ubuntu, Docker, Traefik, and Cloudflare Tunnel for hosting personal projects and services.
+tags: [homeserver, docker, network, linux]
 coverImage: "https://images.giraycoskun.dev/server-landing-page.png"
 author:
   name: Giray Coskun
