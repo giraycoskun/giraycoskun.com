@@ -21,32 +21,34 @@ A simple habit tracking app for iOS with GitHub-style contribution grids, analyt
     <img src="https://images.giraycoskun.dev/ss-tally-home.png" 
          alt="Tally App Screenshot 1" 
          class="w-full h-auto rounded-md shadow-md" />
-    <figcaption class="-mt-5 text-md text-gray-600">Habit List</figcaption>
+    <figcaption class="-mt-5 text-md text-gray-600">Initial Home</figcaption>
   </figure>
 
   <figure class="w-[48%] text-center">
-    <img src="https://images.giraycoskun.dev/ss-tally-reminders.png"
-          alt="Tally App Screenshot 3"
+    <img src="https://images.giraycoskun.dev/ss-tally-home-2.png"
+          alt="Tally App Screenshot 2"
           class="w-full h-auto rounded-md shadow-md" />
-        <figcaption class="-mt-5 text-md text-gray-600">Reminders</figcaption>
+        <figcaption class="-mt-5 text-md text-gray-600">Home 2</figcaption>
     </figure>
 
    <figure class="w-[48%] text-center">
-        <img src="https://images.giraycoskun.dev/ss-tally-reminders.png"
+        <img src="https://images.giraycoskun.dev/ss-tally-stats.png"
             alt="Tally App Screenshot 3"
             class="w-full h-auto rounded-md shadow-md" />
-        <figcaption class="-mt-5 text-md text-gray-600">Reminders</figcaption>
+        <figcaption class="-mt-5 text-md text-gray-600">Stats</figcaption>
     </figure>
 
   <figure class="w-[48%] text-center">
-    <img src="https://images.giraycoskun.dev/ss-tally-stats.png" 
-         alt="Tally App Screenshot 2" 
+    <img src="https://images.giraycoskun.dev/ss-tally-settings.png" 
+         alt="Tally App Screenshot 4" 
          class="w-full h-auto rounded-md shadow-md" />
-    <figcaption class="-mt-5 text-md text-gray-600">Analytics</figcaption>
+    <figcaption class="-mt-5 text-md text-gray-600">Settings</figcaption>
   </figure>
 </div>
 
 ## How to Load without Apple Developer Account
+
+### Self-build (recommended)
 
 You can load the app on your own device without Apple Developer Account using Xcode or Altstore.
 Altstore has auto refresh feature so you don't need to re-install every 7 days like with Xcode.
@@ -61,6 +63,10 @@ Altstore has auto refresh feature so you don't need to re-install every 7 days l
 - Open Altstore on your iOS device
 - Go to My Apps tab and tap the + icon on the top left
 - Select the .ipa file you sent to your device
+
+### Altstore Source (easier)
+
+- Add the Altstore source to your Altstore app: <https://raw.githubusercontent.com/giraycoskun/Tally/refs/heads/main/Altstore.json>
 
 ## Features
 
