@@ -1,7 +1,7 @@
 ---
 title: Home Server
 createdAt: 2026-01-03
-updatedAt: 2026-01-03
+updatedAt: 2026-01-04
 id: home-server
 description: Journey to building a home server with Ubuntu, Docker, Traefik, and Cloudflare Tunnel for hosting personal projects and services.
 tags: [homeserver, docker, network, linux]
@@ -49,7 +49,7 @@ Only paid service I use is for ProtonVPN. I have a Wireguard setup and port forw
 - [How to manually configure WireGuard on Linux](https://protonvpn.com/support/wireguard-linux#cli)
 - [How to manually configure port forwarding](https://protonvpn.com/support/port-forwarding-manual-setup#linux)
 
-There is systemd service using natpmpc tool to keep the port forwarding alive by renewing it.
+There is systemd service using natpmpc tool to keep the port forwarding alive by renewing it. This also might cause the port to change occasionally depending on ProtonVPN's port allocation policy or reboots. But it is easy to update the port in qbittorrent config and ufw rules. 
 
 ```ini
 [Unit]
