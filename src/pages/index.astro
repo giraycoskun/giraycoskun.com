@@ -10,7 +10,8 @@ import { getCollection } from "astro:content";
 const allPosts = (
   await getCollection("blog", (entry) => !entry.data.draft)
 ).sort(
-  (a, b) => new Date(b.data.createdAt).getTime() - new Date(a.data.createdAt).getTime(),
+  (a, b) =>
+    new Date(b.data.createdAt).getTime() - new Date(a.data.createdAt).getTime(),
 );
 const latestPosts = allPosts.slice(0, 3);
 
@@ -42,6 +43,24 @@ const texts = [
             I am also a CMAS 3* Scuba Diver and a hiking enthusiast. <br />
             This is my personal website to write about my projects, hobbies and trips.
           </p>
+          <div class="mt-12">
+            <a
+              href="https://server.giraycoskun.dev"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-2 bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-200 px-4 py-2 rounded border-2 border-black dark:border-gray-400 transition-colors"
+              title="Visit server.giraycoskun.dev"
+              aria-label="Visit server.giraycoskun.dev"
+            >
+              Visit my localhost
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+              </svg>
+            </a>
+          </div>
+          
         </div>
         <div class="shrink-0 mx-auto">
           <Image
@@ -150,11 +169,7 @@ const texts = [
         >Currently Reading</a
       >
     </div>
-    <div
-      data-hardcover-widget
-      id="hardcover-widget"
-    >
-    </div>
+    <div data-hardcover-widget id="hardcover-widget"></div>
   </div>
   <style>
     .hero-cursor {
