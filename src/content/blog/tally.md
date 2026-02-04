@@ -1,6 +1,6 @@
 ---
 title: "Side Project: Tally IOS App"
-createdAt: 2026-02-03
+createdAt: 2026-02-04
 updatedAt: 2026-02-04
 description: A simple and minimalist ios app for habit tracking. Built with Swift and SwiftUI.
 tags: [developer, ios, swift]

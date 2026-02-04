@@ -1,7 +1,7 @@
 ---
 title: "Side Project: F1 Board"
 createdAt: 2026-02-03
-updatedAt: 2026-02-03
+updatedAt: 2026-02-04
 description: Project f1-board mainly to play prediction games on Formula 1 with friends but also f1 dashboard and stats.
 tags: [developer, pyhton, nuxt]
 author:
