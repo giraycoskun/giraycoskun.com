@@ -1,6 +1,7 @@
 ---
 title: Schellschlicht Hike Trail Notes
-date: 2025-11-15
+createdAt: 2025-11-15
+updatedAt: 2025-11-15
 id: schellschlicht-trail-notes
 description: Trail notes and tips from my Schellschlicht hike in Garmisch-Partenkirchen, Bavaria, including gear recommendations and route details.
 tags: [hike, trail-notes]

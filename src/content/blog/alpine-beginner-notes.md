@@ -1,6 +1,7 @@
 ---
 title: Alpine Beginner Notes
-date: 2025-11-13
+createdAt: 2025-11-13
+updatedAt: 2025-11-13
 description: Essential tips and guidance for beginner alpine hikers exploring Bavaria's mountains.
 tags: [hike, guide]
 coverImage: https://images.unsplash.com/photo-1763032409368-d7e328013069?q=80&w=1200

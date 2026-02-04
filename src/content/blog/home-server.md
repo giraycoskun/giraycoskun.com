@@ -1,6 +1,7 @@
 ---
 title: Home Server
-date: 2026-01-03
+createdAt: 2026-01-03
+updatedAt: 2026-01-03
 id: home-server
 description: Journey to building a home server with Ubuntu, Docker, Traefik, and Cloudflare Tunnel for hosting personal projects and services.
 tags: [homeserver, docker, network, linux]

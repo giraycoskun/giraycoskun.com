@@ -38,7 +38,7 @@ const hikesWithPosts = hikes.map(hike => {
 // Fetch hiking blog posts
 const hikePosts = allPosts
 	.filter(entry => entry.data.tags?.includes('hike'))
-	.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
+	.sort((a, b) => new Date(b.data.createdAt).getTime() - new Date(a.data.createdAt).getTime())
 	.slice(0, 6);
 ---
 
@@ -163,7 +163,7 @@ const hikePosts = allPosts
 						<BlogPostCard
 							title={post.data.title}
 							slug={post.slug}
-							date={post.data.date}
+							createdAt={post.data.createdAt}
 							description={post.data.description}
 							tags={post.data.tags}
 							author={{
