@@ -11,9 +11,9 @@ const allPosts = (
   await getCollection("blog", (entry) => !entry.data.draft)
 ).sort(
   (a, b) =>
-    new Date(b.data.createdAt).getTime() - new Date(a.data.createdAt).getTime(),
+    new Date(b.data.updatedAt ?? b.data.createdAt).getTime() - new Date(a.data.updatedAt ?? a.data.createdAt).getTime(),
 );
-const latestPosts = allPosts.slice(0, 3);
+const latestPosts = allPosts.slice(0, 5);
 
 const texts = [
   "Hello World,",
@@ -93,20 +93,24 @@ const texts = [
 
       {
         latestPosts.length > 0 ? (
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {latestPosts.map((post) => (
-              <BlogPostCard
-                title={post.data.title}
-                slug={post.slug}
-                createdAt={post.data.createdAt}
-                description={post.data.description}
-                author={{
-                  name: post.data.author.name,
-                  avatar: post.data.author.avatar,
-                }}
-                tags={post.data.tags}
-                coverImage={post.data.coverImage}
-              />
+          <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6">
+            {latestPosts.map((post, i) => (
+              <div class:list={[
+                { 'hidden md:block': i === 2, 'hidden lg:block': i >= 3 }
+              ]}>
+                <BlogPostCard
+                  title={post.data.title}
+                  slug={post.slug}
+                  createdAt={post.data.createdAt}
+                  description={post.data.description}
+                  author={{
+                    name: post.data.author.name,
+                    avatar: post.data.author.avatar,
+                  }}
+                  tags={post.data.tags}
+                  coverImage={post.data.coverImage}
+                />
+              </div>
             ))}
           </div>
         ) : (

@@ -5,6 +5,7 @@ interface Props {
   title: string;
   description: string;
   createdAt: Date;
+  updatedAt?: Date;
   slug: string;
   tags?: string[];
   coverImage?: string;
@@ -15,13 +16,16 @@ interface Props {
   draft?: boolean;
 }
 
-const { title, description, createdAt, slug, tags = [], coverImage, author, draft = false } = Astro.props;
+const { title, description, createdAt, updatedAt, slug, tags = [], coverImage, author, draft = false } = Astro.props;
 
-const formattedDate = new Intl.DateTimeFormat('en-GB', {
+const dateFormatter = new Intl.DateTimeFormat('en-GB', {
   year: 'numeric',
   month: 'short',
   day: 'numeric',
-}).format(new Date(createdAt));
+});
+
+const formattedDate = dateFormatter.format(new Date(createdAt));
+const formattedUpdatedDate = updatedAt ? dateFormatter.format(new Date(updatedAt)) : null;
 ---
 
 <article class="group bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-200 dark:border-gray-700 flex flex-col h-full">
@@ -106,12 +110,16 @@ const formattedDate = new Intl.DateTimeFormat('en-GB', {
       </div>
 
       {/* Date */}
-      <time 
-        datetime={createdAt.toISOString()} 
-        class="text-sm text-gray-500 dark:text-gray-400"
-      >
-        {formattedDate}
-      </time>
+      <div class="text-right text-sm text-gray-500 dark:text-gray-400">
+        <time datetime={createdAt.toISOString()}>
+          Created: {formattedDate}
+        </time>
+        {formattedUpdatedDate && (
+          <div>
+            Last Update: <time datetime={updatedAt!.toISOString()}>{formattedUpdatedDate}</time>
+          </div>
+        )}
+      </div>
     </div>
 
     {/* Read More Link */}

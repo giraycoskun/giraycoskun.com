@@ -7,7 +7,7 @@ import type { GetStaticPaths, Page } from 'astro';
 export const getStaticPaths = (async ({ paginate }) => {
   const allPosts = await getCollection('blog');
   const sortedPosts = allPosts.sort(
-    (a, b) => new Date(b.data.createdAt).getTime() - new Date(a.data.createdAt).getTime()
+    (a, b) => new Date(b.data.updatedAt ?? b.data.createdAt).getTime() - new Date(a.data.updatedAt ?? a.data.createdAt).getTime()
   );
   return paginate(sortedPosts, { pageSize: 6 });
 }) satisfies GetStaticPaths;
@@ -67,6 +67,7 @@ const allTags = [...new Set(allPosts.flatMap(post => post.data.tags || []))].sor
             title={post.data.title}
             description={post.data.description}
             createdAt={post.data.createdAt}
+            updatedAt={post.data.updatedAt}
             slug={post.slug}
             tags={post.data.tags}
             coverImage={post.data.coverImage}
