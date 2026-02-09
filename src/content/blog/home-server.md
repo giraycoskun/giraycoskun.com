@@ -1,7 +1,7 @@
 ---
 title: Home Server
 createdAt: 2026-01-03
-updatedAt: 2026-01-04
+updatedAt: 2026-02-09
 id: home-server
 description: Journey to building a home server with Ubuntu, Docker, Traefik, and Cloudflare Tunnel for hosting personal projects and services.
 tags: [homeserver, docker, network, linux]
@@ -26,6 +26,8 @@ I have a home server that I use for various personal projects and host open sour
   <p><strong>➜ RAM:</strong> 16GB DDR4</p>
   <p><strong>➜ CPU:</strong> Intel(R) N150</p>
 </div>
+
+![Server-Hardware](https://images.giraycoskun.dev/home-server.jpeg)
 
 ![Architecture](https://images.giraycoskun.dev/localhost.drawio.png)
 
