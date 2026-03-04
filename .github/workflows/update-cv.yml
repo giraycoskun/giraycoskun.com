@@ -1,0 +1,51 @@
+name: Sync CV
+
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Find latest dated CV filename
+        id: cv
+        run: |
+          latest="$(
+            curl -fsSL https://api.github.com/repos/giraycoskun/cv/contents \
+              | jq -r '.[].name' \
+              | grep -E '^cv_long_[0-9]{4}-[0-9]{2}-[0-9]{2}\.pdf$' \
+              | sort \
+              | tail -n 1
+          )"
+
+          if [ -z "$latest" ]; then
+            echo "No matching CV file found in giraycoskun/cv." >&2
+            exit 1
+          fi
+
+          echo "latest=$latest" >> "$GITHUB_OUTPUT"
+
+      - name: Download latest CV
+        run: |
+          curl -fsSL "https://raw.githubusercontent.com/giraycoskun/cv/main/${{ steps.cv.outputs.latest }}" -o public/cv.pdf
+
+      - name: Commit and push if CV changed
+        run: |
+          if git diff --quiet -- public/cv.pdf; then
+            echo "public/cv.pdf is already up to date."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/cv.pdf
+          git commit -m "chore: sync cv from ${{ steps.cv.outputs.latest }}"
+          git push
