@@ -28,6 +28,7 @@ const contactLinks = [
   { label: "GitHub", href: "https://github.com/giraycoskun", icon: "github" },
   { label: "Spotify", href: "https://open.spotify.com/user/11151152114", icon: "spotify" },
   { label: "Instagram", href: "https://instagram.com/giray_coskun", icon: "instagram" },
+  { label: "Scholar", href: "https://scholar.google.com/citations?user=sbQ5XwUAAAAJ&hl=en&authuser=3", icon: "scholar" },
 ];
 ---
 
@@ -153,7 +154,7 @@ const contactLinks = [
           Close
         </button>
       </div>
-      <ul class="mt-6 grid grid-cols-2 md:grid-cols-5 gap-3">
+      <ul class="mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
         {
           contactLinks.map((link) => (
             <li>
@@ -216,6 +217,19 @@ const contactLinks = [
                       aria-hidden="true"
                     >
                       <path d="M4.98 3.5a2.5 2.5 0 1 1 0 5.001 2.5 2.5 0 0 1 0-5ZM3 9h3.96v12H3V9Zm7.02 0H13.8v1.64h.05c.52-.98 1.8-2.01 3.7-2.01 3.96 0 4.69 2.61 4.69 6V21h-3.96v-5.65c0-1.35-.02-3.08-1.88-3.08-1.88 0-2.17 1.47-2.17 2.99V21H10.02V9Z"></path>
+                    </svg>
+                  )
+                }
+                {
+                  link.icon === "scholar" && (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      class="h-6 w-6"
+                      aria-hidden="true"
+                    >
+                      <path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"></path>
                     </svg>
                   )
                 }
