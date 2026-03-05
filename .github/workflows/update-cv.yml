@@ -1,9 +1,10 @@
 name: Sync CV
 
 on:
-  schedule:
-    - cron: "0 6 * * *"
   workflow_dispatch:
+  repository_dispatch:
+    types:
+      - cv-updated
 
 permissions:
   contents: write
