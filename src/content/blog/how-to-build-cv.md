@@ -22,6 +22,45 @@ I keep my CV in a dedicated GitHub repository and publish it in two ways:
 
 The goal is simple: I update CV source once, and the published PDF stays current without manual file copying.
 
+## Flow Diagram
+
+```text
+               (A) Build Source of Truth
++--------------------------------------------------+
+| Repo: giraycoskun/cv                            |
+| - Edit LaTeX (cv_data.tex, cv_base.tex, etc.)   |
+| - Run: make all                                 |
+| - Output: cv_long_YYYY-MM-DD.pdf                |
++-------------------------+------------------------+
+                          |
+                          v
+            +-------------+--------------+
+            | GitHub push to cv/main     |
+            +-------------+--------------+
+                          |
+         +----------------+----------------+
+         |                                 |
+         v                                 v
+ (B) Webhook Server Path             (C) Personal Site Sync Path
++-------------------------------+     +------------------------------------+
+| webhook-server/scripts/cv.sh  |     | .github/workflows/update-cv.yml    |
+| - find latest dated cv_long   |     | - schedule + manual dispatch        |
+| - download + validate PDF     |     | - fetch latest dated cv_long        |
+| - update symlink              |     | - download to public/cv.pdf         |
+|   /media/images/cv.pdf ->     |     | - commit only if changed            |
+|   /media/images/cv/pdf/*      |     +------------------+-----------------+
++---------------+---------------+                        |
+                |                                        v
+                v                           +------------+------------------+
+   +------------+-------------------+       | Repo: giraycoskun-com         |
+   | Nginx serves stable cv.pdf     |       | Updated public/cv.pdf         |
+   +------------+-------------------+       +------------+------------------+
+                |                                        |
+                v                                        v
+       CV available at:                         CV available at:
+    https://cv.giraycoskun.dev              https://giraycoskun.com/cv.pdf
+```
+
 ## Repositories and Components
 
 - CV source repo: [giraycoskun/cv](https://github.com/giraycoskun/cv)
