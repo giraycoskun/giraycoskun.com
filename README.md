@@ -1,46 +1,99 @@
-# Astro Starter Kit: Basics
+# giraycoskun.com
+
+Personal website built with Astro 5.x and TailwindCSS 4.x. The site is statically generated and includes pages for work, hikes, gallery, and a paginated/tagged blog.
+
+## Tech Stack
+
+- Astro 5.x (static site generation + file-based routing)
+- TailwindCSS 4.x (via Vite plugin)
+- TypeScript (strict config)
+- React integration available for isolated interactive use
+- `@astrojs/sitemap` for sitemap generation
+- `pnpm` for package management
+
+## Local Setup
+
+### Prerequisites
+
+- Node.js 20+
+- pnpm
+
+### Install
 
 ```sh
-pnpm create astro@latest -- --template basics
+pnpm install
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+### Run in Development
 
-## 🚀 Project Structure
+```sh
+pnpm dev
+```
 
-Inside of your Astro project, you'll see the following folders and files:
+Starts Astro dev server at `http://localhost:4321`.
+
+### Build and Typecheck
+
+```sh
+pnpm build
+```
+
+Build output is generated in `dist/`.
+
+### Preview Production Build
+
+```sh
+pnpm preview
+```
+
+## Project Structure
 
 ```text
 /
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
+├── public/                  # Static assets
+├── src/
+│   ├── components/          # Reusable Astro UI components
+│   ├── content/blog/        # Blog markdown content collection
+│   ├── data/                # Typed static data modules
+│   ├── layouts/             # Shared layout (Layout.astro)
+│   ├── pages/               # Route files
+│   ├── styles/              # Global styles (Tailwind entry)
+│   └── utils/               # Utilities (e.g., blog helpers)
+├── astro.config.mjs         # Astro + integrations config
 └── package.json
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+## Routing Overview
 
-## 🧞 Commands
+- `/` Home
+- `/work` Work history and projects
+- `/hikes` Hike records and trail details
+- `/gallery` Photography gallery
+- `/blog` Paginated blog index
+- `/blog/[slug]` Blog post detail
+- `/blog/tag/[tag]` Tag archive pages
 
-All commands are run from the root of the project, from a terminal:
+## Content and Data Model
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `pnpm install`             | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
+- Blog posts live in `src/content/blog/*.md`.
+- Static structured content lives in `src/data/`:
+  - `types.ts`: shared TypeScript types
+  - `gallery.ts`: gallery image metadata
+  - `hikes.ts`: hike records and related links
+- Data is imported directly into Astro pages/components at build time (no client-side data fetching).
 
-## 👀 Want to learn more?
+## Conventions
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+- Prefer Astro components for static content.
+- Use PascalCase for components (e.g., `Header.astro`).
+- Use kebab-case for page filenames/routes.
+- Wrap page content in `Layout.astro` with page `title` and `description`.
+- Use Tailwind utility classes, including `dark:` variants for dark mode styling.
+
+## Configuration Notes
+
+- Site URL is configured as `https://giraycoskun.com` in `astro.config.mjs`.
+- Remote image loading is allowed for `images.unsplash.com`.
+- Integrations enabled:
+  - `@astrojs/react`
+  - `@astrojs/sitemap`
