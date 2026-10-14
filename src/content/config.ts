@@ -8,7 +8,10 @@ const blogCollection = defineCollection({
     createdAt: z.date(),
     updatedAt: z.date().optional(),
     tags: z.array(z.string()).optional().default([]),
-    coverImage: z.string().url().optional(),
+    coverImage: z.string().refine(
+      (value) => value.startsWith('/') || z.string().url().safeParse(value).success,
+      'Cover image must be an absolute URL or a site-local path'
+    ).optional(),
     imageCredit: z.object({
       name: z.string().optional(),
       url: z.string().url().optional(),
