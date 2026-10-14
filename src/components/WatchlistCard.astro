@@ -1,0 +1,25 @@
+---
+import { WATCHLIST_URL } from '../utils/watchlist';
+
+const workerUrl = import.meta.env.PUBLIC_LETTERBOXD_WORKER_URL?.trim();
+const chartUrl = workerUrl
+  ? new URL('/watchlist.svg', workerUrl).href
+  : '/letterboxd-watchlist.svg';
+---
+
+<section aria-labelledby="watchlist-title" class="bg-white dark:bg-gray-900 py-12">
+  <div class="container mx-auto px-6">
+    <div class="mx-auto max-w-2xl rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-5 md:p-6">
+      <div class="flex items-center justify-between gap-4 mb-4">
+        <h2 id="watchlist-title" class="text-xl font-semibold text-gray-900 dark:text-gray-100">Watchlist</h2>
+        <a href={WATCHLIST_URL} target="_blank" rel="noopener noreferrer" class="text-sm text-emerald-700 dark:text-emerald-400 hover:underline">Letterboxd ↗</a>
+      </div>
+      <figure class="mx-auto max-w-lg">
+        <a href={chartUrl} target="_blank" rel="noopener noreferrer" aria-label="Open watchlist chart with its count, dates, and text description">
+          <img src={chartUrl} alt="Letterboxd watchlist count and its daily history. Open the chart for its text description." width="480" height="280" loading="lazy" decoding="async" class="w-full h-auto" />
+        </a>
+        <figcaption class="sr-only">Daily watchlist size over the last 90 days. Missing days leave gaps; changes do not indicate films watched.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>

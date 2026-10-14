@@ -1,0 +1,20 @@
+{
+	"$schema": "../../node_modules/wrangler/config-schema.json",
+	"name": "giraycoskun-letterboxd",
+	"main": "index.ts",
+	"compatibility_date": "2026-10-14",
+	"workers_dev": true,
+	"triggers": {
+		"crons": [
+			"0 6 * * *"
+		]
+	},
+	"kv_namespaces": [
+		{
+			"binding": "WATCHLIST",
+			// Production namespace; local development also uses it when remote is true.
+			"id": "5e9ee7bf4dc64add9a6c9f3f179c85ab",
+			"remote": true
+		}
+	]
+}

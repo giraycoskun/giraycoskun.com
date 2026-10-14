@@ -92,6 +92,11 @@ pnpm preview
 
 ## Configuration Notes
 
+- The homepage includes a Letterboxd watchlist card below the reading section.
+  It displays a verified, dated snapshot by default. For daily updates with a free
+  Cloudflare Worker and KV, follow the [watchlist setup guide](workers/letterboxd/README.md).
+  The Worker retains 365 days and renders a 90-day SVG chart; Pages remains static.
+
 - Site URL is configured as `https://giraycoskun.com` in `astro.config.mjs`.
 - Remote image loading is allowed for `images.unsplash.com`.
 - Integrations enabled:

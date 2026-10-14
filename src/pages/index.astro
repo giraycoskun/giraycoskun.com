@@ -3,6 +3,7 @@ import Layout from "../layouts/Layout.astro";
 import BlogPostCard from "../components/BlogPostCard.astro";
 import GalleryGrid from "../components/GalleryGrid.astro";
 import ProfileCard from "../components/ProfileCard.astro";
+import WatchlistCard from "../components/WatchlistCard.astro";
 import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
 
@@ -362,6 +363,7 @@ const contactLinks = [
     </div>
     <div data-hardcover-widget id="hardcover-widget"></div>
   </div>
+  <WatchlistCard />
   <style>
     .hero-cursor {
       display: inline-block;
