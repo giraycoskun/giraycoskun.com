@@ -15,7 +15,7 @@
 
   // Default configuration
   const defaultConfig = {
-    apiUrl: "https://hardcoverembed.gouthamve.dev",
+    apiUrl: "",
     username: "giraycoskun",
     bookType: "currently-reading",
     maxWidth: "800px",
@@ -24,6 +24,7 @@
     gap: "1rem",
     showPoweredBy: false,
     limit: 4, // Add this - null means no limit
+    requestTimeout: 10000,
   };
 
   // Widget styles
@@ -197,6 +198,12 @@
         );
         return;
       }
+      if (!this.config.apiUrl) {
+        this.showError(
+          "Hardcover widget is not configured yet. Set PUBLIC_HARDCOVER_WORKER_URL in the site build environment.",
+        );
+        return;
+      }
 
       this.showLoading();
 
@@ -206,13 +213,26 @@
             ? `/api/books/last-read/${this.config.username}`
             : `/api/books/currently-reading/${this.config.username}`;
 
-        const response = await fetch(`${this.config.apiUrl}${endpoint}`);
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), this.config.requestTimeout);
+        let response;
+        try {
+          response = await fetch(`${this.config.apiUrl}${endpoint}`, {
+            signal: controller.signal,
+            headers: { Accept: "application/json" },
+          });
+        } finally {
+          clearTimeout(timeout);
+        }
 
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}`);
         }
 
         const data = await response.json();
+        if (!data || !Array.isArray(data.books) || typeof data.count !== "number") {
+          throw new Error("Invalid Hardcover API response");
+        }
 
         if (data.count === 0) {
           this.showEmptyState();
@@ -232,7 +252,9 @@
         );
       } catch (error) {
         console.error("Hardcover Widget Error:", error);
-        this.showError("Failed to load books. Please try again later.");
+        this.showError(
+          `Hardcover is temporarily unavailable. <a href="https://hardcover.app/@${encodeURIComponent(this.config.username)}/books/currently-reading" target="_blank" rel="noopener">View currently reading on Hardcover ↗</a>`,
+        );
 
         // Dispatch error event
         this.element.dispatchEvent(
@@ -340,6 +362,8 @@
       }
       if (element.dataset.limit)
         config.limit = parseInt(element.dataset.limit, 10);
+      if (element.dataset.requestTimeout)
+        config.requestTimeout = parseInt(element.dataset.requestTimeout, 10);
 
       new HardcoverWidget(element, config);
     });

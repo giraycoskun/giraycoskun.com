@@ -361,7 +361,12 @@ const contactLinks = [
         >Currently Reading || Listening</a
       >
     </div>
-    <div data-hardcover-widget id="hardcover-widget"></div>
+    <div
+      data-hardcover-widget
+      data-username="giraycoskun"
+      data-api-url={import.meta.env.PUBLIC_HARDCOVER_WORKER_URL ?? ""}
+      id="hardcover-widget"
+    ></div>
   </div>
   <WatchlistCard />
   <style>

@@ -1,0 +1,4 @@
+{
+  "extends": "../letterboxd/tsconfig.json",
+  "include": ["index.ts", "collector.ts"]
+}

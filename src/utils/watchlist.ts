@@ -12,6 +12,7 @@ export interface WatchlistHistory {
 
 export const WATCHLIST_USERNAME = 'giraycoskun';
 export const WATCHLIST_URL = `https://letterboxd.com/${WATCHLIST_USERNAME}/watchlist/`;
+export const LETTERBOXD_PROFILE_URL = `https://letterboxd.com/${WATCHLIST_USERNAME}/`;
 export const HISTORY_DAYS = 365;
 const DAY_MS = 86_400_000;
 

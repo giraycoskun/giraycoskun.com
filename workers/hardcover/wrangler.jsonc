@@ -1,0 +1,20 @@
+{
+	"$schema": "../../node_modules/wrangler/config-schema.json",
+	"name": "giraycoskun-hardcover",
+	"main": "index.ts",
+  "compatibility_date": "2026-10-14",
+  "workers_dev": true,
+  "preview_urls": false,
+	"triggers": {
+		"crons": [
+			"0 6 * * *"
+		]
+	},
+	"kv_namespaces": [
+		{
+			"binding": "HARDCOVER_BOOKS",
+			"id": "9b0d6ecb033a4b7da149bdbb3d664b5f",
+			"remote": true
+		}
+	]
+}
