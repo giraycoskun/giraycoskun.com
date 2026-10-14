@@ -4,6 +4,8 @@ createdAt: 2026-10-14
 updatedAt: 2026-10-14
 description: A chapter-ordered listening guide to 73 composers and 102 tracks, with context for the music and notes on why each selection belongs.
 coverImage: /blog/romantic-composers-listening-guide.webp
+imageCredit:
+  name: Generated cover image
 tags: [music, classical-music, listening-guide]
 author:
   name: Giray Coskun
