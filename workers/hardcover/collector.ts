@@ -30,7 +30,7 @@ export interface Env {
 }
 
 const QUERY = `
-  query CurrentlyReading($username: String!) {
+  query CurrentlyReading($username: citext!) {
     user_books(
       where: { user: { username: { _eq: $username } }, status_id: { _eq: 2 } }
       order_by: { updated_at: desc }
