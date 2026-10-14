@@ -51,7 +51,7 @@ test('collector writes one observation only after a successful verified fetch', 
   assert.equal(result.history[0].estimated, true);
 });
 
-test('backfill has 89 estimated days and one observed day, and real observations replace estimates', () => {
+test('seeded history has 89 estimates and one observed day, and real observations replace estimates', () => {
   assert.equal(snapshot.history.length, 90);
   assert.equal(snapshot.history.filter(point => point.estimated).length, 89);
   assert.ok(snapshot.history.every(point => point.count === 97));
@@ -59,7 +59,7 @@ test('backfill has 89 estimated days and one observed day, and real observations
   const updated = recordCount(snapshot, 98, new Date('2026-10-14T18:00:00Z'));
   assert.deepEqual(updated.history.at(-1), { date: '2026-10-14', count: 98 });
   const svg = renderWatchlistSvg(snapshot, new Date('2026-10-14'));
-  assert.match(svg, /backfilled/);
+  assert.doesNotMatch(svg, /backfill/i);
   assert.match(svg, /stroke-dasharray="5 4"/);
 });
 

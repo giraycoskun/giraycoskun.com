@@ -73,8 +73,8 @@ export function renderWatchlistSvg(data: WatchlistHistory, now = new Date(), sna
   const stale = now.getTime() - Date.parse(data.updatedAt) > 2 * DAY_MS;
   const hasBackfill = points.some(point => point.estimated);
   const status = snapshot ? 'Snapshot' : stale ? 'Last successful update' : 'Updated';
-  const updated = `${status}: ${data.updatedAt.slice(0, 10)}${hasBackfill ? ' · backfilled' : ''}`;
-  const description = `${count} films to watch. ${changeLabel}. ${updated}. Last 90 days; gaps mean missing observations.${hasBackfill ? ' Earlier points are estimates filled with the first observed count.' : ''}`;
+  const updated = `${status}: ${data.updatedAt.slice(0, 10)}`;
+  const description = `${count} films to watch. ${changeLabel}. ${updated}. Last 90 days; gaps mean missing observations.`;
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 280" role="img" aria-labelledby="title description">
   <title id="title">Letterboxd watchlist: ${count} films</title>
   <desc id="description">${escapeXml(description)}</desc>

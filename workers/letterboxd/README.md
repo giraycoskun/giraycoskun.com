@@ -22,9 +22,9 @@ production and preview builds. Pushing `main` deploys the production site.
   Pruning occurs on the next successful collection, so outages preserve good data.
 - Collection begins with the verified **97-film snapshot from 2026-10-14**.
   At the owner's request, the preceding 89 days (starting 2026-07-17) are filled
-  with the same count and marked `estimated: true`. These are backfilled estimates.
-  The chart uses a dashed line and a small “backfilled” label while estimates are
-  visible. Actual observations override estimates; gaps after setup stay empty.
+  with the same count and marked `estimated: true`. The chart uses a dashed line
+  while estimates are visible. Actual observations override estimates; gaps after
+  setup stay empty.
 - HTTP reads never scrape Letterboxd or write KV. SVG responses are browser-cacheable
   for one hour. Each uncached image request reads one KV key. No public collection endpoint exists.
 - The dated bundled snapshot is used if KV is empty or unavailable. It is explicitly
