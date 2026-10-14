@@ -328,8 +328,40 @@ const contactLinks = [
     </div>
   </div>
 
+  {/* Hardcover Bookcase */}
+  <div class="bg-gray-200 dark:bg-gray-700 py-12 content-center">
+    <div class="container mx-auto px-6">
+      <div class="mx-auto max-w-2xl rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 p-5 md:p-6">
+        <div class="flex items-center justify-between gap-4 mb-4">
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">Currently Reading</h2>
+          <a
+            href="https://hardcover.app/@giraycoskun/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-gray-950 dark:hover:text-white hover:underline"
+            aria-label="Open Giray's Hardcover profile"
+          >
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSjN7QYrtvLUg4xfLwP8wVQJhs3S0lWvuC_zJm_9RKVvQ&s" alt="" width="20" height="20" class="rounded-full" />
+            Hardcover
+            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 3h7v7" />
+              <path d="M10 14 21 3" />
+              <path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5" />
+            </svg>
+          </a>
+        </div>
+        <div
+          data-hardcover-widget
+          data-username="giraycoskun"
+          data-api-url={import.meta.env.PUBLIC_HARDCOVER_WORKER_URL ?? ""}
+          id="hardcover-widget"
+        ></div>
+      </div>
+    </div>
+  </div>
+  <WatchlistCard />
   {/* Spotify Playlists */}
-  <div class="hidden md:block bg-gray-200 dark:bg-gray-700 py-12">
+  <div class="hidden md:block bg-gray-100 dark:bg-gray-800 py-12">
     <div class="container mx-auto px-6">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <iframe
@@ -352,23 +384,6 @@ const contactLinks = [
       </div>
     </div>
   </div>
-  {/* Hardcover Bookcase */}
-  <div class="bg-gray-100 dark:bg-gray-800 py-12 content-center">
-    <div class="text-center mb-5">
-      <a
-        href="https://hardcover.app/@giraycoskun/books/currently-reading"
-        class="text-2xl font-bold text-gray-900 dark:text-gray-100"
-        >Currently Reading || Listening</a
-      >
-    </div>
-    <div
-      data-hardcover-widget
-      data-username="giraycoskun"
-      data-api-url={import.meta.env.PUBLIC_HARDCOVER_WORKER_URL ?? ""}
-      id="hardcover-widget"
-    ></div>
-  </div>
-  <WatchlistCard />
   <style>
     .hero-cursor {
       display: inline-block;
