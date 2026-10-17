@@ -67,15 +67,12 @@ export function renderWatchlistSvg(data: WatchlistHistory, now = new Date(), sna
     const consecutive = i > 0 && Date.parse(point.date) - Date.parse(points[i - 1].date) === DAY_MS;
     return `${consecutive ? 'L' : 'M'}${x(point.date).toFixed(2)},${y(point.count).toFixed(2)}`;
   }).join(' ');
-  const change = points.length > 1 ? points.at(-1)!.count - points[0].count : null;
-  const changeLabel = change === null ? 'History starts with the first observation' :
-    `${change > 0 ? '+' : ''}${change} since ${points[0].date} · watchlist change`;
   const dateLabel = (ms: number) => new Date(ms).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' });
   const stale = now.getTime() - Date.parse(data.updatedAt) > 2 * DAY_MS;
   const hasBackfill = points.some(point => point.estimated);
   const status = snapshot ? 'Snapshot' : stale ? 'Last successful update' : 'Updated';
   const updated = `${status}: ${data.updatedAt.slice(0, 10)}`;
-  const description = `${count} films to watch. ${changeLabel}. ${updated}. Last 90 days; gaps mean missing observations.`;
+  const description = `${count} films to watch. ${updated}. Last 90 days; gaps mean missing observations.`;
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 280" role="img" aria-labelledby="title description">
   <title id="title">Letterboxd watchlist: ${count} films</title>
   <desc id="description">${escapeXml(description)}</desc>
@@ -87,7 +84,6 @@ export function renderWatchlistSvg(data: WatchlistHistory, now = new Date(), sna
   </style>
   <text x="24" y="43" font-size="40" font-weight="700">${count}<tspan dx="10" font-size="18" font-weight="400" class="muted">films</tspan></text>
   <text x="456" y="39" text-anchor="end" font-size="16" class="muted">90 days</text>
-  ${change === null ? '' : `<text x="24" y="75" font-size="16" class="muted">${change > 0 ? '+' : ''}${change} in this period</text>`}
   ${[minimum, maximum].map(value => `<line x1="48" x2="456" y1="${y(value)}" y2="${y(value)}" class="grid" stroke-dasharray="3 5"/><text x="38" y="${y(value) + 5}" text-anchor="end" class="muted" font-size="14">${value}</text>`).join('')}
   <path d="${path}" fill="none" class="line" stroke-width="2.5" stroke-dasharray="${hasBackfill ? '5 4' : 'none'}" stroke-linecap="round" stroke-linejoin="round"/>
   ${points.filter(point => !point.estimated).map(point => `<circle cx="${x(point.date).toFixed(2)}" cy="${y(point.count).toFixed(2)}" r="${points.length === 1 ? 4 : 2}" class="dot"><title>${point.date}: ${point.count} films</title></circle>`).join('')}
