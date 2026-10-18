@@ -12,17 +12,15 @@ export interface Env {
 export const HISTORY_KEY = 'watchlist:giraycoskun:v1';
 export const DIARY_KEY = 'diary:giraycoskun:v1';
 
-const REQUEST_OPTIONS: RequestInit = {
-  headers: { Accept: 'text/html, application/rss+xml', 'User-Agent': 'GirayLetterboxd/1.0 (+https://giraycoskun.com)' },
+const requestOptions = (accept: string): RequestInit => ({
+  headers: { Accept: accept, 'User-Agent': 'GirayLetterboxd/1.0 (+https://giraycoskun.com)' },
+  // Creating timeout signals at module scope is forbidden by the Workers runtime.
   signal: AbortSignal.timeout(20_000),
   redirect: 'manual',
-};
+});
 
 export async function collectWatchlist(env: Env, now = new Date(), fetcher: typeof fetch = fetch) {
-  const response = await fetcher(WATCHLIST_URL, {
-    ...REQUEST_OPTIONS,
-    headers: { ...REQUEST_OPTIONS.headers, Accept: 'text/html' },
-  });
+  const response = await fetcher(WATCHLIST_URL, requestOptions('text/html'));
   if (!response.ok) throw new Error(`Letterboxd returned HTTP ${response.status}`);
   if (!response.headers.get('Content-Type')?.includes('text/html')) throw new Error('Expected Letterboxd HTML');
   const count = parseWatchlistCount(await response.text());
@@ -34,10 +32,7 @@ export async function collectWatchlist(env: Env, now = new Date(), fetcher: type
 }
 
 export async function collectDiary(env: Env, now = new Date(), fetcher: typeof fetch = fetch): Promise<DiarySnapshot> {
-  const response = await fetcher(DIARY_RSS_URL, {
-    ...REQUEST_OPTIONS,
-    headers: { ...REQUEST_OPTIONS.headers, Accept: 'application/rss+xml, application/xml' },
-  });
+  const response = await fetcher(DIARY_RSS_URL, requestOptions('application/rss+xml, application/xml'));
   if (!response.ok) throw new Error(`Letterboxd diary feed returned HTTP ${response.status}`);
   const contentType = response.headers.get('Content-Type') ?? '';
   if (!contentType.includes('xml') && !contentType.includes('rss')) throw new Error('Expected Letterboxd RSS');
