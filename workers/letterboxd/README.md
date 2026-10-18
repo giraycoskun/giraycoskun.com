@@ -1,19 +1,22 @@
-# Letterboxd watchlist
+# Letterboxd card
 
-A separate Cloudflare Worker collects the public total at
-<https://letterboxd.com/giraycoskun/watchlist/> every day at **06:00 UTC**.
-The Astro homepage embeds its `/watchlist.svg` image below the reading section.
-No browser JSON fetching, React, chart package, or daily Pages build is needed.
+A separate Cloudflare Worker collects the public watchlist total and the four latest
+diary entries every day at **06:00 UTC**. The Astro homepage embeds its
+`/watchlist.svg` chart and fetches `/diary.json` to refresh the checked-in diary
+snapshot. No React, chart package, or daily Pages build is needed.
 
 The deployed chart is at
 <https://giraycoskun-letterboxd.giraycoskun-dev.workers.dev/watchlist.svg>.
+The diary snapshot is at the same origin under `/diary.json`.
 The `giraycoskun-com` Pages project has `PUBLIC_LETTERBOXD_WORKER_URL` set for
 production and preview builds. Pushing `main` deploys the production site.
 
 ## Data and limits
 
-- One KV key, `watchlist:giraycoskun:v1`, holds the last successful update and
+- The `watchlist:giraycoskun:v1` KV key holds the last successful update and
   `{ date: "YYYY-MM-DD", count: number }` observations.
+- The `diary:giraycoskun:v1` key holds four entries parsed from the public
+  Letterboxd RSS feed: title, year, watched date, rating, link, and poster URL.
 - At most one point per UTC day; a rerun replaces that day's point.
 - Successful collection retains the latest **365 calendar days** (at most 365
   points). The chart shows the last **90 calendar days**, with gaps for missed days.
@@ -25,11 +28,12 @@ production and preview builds. Pushing `main` deploys the production site.
   with the same count and marked `estimated: true`. The chart uses a dashed line
   while estimates are visible. Actual observations override estimates; gaps after
   setup stay empty.
-- HTTP reads never scrape Letterboxd or write KV. SVG responses are browser-cacheable
-  for one hour. Each uncached image request reads one KV key. No public collection endpoint exists.
-- The dated bundled snapshot is used if KV is empty or unavailable. It is explicitly
+- HTTP reads never scrape Letterboxd or write KV. SVG and JSON responses are
+  browser-cacheable for one hour. The JSON endpoint allows cross-origin reads and
+  exposes only already-public diary data. No public collection endpoint exists.
+- Dated bundled snapshots are used if KV is empty or unavailable. The chart is explicitly
   labeled “Snapshot”; live data over 48 hours old says “Last successful update.”
-- Keep this on **Workers Free**: one collection and approximately one KV write per day,
+- Keep this on **Workers Free**: two collection requests and at most two KV writes per day,
   plus chart traffic. Free quotas are shared with your other Workers: 100,000 Worker
   requests/day; KV 100,000 reads/day, 1,000 writes/day, 1 GB storage. Quota exhaustion
   can make the widget unavailable. Do not enable a paid plan for this feature.
@@ -52,17 +56,19 @@ pnpm watchlist:dev
 The checked-in binding has `remote: true`, so local scheduled runs write to the
 production KV namespace. Set `remote: false` in your local configuration to use
 isolated local KV instead.
-In another terminal, trigger the local scheduled handler and inspect the SVG:
+In another terminal, trigger the local scheduled handler and inspect both responses:
 
 ```sh
 curl 'http://localhost:8787/__scheduled?cron=0+6+*+*+*'
 curl -f http://localhost:8787/watchlist.svg
+curl -f http://localhost:8787/diary.json
 ```
 
 To preview the live widget, set `PUBLIC_LETTERBOXD_WORKER_URL=http://localhost:8787`
 in the root `.env`, then run `pnpm dev`. Without that variable, Astro generates a
 static SVG from [the verified snapshot](../../src/data/watchlistSnapshot.json).
-The chart still works in local development and Pages previews before Worker setup.
+The card also renders [the dated diary snapshot](../../src/data/diarySnapshot.json).
+Both still work in local development and Pages previews before Worker setup.
 
 ## Deploy on the free tier
 
@@ -74,21 +80,23 @@ The Worker is deployed separately; the existing Cloudflare Pages build remains `
    For a new account only, run `pnpm watchlist:kv:create` and replace its namespace ID.
 3. Run `pnpm watchlist:deploy`. This installs the daily Cron Trigger and prints the
    Worker's `https://giraycoskun-letterboxd.<subdomain>.workers.dev` URL.
-4. Open `<worker-url>/watchlist.svg`. Until the first successful scheduled run it
-   displays the bundled snapshot. Check Cron Trigger events/logs after the first
-   run: fetching from a local machine does not prove Letterboxd accepts Cloudflare IPs.
+4. Open `<worker-url>/watchlist.svg` and `<worker-url>/diary.json`. Until the first
+   successful scheduled run they return the bundled snapshots. Check Cron Trigger
+   events/logs after the first run: fetching from a local machine does not prove
+   Letterboxd accepts Cloudflare IPs.
 5. In **Cloudflare Pages → Settings → Variables and Secrets**, add the public build
    variable `PUBLIC_LETTERBOXD_WORKER_URL` with the Worker origin (no path). Redeploy
    Pages once to activate the live image. Add it to preview builds too if desired.
 
-Subsequent counts update without rebuilding Pages. The Worker URL is public and is
-not a secret. Cross-origin images need no CORS configuration. Browser dark-mode
-preferences also apply inside the SVG.
+Subsequent watchlist and diary updates appear without rebuilding Pages. The Worker
+URL is public and is not a secret. Browser dark-mode preferences also apply inside
+the SVG.
 
 If Letterboxd blocks the deployed collector, keep the dated snapshot and inspect the
 scheduled error. Do not treat a challenge page as an empty watchlist. The parser
 requires both the watchlist container total and visible heading total to agree;
-markup changes may require updating it. Check changes with `pnpm watchlist:check`
+the diary collector requires four complete RSS entries. Markup changes may require
+updating a parser. Check changes with `pnpm watchlist:check`
 and `pnpm build`; bundle-check with:
 
 ```sh

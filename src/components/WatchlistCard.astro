@@ -1,41 +1,96 @@
 ---
+import diarySnapshot from '../data/diarySnapshot.json';
+import { DIARY_URL, type DiaryFilm } from '../utils/diary';
 import { LETTERBOXD_PROFILE_URL } from '../utils/watchlist';
 
 const workerUrl = import.meta.env.PUBLIC_LETTERBOXD_WORKER_URL?.trim();
-const chartUrl = workerUrl
-  ? new URL('/watchlist.svg', workerUrl).href
-  : '/letterboxd-watchlist.svg';
+const chartUrl = workerUrl ? new URL('/watchlist.svg', workerUrl).href : '/letterboxd-watchlist.svg';
+const diaryApiUrl = workerUrl ? new URL('/diary.json', workerUrl).href : undefined;
+const formatDate = (date: string) => new Date(`${date}T00:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' });
+const formatRating = (rating: number | null) => rating === null ? 'Not rated' : `${'★'.repeat(Math.floor(rating))}${rating % 1 ? '½' : ''}`;
 ---
 
-<section aria-labelledby="watchlist-title" class="bg-white dark:bg-gray-900 py-12">
+<section aria-labelledby="letterboxd-title" class="bg-white dark:bg-gray-900 py-12">
   <div class="container mx-auto px-6">
-    <div class="mx-auto max-w-2xl rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-5 md:p-6">
-      <div class="flex items-center justify-between gap-4 mb-4">
-        <h2 id="watchlist-title" class="text-xl font-semibold text-gray-900 dark:text-gray-100">Watchlist</h2>
-        <a
-          href={LETTERBOXD_PROFILE_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="inline-flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-gray-950 dark:hover:text-white hover:underline"
-          aria-label="Open Giray's Letterboxd profile"
-        >
-          <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20">
-            <circle cx="6" cy="12" r="4" fill="#00e054" />
-            <circle cx="12" cy="12" r="4" fill="#40bcf4" />
-            <circle cx="18" cy="12" r="4" fill="#ff8000" />
-          </svg>
+    <div class="mx-auto max-w-4xl overflow-hidden rounded-2xl border border-gray-200 bg-gray-50 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+      <div class="flex items-center justify-between gap-4 border-b border-gray-200 px-5 py-4 dark:border-gray-700 md:px-6">
+        <h2 id="letterboxd-title" class="flex items-center gap-3 text-xl font-semibold text-gray-900 dark:text-gray-100">
+          <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24"><circle cx="6" cy="12" r="4" fill="#00e054" /><circle cx="12" cy="12" r="4" fill="#40bcf4" /><circle cx="18" cy="12" r="4" fill="#ff8000" /></svg>
           Letterboxd
-          <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14 3h7v7" />
-            <path d="M10 14 21 3" />
-            <path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5" />
-          </svg>
+        </h2>
+        <a href={LETTERBOXD_PROFILE_URL} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-gray-950 hover:underline dark:text-gray-300 dark:hover:text-white" aria-label="Open Giray's Letterboxd profile">
+          View profile
+          <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3h7v7" /><path d="M10 14 21 3" /><path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5" /></svg>
         </a>
       </div>
-      <figure class="mx-auto max-w-lg">
-        <img src={chartUrl} alt="Letterboxd watchlist count and its daily history." width="480" height="280" loading="lazy" decoding="async" class="w-full h-auto" />
-        <figcaption class="sr-only">Daily watchlist size over the last 90 days. Missing days leave gaps; changes do not indicate films watched.</figcaption>
-      </figure>
+
+      <div class="p-5 md:p-6">
+        <div class="mb-3 flex items-baseline justify-between gap-4">
+          <h3 class="font-semibold text-gray-900 dark:text-gray-100">Last watched</h3>
+          <a href={DIARY_URL} target="_blank" rel="noopener noreferrer" class="text-xs font-medium text-emerald-700 hover:underline dark:text-emerald-400">View diary</a>
+        </div>
+        <div id="letterboxd-diary" data-diary-url={diaryApiUrl} class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {diarySnapshot.films.map((film) => (
+            <a href={film.url} target="_blank" rel="noopener noreferrer" class="group min-w-0" aria-label={`${film.title} (${film.year}), watched ${formatDate(film.watchedDate)}, ${formatRating(film.rating)}`}>
+              <div class="relative aspect-2/3 overflow-hidden rounded-lg bg-gray-200 shadow-sm ring-1 ring-black/10 dark:bg-gray-700 dark:ring-white/10">
+                <img src={film.posterUrl} alt="" width="400" height="600" loading="lazy" decoding="async" class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                <div class="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/90 via-black/55 to-transparent px-2.5 pb-2.5 pt-8 text-white">
+                  <p class="truncate text-sm font-semibold">{film.title}</p>
+                  <p class="mt-0.5 flex justify-between gap-2 text-xs text-gray-200"><span>{formatDate(film.watchedDate)}</span><span class="text-[#00e054]">{formatRating(film.rating)}</span></p>
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+
+        <div class="my-6 border-t border-gray-200 dark:border-gray-700"></div>
+        <h3 class="mb-2 font-semibold text-gray-900 dark:text-gray-100">Watchlist trend</h3>
+        <figure class="mx-auto max-w-2xl">
+          <img src={chartUrl} alt="Letterboxd watchlist count and its daily history." width="480" height="280" loading="lazy" decoding="async" class="h-auto w-full" />
+          <figcaption class="sr-only">Daily watchlist size over the last 90 days. Missing days leave gaps; changes do not indicate films watched.</figcaption>
+        </figure>
+      </div>
     </div>
   </div>
 </section>
+
+<script>
+  interface DiaryResponse { films: DiaryFilm[] }
+
+  const diary = document.querySelector<HTMLElement>('#letterboxd-diary');
+  const endpoint = diary?.dataset.diaryUrl;
+  const isFilm = (value: unknown): value is DiaryFilm => {
+    if (!value || typeof value !== 'object') return false;
+    const film = value as Record<string, unknown>;
+    return typeof film.title === 'string' && typeof film.year === 'number' && typeof film.watchedDate === 'string'
+      && (film.rating === null || typeof film.rating === 'number')
+      && typeof film.url === 'string' && film.url.startsWith('https://letterboxd.com/giraycoskun/film/')
+      && typeof film.posterUrl === 'string' && film.posterUrl.startsWith('https://a.ltrbxd.com/resized/');
+  };
+  const filmCard = (film: DiaryFilm) => {
+    const link = document.createElement('a');
+    link.href = film.url; link.target = '_blank'; link.rel = 'noopener noreferrer'; link.className = 'group min-w-0';
+    const watched = new Date(`${film.watchedDate}T00:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' });
+    const rating = film.rating === null ? 'Not rated' : `${'★'.repeat(Math.floor(film.rating))}${film.rating % 1 ? '½' : ''}`;
+    link.setAttribute('aria-label', `${film.title} (${film.year}), watched ${watched}, ${rating}`);
+    const poster = document.createElement('div');
+    poster.className = 'relative aspect-2/3 overflow-hidden rounded-lg bg-gray-200 shadow-sm ring-1 ring-black/10 dark:bg-gray-700 dark:ring-white/10';
+    const image = document.createElement('img');
+    image.src = film.posterUrl; image.alt = ''; image.width = 400; image.height = 600; image.loading = 'lazy'; image.decoding = 'async';
+    image.className = 'h-full w-full object-cover transition-transform duration-300 group-hover:scale-105';
+    const label = document.createElement('div');
+    label.className = 'absolute inset-x-0 bottom-0 bg-linear-to-t from-black/90 via-black/55 to-transparent px-2.5 pb-2.5 pt-8 text-white';
+    const title = document.createElement('p'); title.className = 'truncate text-sm font-semibold'; title.textContent = film.title;
+    const details = document.createElement('p'); details.className = 'mt-0.5 flex justify-between gap-2 text-xs text-gray-200';
+    const date = document.createElement('span'); date.textContent = watched;
+    const stars = document.createElement('span'); stars.className = 'text-[#00e054]'; stars.textContent = rating;
+    details.append(date, stars); label.append(title, details); poster.append(image, label); link.append(poster);
+    return link;
+  };
+  if (diary && endpoint) {
+    fetch(endpoint)
+      .then(response => { if (!response.ok) throw new Error(`Diary request failed: ${response.status}`); return response.json() as Promise<DiaryResponse>; })
+      .then(data => { if (Array.isArray(data.films) && data.films.length === 4 && data.films.every(isFilm)) diary.replaceChildren(...data.films.map(filmCard)); })
+      .catch(() => { /* Keep the build-time snapshot visible. */ });
+  }
+</script>

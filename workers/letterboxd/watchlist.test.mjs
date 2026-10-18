@@ -1,19 +1,24 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import { parseDiaryFeed } from '../../src/utils/diary.ts';
 import { parseWatchlistCount, recordCount, renderWatchlistSvg } from '../../src/utils/watchlist.ts';
 import worker from './index.ts';
-import { collectWatchlist, HISTORY_KEY } from './collector.ts';
+import { collectDiary, collectWatchlist, DIARY_KEY, HISTORY_KEY } from './collector.ts';
+import diarySnapshot from '../../src/data/diarySnapshot.json' with { type: 'json' };
 import snapshot from '../../src/data/watchlistSnapshot.json' with { type: 'json' };
 
 const html = (count, heading = count) => `<body data-owner="giraycoskun"><div class="cols-2 js-watchlist-content" data-num-entries="${count}"><span class="js-watchlist-count">${heading}&nbsp;films</span></div></body>`;
 const observation = (date, count = 97) => ({ username: 'giraycoskun', updatedAt: `${date}T06:00:00.000Z`, history: [{ date, count }] });
-function storage(value = null) {
+function storage(value = null, expectedKey = HISTORY_KEY) {
   const writes = [];
   return { writes, WATCHLIST: {
-    async get(key) { assert.equal(key, HISTORY_KEY); return value; },
-    async put(key, json) { assert.equal(key, HISTORY_KEY); writes.push(JSON.parse(json)); },
+    async get(key) { assert.equal(key, expectedKey); return value; },
+    async put(key, json) { assert.equal(key, expectedKey); writes.push(JSON.parse(json)); },
   } };
 }
+
+const feedItem = (index, overrides = '') => `<item><link>https://letterboxd.com/giraycoskun/film/film-${index}/</link><letterboxd:watchedDate>2026-10-${17 - index}</letterboxd:watchedDate><letterboxd:filmTitle>Film ${index} &amp; Friends</letterboxd:filmTitle><letterboxd:filmYear>202${index}</letterboxd:filmYear><letterboxd:memberRating>${index + 1}.0</letterboxd:memberRating><description><![CDATA[<p><img src="https://a.ltrbxd.com/resized/film-poster/${index}.jpg?v=test"/></p>]]></description>${overrides}</item>`;
+const diaryFeed = (items = Array.from({ length: 4 }, (_, index) => feedItem(index)).join('')) => `<?xml version="1.0"?><rss><channel><link>https://letterboxd.com/giraycoskun/</link>${items}</channel></rss>`;
 
 test('extracts verified totals including zero and thousands, ignoring poster counts', () => {
   assert.equal(parseWatchlistCount(html(97)), 97);
@@ -72,6 +77,30 @@ test('blocked, malformed and timed-out fetches leave history untouched', async (
   assert.equal(env.writes.length, 0);
 });
 
+test('parses and validates the four latest diary entries', () => {
+  const films = parseDiaryFeed(diaryFeed());
+  assert.equal(films.length, 4);
+  assert.equal(films[0].title, 'Film 0 & Friends');
+  assert.equal(films[0].watchedDate, '2026-10-17');
+  assert.equal(films[3].rating, 4);
+  assert.throws(() => parseDiaryFeed('<rss><channel></channel></rss>'));
+  assert.throws(() => parseDiaryFeed(diaryFeed(feedItem(0))));
+});
+
+test('diary collector stores only a complete, verified feed', async () => {
+  const env = storage(null, DIARY_KEY);
+  const result = await collectDiary(env, new Date('2026-10-18T06:00:00Z'), async (url, options) => {
+    assert.equal(url, 'https://letterboxd.com/giraycoskun/rss/');
+    assert.equal(options.redirect, 'manual');
+    return new Response(diaryFeed(), { headers: { 'Content-Type': 'application/rss+xml' } });
+  });
+  assert.equal(result.updatedAt, '2026-10-18T06:00:00.000Z');
+  assert.equal(env.writes.length, 1);
+  assert.equal(env.writes[0].films.length, 4);
+  await assert.rejects(collectDiary(env, new Date(), async () => new Response(diaryFeed(), { headers: { 'Content-Type': 'text/html' } })));
+  assert.equal(env.writes.length, 1);
+});
+
 test('SVG preserves gaps, shows real change and handles single, flat and stale history', () => {
   const data = observation('2026-10-10', 96);
   data.history.push({ date: '2026-10-11', count: 97 }, { date: '2026-10-14', count: 99 });
@@ -97,4 +126,13 @@ test('public handler serves SVG and HEAD, rejects writes, and falls back when un
   assert.equal((await worker.fetch(new Request('https://worker.test/unknown'), env)).status, 404);
   assert.equal(await (await worker.fetch(new Request('https://worker.test/watchlist.svg', { method: 'HEAD' }), env)).text(), '');
   assert.equal(env.writes.length, 0);
+});
+
+test('public diary endpoint serves JSON with CORS and a checked-in fallback', async () => {
+  const env = storage(null, DIARY_KEY);
+  const response = await worker.fetch(new Request('https://worker.test/diary.json'), env);
+  assert.equal(response.headers.get('Content-Type'), 'application/json; charset=utf-8');
+  assert.equal(response.headers.get('Access-Control-Allow-Origin'), '*');
+  assert.deepEqual(await response.json(), diarySnapshot);
+  assert.equal(await (await worker.fetch(new Request('https://worker.test/diary.json', { method: 'HEAD' }), env)).text(), '');
 });

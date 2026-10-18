@@ -72,6 +72,10 @@ export function renderWatchlistSvg(data: WatchlistHistory, now = new Date(), sna
   const hasBackfill = points.some(point => point.estimated);
   const status = snapshot ? 'Snapshot' : stale ? 'Last successful update' : 'Updated';
   const updated = `${status}: ${data.updatedAt.slice(0, 10)}`;
+  const first = points.at(0);
+  const changeLabel = first && latest
+    ? `${latest.count - first.count >= 0 ? '+' : ''}${latest.count - first.count} since ${first.date}`
+    : '';
   const description = `${count} films to watch. ${updated}. Last 90 days; gaps mean missing observations.`;
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 280" role="img" aria-labelledby="title description">
   <title id="title">Letterboxd watchlist: ${count} films</title>
@@ -84,6 +88,7 @@ export function renderWatchlistSvg(data: WatchlistHistory, now = new Date(), sna
   </style>
   <text x="24" y="43" font-size="40" font-weight="700">${count}<tspan dx="10" font-size="18" font-weight="400" class="muted">films</tspan></text>
   <text x="456" y="39" text-anchor="end" font-size="16" class="muted">90 days</text>
+  ${changeLabel ? `<text x="456" y="64" text-anchor="end" font-size="14" class="muted">${escapeXml(changeLabel)}</text>` : ''}
   ${[minimum, maximum].map(value => `<line x1="48" x2="456" y1="${y(value)}" y2="${y(value)}" class="grid" stroke-dasharray="3 5"/><text x="38" y="${y(value) + 5}" text-anchor="end" class="muted" font-size="14">${value}</text>`).join('')}
   <path d="${path}" fill="none" class="line" stroke-width="2.5" stroke-dasharray="${hasBackfill ? '5 4' : 'none'}" stroke-linecap="round" stroke-linejoin="round"/>
   ${points.filter(point => !point.estimated).map(point => `<circle cx="${x(point.date).toFixed(2)}" cy="${y(point.count).toFixed(2)}" r="${points.length === 1 ? 4 : 2}" class="dot"><title>${point.date}: ${point.count} films</title></circle>`).join('')}

@@ -11,5 +11,5 @@
     "skipLibCheck": true,
     "types": []
   },
-  "include": ["index.ts", "../../src/utils/watchlist.ts"]
+  "include": ["index.ts", "../../src/utils/watchlist.ts", "../../src/utils/diary.ts"]
 }
