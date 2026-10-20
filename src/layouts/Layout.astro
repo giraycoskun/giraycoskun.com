@@ -11,12 +11,14 @@ interface Props {
 }
 
 const { 
-  title = 'Giray Coskun - Personal Website',
+  title = 'Home',
   description = 'Personal website of Giray Coskun - Software Engineer, Computer Scientist, and hiking enthusiast',
   image = '/og-image.jpg',
   type = 'website'
 } = Astro.props;
 
+const siteName = 'giraycoskun';
+const documentTitle = title === 'Home' ? siteName : `${siteName} - ${title}`;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
 
@@ -33,18 +35,18 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 		<!-- Open Graph / Facebook -->
 		<meta property="og:type" content={type} />
 		<meta property="og:url" content={canonicalURL} />
-		<meta property="og:title" content={title} />
+		<meta property="og:title" content={documentTitle} />
 		<meta property="og:description" content={description} />
 		<meta property="og:image" content={new URL(image, Astro.site)} />
 		
 		<!-- Twitter -->
 		<meta property="twitter:card" content="summary_large_image" />
 		<meta property="twitter:url" content={canonicalURL} />
-		<meta property="twitter:title" content={title} />
+		<meta property="twitter:title" content={documentTitle} />
 		<meta property="twitter:description" content={description} />
 		<meta property="twitter:image" content={new URL(image, Astro.site)} />
 		
-		<title>{title}</title>
+		<title>{documentTitle}</title>
 	</head>
 	<body class="flex flex-col min-h-screen bg-white dark:bg-gray-800">
 		<Header />
@@ -54,4 +56,3 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 		<Footer />
 	</body>
 </html>
-
