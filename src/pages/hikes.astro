@@ -29,7 +29,7 @@ const allPosts = await getCollection('blog', (entry) => !entry.data.draft);
 // Find related posts for each hike
 const hikesWithPosts = hikes.map(hike => {
 	const relatedPost = allPosts.find(post => 
-		post.slug === hike.blogSlug || 
+		post.id === hike.blogSlug ||
 		post.data.title.toLowerCase().includes(hike.title.toLowerCase())
 	);
 	return { hike, relatedPost };
@@ -162,7 +162,7 @@ const hikePosts = allPosts
 					{hikePosts.map((post, i) => (
 						<BlogPostCard
 							title={post.data.title}
-							slug={post.slug}
+							slug={post.id}
 							createdAt={post.data.createdAt}
 							description={post.data.description}
 							tags={post.data.tags}

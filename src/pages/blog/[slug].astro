@@ -2,7 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import CopyButton from '../../components/CopyButton.astro';
 import { Image } from 'astro:assets';
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import { calculateReadingTime } from '../../utils/blogUtil';
 import type { CollectionEntry } from 'astro:content';
 
@@ -13,14 +13,14 @@ interface Props {
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
   return posts.map((post) => ({
-    params: { slug: post.slug },
+    params: { slug: post.id },
     props: { post },
   }));
 }
 
 const { post } = Astro.props;
 
-const { Content, headings } = await post.render();
+const { Content, headings } = await render(post);
 const readingTime = calculateReadingTime(post.body);
 const formatDate = (value: Date) =>
   new Intl.DateTimeFormat('en-GB', {

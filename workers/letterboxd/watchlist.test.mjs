@@ -7,7 +7,7 @@ import { collectDiary, collectWatchlist, DIARY_KEY, HISTORY_KEY } from './collec
 import diarySnapshot from '../../src/data/diarySnapshot.json' with { type: 'json' };
 import snapshot from '../../src/data/watchlistSnapshot.json' with { type: 'json' };
 
-const html = (count, heading = count) => `<body data-owner="giraycoskun"><div class="cols-2 js-watchlist-content" data-num-entries="${count}"><span class="js-watchlist-count">${heading}&nbsp;films</span></div></body>`;
+const html = (count, heading = count) => `<head><meta content="https://letterboxd.com/giraycoskun/watchlist/" property="og:url"></head><body class="screen-member-child-page watchlist wide"><div class="cols-2 js-watchlist-content" data-num-entries="${count}"><span class="js-watchlist-count">${heading}&nbsp;films</span></div></body>`;
 const observation = (date, count = 97) => ({ username: 'giraycoskun', updatedAt: `${date}T06:00:00.000Z`, history: [{ date, count }] });
 function storage(value = null, expectedKey = HISTORY_KEY) {
   const writes = [];
@@ -20,7 +20,7 @@ function storage(value = null, expectedKey = HISTORY_KEY) {
 const feedItem = (index, overrides = '') => `<item><link>https://letterboxd.com/giraycoskun/film/film-${index}/</link><letterboxd:watchedDate>2026-10-${17 - index}</letterboxd:watchedDate><letterboxd:filmTitle>Film ${index} &amp; Friends</letterboxd:filmTitle><letterboxd:filmYear>202${index}</letterboxd:filmYear><letterboxd:memberRating>${index + 1}.0</letterboxd:memberRating><description><![CDATA[<p><img src="https://a.ltrbxd.com/resized/film-poster/${index}.jpg?v=test"/></p>]]></description>${overrides}</item>`;
 const diaryFeed = (items = Array.from({ length: 4 }, (_, index) => feedItem(index)).join('')) => `<?xml version="1.0"?><rss><channel><link>https://letterboxd.com/giraycoskun/</link>${items}</channel></rss>`;
 
-test('extracts verified totals including zero and thousands, ignoring poster counts', () => {
+test('extracts verified totals from the current page shape including zero and thousands', () => {
   assert.equal(parseWatchlistCount(html(97)), 97);
   assert.equal(parseWatchlistCount(html(1234, '1,234')), 1234);
   assert.equal(parseWatchlistCount(html(0)), 0);
@@ -101,14 +101,15 @@ test('diary collector stores only a complete, verified feed', async () => {
   assert.equal(env.writes.length, 1);
 });
 
-test('SVG preserves gaps, shows real change and handles single, flat and stale history', () => {
+test('SVG preserves gaps, labels every y-axis value and handles single, flat and stale history', () => {
   const data = observation('2026-10-10', 96);
   data.history.push({ date: '2026-10-11', count: 97 }, { date: '2026-10-14', count: 99 });
   const svg = renderWatchlistSvg(data, new Date('2026-10-14'));
   const path = svg.match(/<path d="([^"]*)"/)[1];
   assert.equal((path.match(/M/g) ?? []).length, 2);
   assert.equal((path.match(/L/g) ?? []).length, 1);
-  assert.match(svg, /\+3 since 2026-10-10/);
+  assert.doesNotMatch(svg, /[+-]\d+ since/);
+  assert.deepEqual([...svg.matchAll(/class="muted y-tick" font-size="14">(\d+)<\/text>/g)].map(match => Number(match[1])), [94, 95, 96, 97, 98, 99, 100, 101]);
   assert.match(svg, /Last successful update/);
   assert.match(renderWatchlistSvg(observation('2026-10-14'), new Date('2026-10-14')), /r="4"/);
   assert.match(renderWatchlistSvg(observation('2025-10-14'), new Date('2026-10-14')), /No recent observations/);

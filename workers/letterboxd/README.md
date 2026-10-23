@@ -94,9 +94,9 @@ the SVG.
 
 If Letterboxd blocks the deployed collector, keep the dated snapshot and inspect the
 scheduled error. Do not treat a challenge page as an empty watchlist. The parser
-requires both the watchlist container total and visible heading total to agree;
-the diary collector requires four complete RSS entries. Markup changes may require
-updating a parser. Check changes with `pnpm watchlist:check`
+requires the canonical profile URL and both the watchlist container total and visible
+heading total to agree; the diary collector requires four complete RSS entries.
+Markup changes may require updating a parser. Check changes with `pnpm watchlist:check`
 and `pnpm build`; bundle-check with:
 
 ```sh

@@ -95,7 +95,7 @@ const allTags = [...new Set(allPosts.flatMap(post => post.data.tags || []))].sor
             title={post.data.title}
             description={post.data.description}
             createdAt={post.data.createdAt}
-            slug={post.slug}
+            slug={post.id}
             tags={post.data.tags}
             coverImage={post.data.coverImage}
             author={post.data.author}
