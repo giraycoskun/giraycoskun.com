@@ -44,7 +44,7 @@ Sources: [Workers pricing](https://developers.cloudflare.com/workers/platform/pr
 
 ## Local development
 
-Use Node **22.18+ or 24+** for the native TypeScript tests and Wrangler, and run from
+Use Node **22.23.4+ or 24+** for the native TypeScript tests and Wrangler, and run from
 the repository root:
 
 ```sh

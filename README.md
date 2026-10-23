@@ -1,6 +1,6 @@
 # giraycoskun.com
 
-Personal website built with Astro 5.x and TailwindCSS 4.x. The site is statically generated and includes pages for work, hikes, gallery, and a paginated/tagged blog.
+Personal website built with Astro 7.x and TailwindCSS 4.x. The site is statically generated and includes pages for work, hikes, gallery, and a paginated/tagged blog.
 
 ## Tech Stack
 
