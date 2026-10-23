@@ -329,20 +329,22 @@ const contactLinks = [
   </div>
 
   {/* Hardcover Bookcase */}
-  <div class="bg-gray-200 dark:bg-gray-700 py-12 content-center">
+  <section aria-labelledby="hardcover-title" class="bg-gray-200 dark:bg-gray-700 py-12">
     <div class="container mx-auto px-6">
-      <div class="mx-auto w-full max-w-4xl rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 p-5 md:p-6">
-        <div class="flex items-center justify-between gap-4 mb-4">
-          <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">Currently Reading</h2>
+      <div class="mx-auto w-full max-w-4xl overflow-hidden rounded-2xl border border-gray-200 bg-gray-50 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+        <div class="flex items-center justify-between gap-4 border-b border-gray-200 px-5 py-4 dark:border-gray-700 md:px-6">
+          <h2 id="hardcover-title" class="flex items-center gap-3 text-xl font-semibold text-gray-900 dark:text-gray-100">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSjN7QYrtvLUg4xfLwP8wVQJhs3S0lWvuC_zJm_9RKVvQ&s" alt="" width="24" height="24" class="rounded-full" />
+            Hardcover
+          </h2>
           <a
             href="https://hardcover.app/@giraycoskun/"
             target="_blank"
             rel="noopener noreferrer"
-            class="inline-flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-gray-950 dark:hover:text-white hover:underline"
+            class="inline-flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-gray-950 hover:underline dark:text-gray-300 dark:hover:text-white"
             aria-label="Open Giray's Hardcover profile"
           >
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSjN7QYrtvLUg4xfLwP8wVQJhs3S0lWvuC_zJm_9RKVvQ&s" alt="" width="20" height="20" class="rounded-full" />
-            Hardcover
+            View profile
             <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M14 3h7v7" />
               <path d="M10 14 21 3" />
@@ -350,15 +352,18 @@ const contactLinks = [
             </svg>
           </a>
         </div>
-        <div
-          data-hardcover-widget
-          data-username="giraycoskun"
-          data-api-url={import.meta.env.PUBLIC_HARDCOVER_WORKER_URL ?? ""}
-          id="hardcover-widget"
-        ></div>
+        <div class="p-5 md:p-6">
+          <h3 class="mb-3 font-semibold text-gray-900 dark:text-gray-100">Currently reading</h3>
+          <div
+            data-hardcover-widget
+            data-username="giraycoskun"
+            data-api-url={import.meta.env.PUBLIC_HARDCOVER_WORKER_URL ?? ""}
+            id="hardcover-widget"
+          ></div>
+        </div>
       </div>
     </div>
-  </div>
+  </section>
   <WatchlistCard />
   {/* Spotify Playlists */}
   <div class="hidden md:block bg-gray-100 dark:bg-gray-800 py-12">

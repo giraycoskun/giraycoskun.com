@@ -47,7 +47,7 @@ const formatRating = (rating: number | null) => rating === null ? 'Not rated' : 
         <h3 class="mb-2 font-semibold text-gray-900 dark:text-gray-100">Watchlist trend</h3>
         <figure class="mx-auto max-w-2xl">
           <img src={chartUrl} alt="Letterboxd watchlist count and its daily history." width="480" height="280" loading="lazy" decoding="async" class="h-auto w-full" />
-          <figcaption class="sr-only">Daily watchlist size over the last 90 days. Missing days leave gaps; changes do not indicate films watched.</figcaption>
+          <figcaption class="sr-only">Observed watchlist sizes over the last 90 days. Points are connected across missing days; changes do not indicate films watched.</figcaption>
         </figure>
       </div>
     </div>

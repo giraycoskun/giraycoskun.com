@@ -69,17 +69,15 @@ export function renderWatchlistSvg(data: WatchlistHistory, now = new Date(), sna
   const yTicks = Array.from({ length: maximum - minimum + 1 }, (_, index) => minimum + index);
   const x = (date: string) => 48 + ((Date.parse(date) - start) / (89 * DAY_MS)) * 408;
   const y = (value: number) => 208 - ((value - minimum) / (maximum - minimum)) * 96;
-  // Move instead of drawing across missing observations.
-  const path = points.map((point, i) => {
-    const consecutive = i > 0 && Date.parse(point.date) - Date.parse(points[i - 1].date) === DAY_MS;
-    return `${consecutive ? 'L' : 'M'}${x(point.date).toFixed(2)},${y(point.count).toFixed(2)}`;
-  }).join(' ');
+  const path = points.map((point, index) =>
+    `${index === 0 ? 'M' : 'L'}${x(point.date).toFixed(2)},${y(point.count).toFixed(2)}`
+  ).join(' ');
   const dateLabel = (ms: number) => new Date(ms).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' });
   const stale = now.getTime() - Date.parse(data.updatedAt) > 2 * DAY_MS;
   const hasBackfill = points.some(point => point.estimated);
   const status = snapshot ? 'Snapshot' : stale ? 'Last successful update' : 'Updated';
   const updated = `${status}: ${data.updatedAt.slice(0, 10)}`;
-  const description = `${count} films to watch. ${updated}. Last 90 days; gaps mean missing observations.`;
+  const description = `${count} films to watch. ${updated}. Observed watchlist counts over the last 90 days.`;
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 280" role="img" aria-labelledby="title description">
   <title id="title">Letterboxd watchlist: ${count} films</title>
   <desc id="description">${escapeXml(description)}</desc>

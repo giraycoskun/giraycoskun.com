@@ -31,9 +31,7 @@
   const styles = `
         .hardcover-widget {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            max-width: var(--hw-max-width, 800px);
-            margin: 0 auto;
-            padding: var(--hw-padding, 1rem);
+            width: 100%;
         }
 
         .hardcover-widget * {
@@ -41,18 +39,16 @@
         }
 
         .hw-books-grid {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: var(--hw-gap, 1rem);
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.75rem;
             padding: 0;
             margin: 0;
             list-style: none;
         }
 
         .hw-book-item {
-            width: var(--hw-min-column-width, 120px);
-            flex-shrink: 0;
+            min-width: 0;
             position: relative;
             transition: all 0.3s ease;
         }
@@ -148,20 +144,16 @@
             text-decoration: underline;
         }
 
-        @media (max-width: 600px) {
-            .hw-book-item {
-                width: 100px;
-            }
-            
-            .hw-book-title-overlay {
-                font-size: 0.75rem;
-                padding: 1.5rem 0.5rem 0.5rem;
+        @media (min-width: 640px) {
+            .hw-books-grid {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
             }
         }
 
         @media (max-width: 400px) {
-            .hw-book-item {
-                width: 80px;
+            .hw-book-title-overlay {
+                font-size: 0.75rem;
+                padding: 1.5rem 0.5rem 0.5rem;
             }
         }
     `;

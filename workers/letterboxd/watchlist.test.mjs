@@ -101,13 +101,13 @@ test('diary collector stores only a complete, verified feed', async () => {
   assert.equal(env.writes.length, 1);
 });
 
-test('SVG preserves gaps, labels every y-axis value and handles single, flat and stale history', () => {
+test('SVG connects observations across missing days, labels every y-axis value and handles single, flat and stale history', () => {
   const data = observation('2026-10-10', 96);
   data.history.push({ date: '2026-10-11', count: 97 }, { date: '2026-10-14', count: 99 });
   const svg = renderWatchlistSvg(data, new Date('2026-10-14'));
   const path = svg.match(/<path d="([^"]*)"/)[1];
-  assert.equal((path.match(/M/g) ?? []).length, 2);
-  assert.equal((path.match(/L/g) ?? []).length, 1);
+  assert.equal((path.match(/M/g) ?? []).length, 1);
+  assert.equal((path.match(/L/g) ?? []).length, 2);
   assert.doesNotMatch(svg, /[+-]\d+ since/);
   assert.deepEqual([...svg.matchAll(/class="muted y-tick" font-size="14">(\d+)<\/text>/g)].map(match => Number(match[1])), [94, 95, 96, 97, 98, 99, 100, 101]);
   assert.match(svg, /Last successful update/);
