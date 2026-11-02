@@ -64,11 +64,24 @@ export function renderWatchlistSvg(data: WatchlistHistory, now = new Date(), sna
   const latest = data.history.at(-1);
   const count = latest?.count.toLocaleString('en-US') ?? '—';
   const values = points.map(point => point.count);
-  const minimum = Math.max(0, Math.min(...values, latest?.count ?? 0) - 2);
-  const maximum = Math.max(...values, latest?.count ?? 0) + 2;
-  const yTicks = Array.from({ length: maximum - minimum + 1 }, (_, index) => minimum + index);
-  const x = (date: string) => 48 + ((Date.parse(date) - start) / (89 * DAY_MS)) * 408;
-  const y = (value: number) => 208 - ((value - minimum) / (maximum - minimum)) * 96;
+  const lowerBound = Math.max(0, Math.min(...values, latest?.count ?? 0) - 2);
+  const upperBound = Math.max(...values, latest?.count ?? 0) + 2;
+  // Keep small ranges precise, but avoid hundreds of crowded labels on large ranges.
+  const targetStep = Math.max(1, (upperBound - lowerBound) / 8);
+  const magnitude = 10 ** Math.floor(Math.log10(targetStep));
+  const step = [1, 2, 5, 10].find(value => value * magnitude >= targetStep)! * magnitude;
+  const minimum = Math.floor(lowerBound / step) * step;
+  const maximum = Math.ceil(upperBound / step) * step;
+  const intervals = Math.round((maximum - minimum) / step);
+  const yTicks = Array.from({ length: intervals + 1 }, (_, index) => minimum + index * step);
+  const plotLeft = Math.max(48, String(maximum).length * 9 + 34);
+  const plotRight = 456;
+  const plotTop = 112;
+  const plotHeight = Math.max(96, intervals * 28);
+  const plotBottom = plotTop + plotHeight;
+  const height = plotBottom + 72;
+  const x = (date: string) => plotLeft + ((Date.parse(date) - start) / (89 * DAY_MS)) * (plotRight - plotLeft);
+  const y = (value: number) => plotBottom - ((value - minimum) / (maximum - minimum)) * plotHeight;
   const path = points.map((point, index) =>
     `${index === 0 ? 'M' : 'L'}${x(point.date).toFixed(2)},${y(point.count).toFixed(2)}`
   ).join(' ');
@@ -78,7 +91,7 @@ export function renderWatchlistSvg(data: WatchlistHistory, now = new Date(), sna
   const status = snapshot ? 'Snapshot' : stale ? 'Last successful update' : 'Updated';
   const updated = `${status}: ${data.updatedAt.slice(0, 10)}`;
   const description = `${count} films to watch. ${updated}. Observed watchlist counts over the last 90 days.`;
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 280" role="img" aria-labelledby="title description">
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="480" height="${height}" viewBox="0 0 480 ${height}" role="img" aria-labelledby="title description">
   <title id="title">Letterboxd watchlist: ${count} films</title>
   <desc id="description">${escapeXml(description)}</desc>
   <style>
@@ -89,12 +102,12 @@ export function renderWatchlistSvg(data: WatchlistHistory, now = new Date(), sna
   </style>
   <text x="24" y="43" font-size="40" font-weight="700">${count}<tspan dx="10" font-size="18" font-weight="400" class="muted">films</tspan></text>
   <text x="456" y="39" text-anchor="end" font-size="16" class="muted">90 days</text>
-  ${yTicks.map(value => `<line x1="48" x2="456" y1="${y(value)}" y2="${y(value)}" class="grid" stroke-dasharray="3 5"/><text x="38" y="${y(value) + 5}" text-anchor="end" class="muted y-tick" font-size="14">${value}</text>`).join('')}
+  ${yTicks.map(value => `<line x1="${plotLeft}" x2="${plotRight}" y1="${y(value)}" y2="${y(value)}" class="grid" stroke-dasharray="3 5"/><text x="${plotLeft - 10}" y="${y(value) + 5}" text-anchor="end" class="muted y-tick" font-size="14">${value}</text>`).join('')}
   <path d="${path}" fill="none" class="line" stroke-width="2.5" stroke-dasharray="${hasBackfill ? '5 4' : 'none'}" stroke-linecap="round" stroke-linejoin="round"/>
   ${points.filter(point => !point.estimated).map(point => `<circle cx="${x(point.date).toFixed(2)}" cy="${y(point.count).toFixed(2)}" r="${points.length === 1 ? 4 : 2}" class="dot"><title>${point.date}: ${point.count} films</title></circle>`).join('')}
-  ${points.length === 0 ? '<text x="252" y="153" text-anchor="middle" class="muted" font-size="16">No recent observations</text>' : ''}
-  <text x="48" y="233" class="muted" font-size="16">${dateLabel(start)}</text>
-  <text x="456" y="233" text-anchor="end" class="muted" font-size="16">${dateLabel(end)}</text>
-  <text x="24" y="266" class="muted" font-size="16">${escapeXml(updated)}</text>
+  ${points.length === 0 ? `<text x="${(plotLeft + plotRight) / 2}" y="${plotTop + plotHeight / 2}" text-anchor="middle" class="muted" font-size="16">No recent observations</text>` : ''}
+  <text x="${plotLeft}" y="${plotBottom + 25}" class="muted" font-size="16">${dateLabel(start)}</text>
+  <text x="${plotRight}" y="${plotBottom + 25}" text-anchor="end" class="muted" font-size="16">${dateLabel(end)}</text>
+  <text x="24" y="${height - 14}" class="muted" font-size="16">${escapeXml(updated)}</text>
 </svg>`;
 }

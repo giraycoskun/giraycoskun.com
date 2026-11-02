@@ -118,6 +118,30 @@ test('SVG connects observations across missing days, labels every y-axis value a
   assert.doesNotMatch(renderWatchlistSvg(flat, new Date('2026-10-14')), /NaN|Infinity/);
 });
 
+test('SVG grows with y-axis labels and keeps wide ranges readable', () => {
+  const now = new Date('2026-10-14');
+  const flat = renderWatchlistSvg(observation('2026-10-14', 97), now);
+  const data = observation('2026-10-10', 96);
+  data.history.push({ date: '2026-10-14', count: 99 });
+  const growing = renderWatchlistSvg(data, now);
+  const height = svg => Number(svg.match(/viewBox="0 0 480 (\d+)"/)[1]);
+  assert.ok(height(growing) > height(flat));
+
+  for (const count of [99, 9999, 1000000]) {
+    data.history[1].count = count;
+    const svg = renderWatchlistSvg(data, now);
+    const ticks = [...svg.matchAll(/<text x="([\d.]+)" y="([\d.]+)" text-anchor="end" class="muted y-tick" font-size="14">(\d+)<\/text>/g)];
+    assert.ok(ticks.length >= 2 && ticks.length <= 10);
+    for (let index = 1; index < ticks.length; index++) {
+      assert.ok(Number(ticks[index - 1][2]) - Number(ticks[index][2]) >= 28);
+    }
+    for (const tick of ticks) {
+      assert.ok(Number(tick[1]) - tick[3].length * 9 >= 24, 'labels fit inside the SVG');
+    }
+    assert.doesNotMatch(svg, /NaN|Infinity/);
+  }
+});
+
 test('public handler serves SVG and HEAD, rejects writes, and falls back when uninitialized', async () => {
   const env = storage();
   const response = await worker.fetch(new Request('https://worker.test/watchlist.svg'), env);
