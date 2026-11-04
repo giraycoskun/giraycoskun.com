@@ -19,9 +19,10 @@ production and preview builds. Pushing `main` deploys the production site.
   `{ date: "YYYY-MM-DD", count: number }` observations.
 - The `diary:giraycoskun:v1` key holds four entries parsed from the public
   Letterboxd RSS feed: title, year, watched date, rating, link, and poster URL.
-- The `diary-year:giraycoskun:v1` key holds one cumulative diary-count observation
-  per UTC day for the current year. The collector derives the year from its run
-  date and reads Letterboxd's matching `/diary/films/for/{year}/` page.
+- The `diary-year:giraycoskun:v1` key holds an exact cumulative daily history for
+  the current year. The collector derives the year from its run date, follows every
+  page of Letterboxd's matching `/diary/films/for/{year}/` diary, and rebuilds the
+  history from each entry's watched date.
 - At most one point per UTC day; a rerun replaces that day's point.
 - Watchlist collection retains the latest **365 calendar days** (at most 365
   points). Its chart shows the last **90 calendar days**, with gaps for missed days.
@@ -33,8 +34,9 @@ production and preview builds. Pushing `main` deploys the production site.
   with the same count and marked `estimated: true`. The chart uses a dashed line
   while estimates are visible. Actual observations override estimates; gaps after
   setup stay empty.
-- Annual histories reset automatically on January 1. A new installation begins
-  with the current total and does not fabricate earlier daily observations.
+- Annual histories reset automatically on January 1. A new installation backfills
+  January through today from the public diary's dated entries on its first successful
+  collection, so missed scheduled runs do not leave gaps or fabricate observations.
 - HTTP reads never scrape Letterboxd or write KV. SVG and JSON responses are
   browser-cacheable for one hour. The JSON endpoint allows cross-origin reads and
   exposes only already-public diary data. No public collection endpoint exists.
@@ -42,7 +44,8 @@ production and preview builds. Pushing `main` deploys the production site.
   unavailable. The watchlist chart is explicitly labeled “Snapshot”; live data
   over 48 hours old says “Last successful update.” The annual graph displays an
   awaiting-data state until its first successful collection.
-- Keep this on **Workers Free**: three collection requests and at most three KV writes per day,
+- Keep this on **Workers Free**: two fixed collection requests plus the current
+  year's paginated diary requests, and at most three KV writes per day,
   plus chart traffic. Free quotas are shared with your other Workers: 100,000 Worker
   requests/day; KV 100,000 reads/day, 1,000 writes/day, 1 GB storage. Quota exhaustion
   can make the widget unavailable. Do not enable a paid plan for this feature.
@@ -73,6 +76,18 @@ curl -f http://localhost:8787/watchlist.svg
 curl -f http://localhost:8787/diary.json
 curl -f http://localhost:8787/watched-this-year.svg
 ```
+
+To seed the production annual history immediately from all current-year diary
+pages, run the Worker on Cloudflare's network (which is less likely to receive the
+Letterboxd challenge shown to command-line clients) and trigger it once:
+
+```sh
+pnpm exec wrangler dev --remote --config workers/letterboxd/wrangler.jsonc --test-scheduled
+curl 'http://localhost:8787/__scheduled?cron=0+6+*+*+*'
+```
+
+This is a real production-KV write because the binding is remote. Stop the dev
+process after the scheduled request completes.
 
 To preview the live widget, set `PUBLIC_LETTERBOXD_WORKER_URL=http://localhost:8787`
 in the root `.env`, then run `pnpm dev`. Without that variable, Astro generates a

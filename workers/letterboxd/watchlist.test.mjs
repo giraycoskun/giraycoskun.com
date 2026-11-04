@@ -2,9 +2,9 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { parseDiaryFeed } from '../../src/utils/diary.ts';
 import { parseWatchlistCount, recordCount, renderWatchlistSvg } from '../../src/utils/watchlist.ts';
-import { recordYearActivity, renderYearActivitySvg } from '../../src/utils/yearActivity.ts';
+import { recordYearActivity, renderYearActivitySvg, seedYearActivity } from '../../src/utils/yearActivity.ts';
 import worker from './index.ts';
-import { collectDiary, collectWatchlist, collectYearlyDiary, DIARY_KEY, HISTORY_KEY, parseYearlyDiaryCount, YEAR_DIARY_KEY } from './collector.ts';
+import { collectDiary, collectWatchlist, collectYearlyDiary, DIARY_KEY, HISTORY_KEY, parseYearlyDiaryCount, parseYearlyDiaryDates, YEAR_DIARY_KEY } from './collector.ts';
 import diarySnapshot from '../../src/data/diarySnapshot.json' with { type: 'json' };
 import snapshot from '../../src/data/watchlistSnapshot.json' with { type: 'json' };
 
@@ -20,7 +20,10 @@ function storage(value = null, expectedKey = HISTORY_KEY) {
 
 const feedItem = (index, overrides = '') => `<item><link>https://letterboxd.com/giraycoskun/film/film-${index}/</link><letterboxd:watchedDate>2026-10-${17 - index}</letterboxd:watchedDate><letterboxd:filmTitle>Film ${index} &amp; Friends</letterboxd:filmTitle><letterboxd:filmYear>202${index}</letterboxd:filmYear><letterboxd:memberRating>${index + 1}.0</letterboxd:memberRating><description><![CDATA[<p><img src="https://a.ltrbxd.com/resized/film-poster/${index}.jpg?v=test"/></p>]]></description>${overrides}</item>`;
 const diaryFeed = (items = Array.from({ length: 4 }, (_, index) => feedItem(index)).join('')) => `<?xml version="1.0"?><rss><channel><link>https://letterboxd.com/giraycoskun/</link>${items}</channel></rss>`;
-const yearDiary = (count, year = 2026) => `<html><body class="screen-member-child-page diary films-diary wide" data-owner="giraycoskun"><p>Giray has logged ${count.toLocaleString('en-US')} ${count === 1 ? 'entry' : 'entries'} for films during ${year}.</p><table id="diary-table"><tr class="diary-entry-row"><td><a href="/giraycoskun/diary/films/for/${year}/10/01/">1</a></td></tr></table></body></html>`;
+const yearDiary = (count, year = 2026, dates = Array.from({ length: count }, (_, index) => `${year}-10-${String((index % 28) + 1).padStart(2, '0')}`)) => `<html><body class="screen-member-child-page diary films-diary wide" data-owner="giraycoskun"><p>Giray has logged ${count.toLocaleString('en-US')} ${count === 1 ? 'entry' : 'entries'} for films during ${year}.</p><table id="diary-table">${dates.map(date => {
+  const [, month, day] = date.split('-');
+  return `<tr class="diary-entry-row"><td class="td-day diary-day center"><a href="/giraycoskun/diary/${year}/${month}/${day}/">${Number(day)}</a></td></tr>`;
+}).join('')}</table></body></html>`;
 
 test('extracts verified totals from the current page shape including zero and thousands', () => {
   assert.equal(parseWatchlistCount(html(97)), 97);
@@ -115,16 +118,29 @@ test('yearly diary parser verifies the owner and variable year before accepting 
   }
 });
 
-test('yearly diary collector records one observation using the current UTC year', async () => {
+test('yearly diary parser extracts every watched date and rejects incomplete rows', () => {
+  assert.deepEqual(parseYearlyDiaryDates(yearDiary(2, 2026, ['2026-01-02', '2026-10-31']), 2026), ['2026-01-02', '2026-10-31']);
+  assert.throws(() => parseYearlyDiaryDates(yearDiary(1).replace(/href="[^"]+"/, 'href="/film/example/"'), 2026));
+});
+
+test('yearly diary collector backfills daily history across every current-year page', async () => {
   const env = storage(null, YEAR_DIARY_KEY);
   const now = new Date('2026-11-04T06:00:00Z');
+  const pages = [
+    yearDiary(3, 2026, ['2026-01-02', '2026-03-04']),
+    yearDiary(3, 2026, ['2026-10-31']),
+  ];
   const result = await collectYearlyDiary(env, now, async (url, options) => {
-    assert.equal(url, 'https://letterboxd.com/giraycoskun/diary/films/for/2026/');
+    assert.equal(url, pages.length === 2
+      ? 'https://letterboxd.com/giraycoskun/diary/films/for/2026/'
+      : 'https://letterboxd.com/giraycoskun/diary/films/for/2026/page/2/');
     assert.equal(options.redirect, 'manual');
-    return new Response(yearDiary(123), { headers: { 'Content-Type': 'text/html;charset=utf-8' } });
+    return new Response(pages.shift(), { headers: { 'Content-Type': 'text/html;charset=utf-8' } });
   });
   assert.equal(result.year, 2026);
-  assert.deepEqual(result.history, [{ date: '2026-11-04', count: 123 }]);
+  assert.equal(result.history.length, 308);
+  assert.deepEqual(result.history[0], { date: '2026-01-01', count: 0 });
+  assert.deepEqual(result.history.at(-1), { date: '2026-11-04', count: 3 });
   assert.equal(env.writes.length, 1);
 });
 
@@ -135,8 +151,21 @@ test('year activity history resets at New Year and renders an accessible cumulat
   assert.deepEqual(next.history, [{ date: '2027-01-01', count: 1 }]);
   const svg = renderYearActivitySvg(next, { title: 'Films watched', unit: 'films watched', accent: '#000', darkAccent: '#fff' }, new Date('2027-01-01'));
   assert.match(svg, /Films watched: 1 films watched in 2027/);
+  assert.doesNotMatch(svg, /<tspan/);
   assert.match(svg, /Jan/);
   assert.doesNotMatch(svg, /NaN|Infinity/);
+});
+
+test('year activity seed turns dated records into an exact cumulative daily history', () => {
+  const seeded = seedYearActivity('giraycoskun', ['2026-01-02', '2026-01-02', '2026-01-04'], new Date('2026-01-05T06:00:00Z'));
+  assert.deepEqual(seeded.history, [
+    { date: '2026-01-01', count: 0 },
+    { date: '2026-01-02', count: 2 },
+    { date: '2026-01-03', count: 2 },
+    { date: '2026-01-04', count: 3 },
+    { date: '2026-01-05', count: 3 },
+  ]);
+  assert.throws(() => seedYearActivity('giraycoskun', ['2025-12-31'], new Date('2026-01-05')));
 });
 
 test('SVG connects observations across missing days, labels every y-axis value and handles single, flat and stale history', () => {

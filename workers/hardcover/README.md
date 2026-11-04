@@ -12,10 +12,10 @@ Public endpoints:
 - `/api/books/read-this-year/giraycoskun.svg` — cumulative daily observations for
   the current year's completed-book count.
 
-The year boundaries are generated from the scheduled run date. On January 1 the
-history starts a new year automatically. A new installation shows the current
-count immediately and builds its line history from subsequent daily runs; it does
-not invent historical observations.
+The year boundaries are generated from the scheduled run date. On every successful
+run, the Worker reads the current year's exact finish dates and rebuilds a cumulative
+daily history from January 1 through today. This seeds a new installation immediately,
+repairs gaps after missed runs, and starts a new history automatically on January 1.
 
 ## Setup
 
@@ -45,4 +45,18 @@ The daily Cron runs at **06:00 UTC**. To test locally:
 ```sh
 pnpm exec wrangler dev --config workers/hardcover/wrangler.jsonc --test-scheduled
 curl "http://localhost:8787/cdn-cgi/local/scheduled"
+```
+
+Before starting, create the ignored `workers/hardcover/.dev.vars` file with a
+`HARDCOVER_API_TOKEN="your-token"` line. It keeps the token out of source control.
+Because the KV binding has `remote: true`, this local scheduled request also seeds the production
+annual history. Set `remote: false` in a temporary local configuration if you only
+want an isolated preview.
+
+If the secret is already configured on the deployed Worker, remote preview can use
+it directly without a local token file:
+
+```sh
+pnpm exec wrangler dev --remote --config workers/hardcover/wrangler.jsonc --test-scheduled
+curl 'http://localhost:8787/__scheduled?cron=0+6+*+*+*'
 ```

@@ -16,7 +16,7 @@ function storage(initial = {}) {
   };
 }
 
-test('collector fetches current books and this-year reads in one year-aware GraphQL request', async () => {
+test('collector fetches current books and seeds this-year daily history in one year-aware GraphQL request', async () => {
   const env = storage();
   const now = new Date('2026-11-04T06:00:00Z');
   const result = await collectReadingSnapshot(env, now, async (url, options) => {
@@ -27,11 +27,17 @@ test('collector fetches current books and this-year reads in one year-aware Grap
     assert.match(body.query, /user_book_reads: \{ finished_at:/);
     return Response.json({ data: {
       user_books: [{ book: { title: 'Book', slug: 'book', image: null } }],
-      user_books_aggregate: { aggregate: { count: 7 } },
+      user_books_aggregate: { aggregate: { count: 2 } },
+      yearly_books: [
+        { user_book_reads: [{ finished_at: '2026-01-02' }] },
+        { user_book_reads: [{ finished_at: '2026-10-31' }] },
+      ],
     } });
   });
   assert.equal(result.books.count, 1);
-  assert.deepEqual(result.yearlyReads.history, [{ date: '2026-11-04', count: 7 }]);
+  assert.equal(result.yearlyReads.history.length, 308);
+  assert.deepEqual(result.yearlyReads.history[0], { date: '2026-01-01', count: 0 });
+  assert.deepEqual(result.yearlyReads.history.at(-1), { date: '2026-11-04', count: 2 });
   assert.deepEqual(env.writes.map(([key]) => key), [BOOKS_KEY, YEAR_READS_KEY]);
 });
 

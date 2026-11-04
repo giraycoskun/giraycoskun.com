@@ -43,6 +43,39 @@ export function recordYearActivity(
   };
 }
 
+/** Build an exact cumulative daily history from dated source records. */
+export function seedYearActivity(
+  username: string,
+  dates: string[],
+  now = new Date(),
+): YearActivityHistory {
+  const year = now.getUTCFullYear();
+  const today = now.toISOString().slice(0, 10);
+  const start = `${year}-01-01`;
+  const dailyTotals = new Map<string, number>();
+
+  for (const date of dates) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)
+      || date < start
+      || date > today
+      || !Number.isFinite(Date.parse(date))
+      || new Date(`${date}T00:00:00Z`).toISOString().slice(0, 10) !== date) {
+      throw new Error(`Invalid ${year} activity date`);
+    }
+    dailyTotals.set(date, (dailyTotals.get(date) ?? 0) + 1);
+  }
+
+  const history: YearActivityPoint[] = [];
+  let count = 0;
+  for (let time = Date.UTC(year, 0, 1); time <= Date.parse(today); time += DAY_MS) {
+    const date = new Date(time).toISOString().slice(0, 10);
+    count += dailyTotals.get(date) ?? 0;
+    history.push({ date, count });
+  }
+
+  return { username, year, updatedAt: now.toISOString(), history };
+}
+
 const escapeXml = (value: string) => value.replace(/[&<>"']/g, char => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;',
 }[char]!));
@@ -108,7 +141,7 @@ export function renderYearActivitySvg(
     .muted { fill: #4b5563; } .grid { stroke: #d1d5db; } .line { stroke: ${options.accent}; } .dot { fill: ${options.accent}; }
     @media (prefers-color-scheme: dark) { text { fill: #f3f4f6; } .muted { fill: #d1d5db; } .grid { stroke: #4b5563; } .line { stroke: ${options.darkAccent}; } .dot { fill: ${options.darkAccent}; } }
   </style>
-  <text x="24" y="43" font-size="40" font-weight="700">${count}<tspan dx="10" font-size="18" font-weight="400" class="muted">${escapeXml(options.unit)}</tspan></text>
+  <text x="24" y="43" font-size="40" font-weight="700">${count}</text>
   <text x="616" y="39" text-anchor="end" font-size="16" class="muted">${year}</text>
   ${ticks.map(value => `<line x1="${plotLeft}" x2="${plotRight}" y1="${y(value)}" y2="${y(value)}" class="grid" stroke-dasharray="3 5"/><text x="${plotLeft - 10}" y="${y(value) + 5}" text-anchor="end" class="muted" font-size="14">${value}</text>`).join('')}
   ${path ? `<path d="${path}" fill="none" class="line" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>` : ''}
