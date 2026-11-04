@@ -1,9 +1,21 @@
 # Hardcover Worker
 
-This Worker fetches Giray's currently-reading books from the official Hardcover
-GraphQL API once per day and stores the successful result in Workers KV. The
-browser only reads the cached JSON; the Hardcover API token never reaches the
-client.
+This Worker fetches Giray's currently-reading books and the number of unique books
+finished in the current UTC year from the official Hardcover GraphQL API once per
+day. A single GraphQL request stores both successful results in Workers KV. The
+browser only reads cached JSON/SVG responses; the Hardcover API token never reaches
+the client.
+
+Public endpoints:
+
+- `/api/books/currently-reading/giraycoskun` — current book JSON.
+- `/api/books/read-this-year/giraycoskun.svg` — cumulative daily observations for
+  the current year's completed-book count.
+
+The year boundaries are generated from the scheduled run date. On January 1 the
+history starts a new year automatically. A new installation shows the current
+count immediately and builds its line history from subsequent daily runs; it does
+not invent historical observations.
 
 ## Setup
 

@@ -14,7 +14,7 @@
     "watchlist:check": "tsc -p workers/letterboxd/tsconfig.json && node --experimental-strip-types --test workers/letterboxd/watchlist.test.mjs",
     "watchlist:kv:create": "wrangler kv namespace create WATCHLIST --config workers/letterboxd/wrangler.jsonc",
     "watchlist:deploy": "wrangler deploy --config workers/letterboxd/wrangler.jsonc",
-    "hardcover:check": "tsc -p workers/hardcover/tsconfig.json",
+    "hardcover:check": "tsc -p workers/hardcover/tsconfig.json && node --experimental-strip-types --test workers/hardcover/hardcover.test.mjs",
     "hardcover:dev": "wrangler dev --config workers/hardcover/wrangler.jsonc --test-scheduled",
     "hardcover:kv:create": "wrangler kv namespace create HARDCOVER_BOOKS --config workers/hardcover/wrangler.jsonc",
     "hardcover:deploy": "wrangler deploy --config workers/hardcover/wrangler.jsonc"

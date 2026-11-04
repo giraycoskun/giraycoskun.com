@@ -5,7 +5,10 @@ import { LETTERBOXD_PROFILE_URL } from '../utils/watchlist';
 
 const workerUrl = import.meta.env.PUBLIC_LETTERBOXD_WORKER_URL?.trim();
 const chartUrl = workerUrl ? new URL('/watchlist.svg', workerUrl).href : '/letterboxd-watchlist.svg';
+const yearChartUrl = workerUrl ? new URL('/watched-this-year.svg', workerUrl).href : '/letterboxd-year.svg';
 const diaryApiUrl = workerUrl ? new URL('/diary.json', workerUrl).href : undefined;
+const currentYear = new Date().getUTCFullYear();
+const yearDiaryUrl = `https://letterboxd.com/giraycoskun/diary/films/for/${currentYear}/`;
 const formatDate = (date: string) => new Date(`${date}T00:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' });
 const formatRating = (rating: number | null) => rating === null ? 'Not rated' : `${'★'.repeat(Math.floor(rating))}${rating % 1 ? '½' : ''}`;
 ---
@@ -42,6 +45,16 @@ const formatRating = (rating: number | null) => rating === null ? 'Not rated' : 
             </a>
           ))}
         </div>
+
+        <div class="my-6 border-t border-gray-200 dark:border-gray-700"></div>
+        <div class="mb-2 flex items-baseline justify-between gap-4">
+          <h3 class="font-semibold text-gray-900 dark:text-gray-100">Watched in {currentYear}</h3>
+          <a href={yearDiaryUrl} target="_blank" rel="noopener noreferrer" class="text-xs font-medium text-emerald-700 hover:underline dark:text-emerald-400">View year</a>
+        </div>
+        <figure class="mx-auto max-w-2xl">
+          <img src={yearChartUrl} alt={`Cumulative films watched on Letterboxd in ${currentYear}.`} width="640" height="300" loading="lazy" decoding="async" class="block h-auto w-full" />
+          <figcaption class="sr-only">Daily observations of the cumulative Letterboxd diary total for {currentYear}.</figcaption>
+        </figure>
 
         <div class="my-6 border-t border-gray-200 dark:border-gray-700"></div>
         <h3 class="mb-2 font-semibold text-gray-900 dark:text-gray-100">Watchlist trend</h3>

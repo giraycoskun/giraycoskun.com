@@ -2,8 +2,9 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { parseDiaryFeed } from '../../src/utils/diary.ts';
 import { parseWatchlistCount, recordCount, renderWatchlistSvg } from '../../src/utils/watchlist.ts';
+import { recordYearActivity, renderYearActivitySvg } from '../../src/utils/yearActivity.ts';
 import worker from './index.ts';
-import { collectDiary, collectWatchlist, DIARY_KEY, HISTORY_KEY } from './collector.ts';
+import { collectDiary, collectWatchlist, collectYearlyDiary, DIARY_KEY, HISTORY_KEY, parseYearlyDiaryCount, YEAR_DIARY_KEY } from './collector.ts';
 import diarySnapshot from '../../src/data/diarySnapshot.json' with { type: 'json' };
 import snapshot from '../../src/data/watchlistSnapshot.json' with { type: 'json' };
 
@@ -19,6 +20,7 @@ function storage(value = null, expectedKey = HISTORY_KEY) {
 
 const feedItem = (index, overrides = '') => `<item><link>https://letterboxd.com/giraycoskun/film/film-${index}/</link><letterboxd:watchedDate>2026-10-${17 - index}</letterboxd:watchedDate><letterboxd:filmTitle>Film ${index} &amp; Friends</letterboxd:filmTitle><letterboxd:filmYear>202${index}</letterboxd:filmYear><letterboxd:memberRating>${index + 1}.0</letterboxd:memberRating><description><![CDATA[<p><img src="https://a.ltrbxd.com/resized/film-poster/${index}.jpg?v=test"/></p>]]></description>${overrides}</item>`;
 const diaryFeed = (items = Array.from({ length: 4 }, (_, index) => feedItem(index)).join('')) => `<?xml version="1.0"?><rss><channel><link>https://letterboxd.com/giraycoskun/</link>${items}</channel></rss>`;
+const yearDiary = (count, year = 2026) => `<html><body class="screen-member-child-page diary films-diary wide" data-owner="giraycoskun"><p>Giray has logged ${count.toLocaleString('en-US')} ${count === 1 ? 'entry' : 'entries'} for films during ${year}.</p><table id="diary-table"><tr class="diary-entry-row"><td><a href="/giraycoskun/diary/films/for/${year}/10/01/">1</a></td></tr></table></body></html>`;
 
 test('extracts verified totals from the current page shape including zero and thousands', () => {
   assert.equal(parseWatchlistCount(html(97)), 97);
@@ -101,6 +103,42 @@ test('diary collector stores only a complete, verified feed', async () => {
   assert.equal(env.writes.length, 1);
 });
 
+test('yearly diary parser verifies the owner and variable year before accepting totals', () => {
+  assert.equal(parseYearlyDiaryCount(yearDiary(123), 2026), 123);
+  assert.equal(parseYearlyDiaryCount(yearDiary(1), 2026), 1);
+  const empty = `<body class="diary films-diary" data-owner="giraycoskun"><p>Giray hasn’t logged any entries for films during 2026.</p></body>`;
+  assert.equal(parseYearlyDiaryCount(empty, 2026), 0);
+  const singlePage = `<body class="diary films-diary" data-owner="giraycoskun"><table><tr class="diary-entry-row"><td><a href="/giraycoskun/diary/films/for/2026/10/01/">1</a></td></tr><tr class="diary-entry-row"><td>2</td></tr></table></body>`;
+  assert.equal(parseYearlyDiaryCount(singlePage, 2026), 2);
+  for (const page of ['<html>Challenge</html>', yearDiary(12).replace('giraycoskun', 'someone'), yearDiary(12, 2025)]) {
+    assert.throws(() => parseYearlyDiaryCount(page, 2026));
+  }
+});
+
+test('yearly diary collector records one observation using the current UTC year', async () => {
+  const env = storage(null, YEAR_DIARY_KEY);
+  const now = new Date('2026-11-04T06:00:00Z');
+  const result = await collectYearlyDiary(env, now, async (url, options) => {
+    assert.equal(url, 'https://letterboxd.com/giraycoskun/diary/films/for/2026/');
+    assert.equal(options.redirect, 'manual');
+    return new Response(yearDiary(123), { headers: { 'Content-Type': 'text/html;charset=utf-8' } });
+  });
+  assert.equal(result.year, 2026);
+  assert.deepEqual(result.history, [{ date: '2026-11-04', count: 123 }]);
+  assert.equal(env.writes.length, 1);
+});
+
+test('year activity history resets at New Year and renders an accessible cumulative SVG', () => {
+  const first = recordYearActivity(null, 'giraycoskun', 12, new Date('2026-12-31T06:00:00Z'));
+  const next = recordYearActivity(first, 'giraycoskun', 1, new Date('2027-01-01T06:00:00Z'));
+  assert.equal(next.year, 2027);
+  assert.deepEqual(next.history, [{ date: '2027-01-01', count: 1 }]);
+  const svg = renderYearActivitySvg(next, { title: 'Films watched', unit: 'films watched', accent: '#000', darkAccent: '#fff' }, new Date('2027-01-01'));
+  assert.match(svg, /Films watched: 1 films watched in 2027/);
+  assert.match(svg, /Jan/);
+  assert.doesNotMatch(svg, /NaN|Infinity/);
+});
+
 test('SVG connects observations across missing days, labels every y-axis value and handles single, flat and stale history', () => {
   const data = observation('2026-10-10', 96);
   data.history.push({ date: '2026-10-11', count: 97 }, { date: '2026-10-14', count: 99 });
@@ -160,4 +198,12 @@ test('public diary endpoint serves JSON with CORS and a checked-in fallback', as
   assert.equal(response.headers.get('Access-Control-Allow-Origin'), '*');
   assert.deepEqual(await response.json(), diarySnapshot);
   assert.equal(await (await worker.fetch(new Request('https://worker.test/diary.json', { method: 'HEAD' }), env)).text(), '');
+});
+
+test('public yearly diary endpoint serves an SVG fallback and HEAD', async () => {
+  const env = storage(null, YEAR_DIARY_KEY);
+  const response = await worker.fetch(new Request('https://worker.test/watched-this-year.svg'), env);
+  assert.equal(response.headers.get('Content-Type'), 'image/svg+xml; charset=utf-8');
+  assert.match(await response.text(), /Awaiting first observation/);
+  assert.equal(await (await worker.fetch(new Request('https://worker.test/watched-this-year.svg', { method: 'HEAD' }), env)).text(), '');
 });
