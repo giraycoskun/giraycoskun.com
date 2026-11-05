@@ -4,6 +4,7 @@ const HARDCOVER_API_URL = 'https://api.hardcover.app/v1/graphql';
 export const HARDCOVER_USERNAME = 'giraycoskun';
 export const BOOKS_KEY = 'currently-reading:v1';
 export const YEAR_READS_KEY = 'read-this-year:v1';
+export const yearReadsArchiveKey = (year: number) => `read-year:giraycoskun:${year}:v1`;
 
 export interface HardcoverBook {
   book: {
@@ -77,6 +78,13 @@ const QUERY = `
 export interface HardcoverSnapshot {
   books: HardcoverBooks;
   yearlyReads: YearActivityHistory;
+}
+
+export async function archiveCompletedReadingYear(env: Env, now = new Date()): Promise<YearActivityHistory | null> {
+  const previous = await env.HARDCOVER_BOOKS.get<YearActivityHistory>(YEAR_READS_KEY, 'json');
+  if (!previous || previous.year >= now.getUTCFullYear()) return null;
+  await env.HARDCOVER_BOOKS.put(yearReadsArchiveKey(previous.year), JSON.stringify(previous));
+  return previous;
 }
 
 export async function collectReadingSnapshot(

@@ -4,7 +4,7 @@ import { parseDiaryFeed } from '../../src/utils/diary.ts';
 import { parseWatchlistCount, recordCount, renderWatchlistSvg } from '../../src/utils/watchlist.ts';
 import { recordYearActivity, renderYearActivitySvg, seedYearActivity } from '../../src/utils/yearActivity.ts';
 import worker from './index.ts';
-import { collectDiary, collectWatchlist, collectYearlyDiary, DIARY_KEY, HISTORY_KEY, parseYearlyDiaryCount, parseYearlyDiaryDates, YEAR_DIARY_KEY } from './collector.ts';
+import { archiveCompletedDiaryYear, collectDiary, collectWatchlist, collectYearlyDiary, DIARY_KEY, HISTORY_KEY, parseYearlyDiaryCount, parseYearlyDiaryDates, YEAR_DIARY_KEY, yearDiaryArchiveKey } from './collector.ts';
 import diarySnapshot from '../../src/data/diarySnapshot.json' with { type: 'json' };
 import snapshot from '../../src/data/watchlistSnapshot.json' with { type: 'json' };
 
@@ -15,6 +15,15 @@ function storage(value = null, expectedKey = HISTORY_KEY) {
   return { writes, WATCHLIST: {
     async get(key) { assert.equal(key, expectedKey); return value; },
     async put(key, json) { assert.equal(key, expectedKey); writes.push(JSON.parse(json)); },
+  } };
+}
+
+function mapStorage(initial = {}) {
+  const values = new Map(Object.entries(initial));
+  const writes = [];
+  return { writes, WATCHLIST: {
+    async get(key) { return values.get(key) ?? null; },
+    async put(key, json) { const parsed = JSON.parse(json); values.set(key, parsed); writes.push([key, parsed]); },
   } };
 }
 
@@ -123,7 +132,7 @@ test('yearly diary parser extracts every watched date and rejects incomplete row
   assert.throws(() => parseYearlyDiaryDates(yearDiary(1).replace(/href="[^"]+"/, 'href="/film/example/"'), 2026));
 });
 
-test('yearly diary collector backfills daily history across every current-year page', async () => {
+test('yearly diary collector backfills weekly history across every current-year page', async () => {
   const env = storage(null, YEAR_DIARY_KEY);
   const now = new Date('2026-11-04T06:00:00Z');
   const pages = [
@@ -138,8 +147,8 @@ test('yearly diary collector backfills daily history across every current-year p
     return new Response(pages.shift(), { headers: { 'Content-Type': 'text/html;charset=utf-8' } });
   });
   assert.equal(result.year, 2026);
-  assert.equal(result.history.length, 308);
-  assert.deepEqual(result.history[0], { date: '2026-01-01', count: 0 });
+  assert.equal(result.history.length, 45);
+  assert.deepEqual(result.history[0], { date: '2026-01-04', count: 1 });
   assert.deepEqual(result.history.at(-1), { date: '2026-11-04', count: 3 });
   assert.equal(env.writes.length, 1);
 });
@@ -152,18 +161,22 @@ test('year activity history resets at New Year and renders an accessible cumulat
   const svg = renderYearActivitySvg(next, { title: 'Films watched', unit: 'films watched', accent: '#000', darkAccent: '#fff' }, new Date('2027-01-01'));
   assert.match(svg, /Films watched: 1 films watched in 2027/);
   assert.doesNotMatch(svg, /<tspan/);
+  assert.match(svg, /viewBox="0 0 480 380"/);
+  assert.match(svg, /class="area"/);
+  assert.match(svg, /class="line"/);
+  assert.match(svg, /stroke-dasharray="5 4"/);
+  assert.doesNotMatch(svg, /<circle/);
+  assert.doesNotMatch(svg, /<polygon/);
   assert.match(svg, /Jan/);
   assert.doesNotMatch(svg, /NaN|Infinity/);
 });
 
-test('year activity seed turns dated records into an exact cumulative daily history', () => {
-  const seeded = seedYearActivity('giraycoskun', ['2026-01-02', '2026-01-02', '2026-01-04'], new Date('2026-01-05T06:00:00Z'));
+test('year activity seed turns dated records into cumulative weekly history', () => {
+  const seeded = seedYearActivity('giraycoskun', ['2026-01-02', '2026-01-02', '2026-01-04', '2026-01-11'], new Date('2026-01-12T06:00:00Z'));
   assert.deepEqual(seeded.history, [
-    { date: '2026-01-01', count: 0 },
-    { date: '2026-01-02', count: 2 },
-    { date: '2026-01-03', count: 2 },
     { date: '2026-01-04', count: 3 },
-    { date: '2026-01-05', count: 3 },
+    { date: '2026-01-11', count: 4 },
+    { date: '2026-01-12', count: 4 },
   ]);
   assert.throws(() => seedYearActivity('giraycoskun', ['2025-12-31'], new Date('2026-01-05')));
 });
@@ -235,4 +248,20 @@ test('public yearly diary endpoint serves an SVG fallback and HEAD', async () =>
   assert.equal(response.headers.get('Content-Type'), 'image/svg+xml; charset=utf-8');
   assert.match(await response.text(), /Awaiting first observation/);
   assert.equal(await (await worker.fetch(new Request('https://worker.test/watched-this-year.svg', { method: 'HEAD' }), env)).text(), '');
+});
+
+test('completed Letterboxd years are archived and served from a permanent gallery endpoint', async () => {
+  const completed = {
+    username: 'giraycoskun',
+    year: 2026,
+    updatedAt: '2026-12-31T06:00:00.000Z',
+    history: [{ date: '2026-12-31', count: 220 }],
+  };
+  const env = mapStorage({ [YEAR_DIARY_KEY]: completed });
+  assert.deepEqual(await archiveCompletedDiaryYear(env, new Date('2027-01-01T06:00:00Z')), completed);
+  assert.equal(env.writes[0][0], yearDiaryArchiveKey(2026));
+
+  const response = await worker.fetch(new Request('https://worker.test/watched-in/2026.svg'), env);
+  assert.equal(response.status, 200);
+  assert.match(await response.text(), /Letterboxd films watched in 2026: 220 films watched in 2026/);
 });

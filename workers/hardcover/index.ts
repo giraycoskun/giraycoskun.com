@@ -1,5 +1,5 @@
 import { emptyYearActivity, renderYearActivitySvg, type YearActivityHistory } from '../../src/utils/yearActivity.ts';
-import { BOOKS_KEY, collectReadingSnapshot, type Env, type HardcoverBooks, YEAR_READS_KEY } from './collector.ts';
+import { archiveCompletedReadingYear, BOOKS_KEY, collectReadingSnapshot, type Env, type HardcoverBooks, YEAR_READS_KEY, yearReadsArchiveKey } from './collector.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -22,6 +22,8 @@ function jsonResponse(body: unknown, init: ResponseInit = {}) {
 
 export default {
   async scheduled(_event: unknown, env: Env) {
+    // Preserve the completed prior year before the current-year key is replaced.
+    await archiveCompletedReadingYear(env);
     // Keep the previous successful value if Hardcover is temporarily unavailable.
     await collectReadingSnapshot(env);
   },
@@ -35,20 +37,31 @@ export default {
     const pathname = new URL(request.url).pathname;
     const booksPath = '/api/books/currently-reading/giraycoskun';
     const yearPath = '/api/books/read-this-year/giraycoskun.svg';
-    if (pathname !== booksPath && pathname !== yearPath) {
+    const archiveMatch = pathname.match(/^\/api\/books\/read-in\/(\d{4})\/giraycoskun\.svg$/);
+    if (pathname !== booksPath && pathname !== yearPath && !archiveMatch) {
       return jsonResponse({ error: 'Not found' }, { status: 404 });
     }
 
-    if (pathname === yearPath) {
-      const stored = await env.HARDCOVER_BOOKS.get<YearActivityHistory>(YEAR_READS_KEY, 'json');
+    if (pathname === yearPath || archiveMatch) {
       const now = new Date();
-      const current = stored?.year === now.getUTCFullYear() ? stored : emptyYearActivity('giraycoskun', now);
-      const svg = renderYearActivitySvg(current, {
-        title: 'Hardcover books read this year',
+      const archivedYear = archiveMatch ? Number(archiveMatch[1]) : null;
+      const stored = archivedYear === null
+        ? await env.HARDCOVER_BOOKS.get<YearActivityHistory>(YEAR_READS_KEY, 'json')
+        : await env.HARDCOVER_BOOKS.get<YearActivityHistory>(yearReadsArchiveKey(archivedYear), 'json')
+          ?? await env.HARDCOVER_BOOKS.get<YearActivityHistory>(YEAR_READS_KEY, 'json');
+      if (archivedYear !== null && stored?.year !== archivedYear) {
+        return jsonResponse({ error: 'Archived year not found' }, { status: 404 });
+      }
+      const activity = archivedYear === null && stored?.year !== now.getUTCFullYear()
+        ? emptyYearActivity('giraycoskun', now)
+        : stored!;
+      const svg = renderYearActivitySvg(activity, {
+        title: archivedYear === null ? 'Hardcover books read this year' : `Hardcover books read in ${archivedYear}`,
         unit: 'books read',
         accent: '#7c3aed',
         darkAccent: '#a78bfa',
-        snapshot: current !== stored,
+        snapshot: archivedYear === null && activity !== stored,
+        archived: archivedYear !== null,
       }, now);
       return new Response(request.method === 'HEAD' ? null : svg, {
         headers: {

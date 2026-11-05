@@ -13,10 +13,18 @@ export interface Env {
 export const HISTORY_KEY = 'watchlist:giraycoskun:v1';
 export const DIARY_KEY = 'diary:giraycoskun:v1';
 export const YEAR_DIARY_KEY = 'diary-year:giraycoskun:v1';
+export const yearDiaryArchiveKey = (year: number) => `diary-year:giraycoskun:${year}:v1`;
 export const LETTERBOXD_USERNAME = 'giraycoskun';
 
 export const yearlyDiaryUrl = (year: number, page = 1) =>
   `https://letterboxd.com/${LETTERBOXD_USERNAME}/diary/films/for/${year}/${page === 1 ? '' : `page/${page}/`}`;
+
+export async function archiveCompletedDiaryYear(env: Env, now = new Date()): Promise<YearActivityHistory | null> {
+  const previous = await env.WATCHLIST.get<YearActivityHistory>(YEAR_DIARY_KEY, 'json');
+  if (!previous || previous.year >= now.getUTCFullYear()) return null;
+  await env.WATCHLIST.put(yearDiaryArchiveKey(previous.year), JSON.stringify(previous));
+  return previous;
+}
 
 const requestOptions = (accept: string): RequestInit => ({
   headers: { Accept: accept, 'User-Agent': 'GirayLetterboxd/1.0 (+https://giraycoskun.com)' },

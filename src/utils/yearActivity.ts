@@ -12,6 +12,23 @@ export interface YearActivityHistory {
 
 const DAY_MS = 86_400_000;
 
+const weekStart = (date: string): string => {
+  const value = new Date(`${date}T00:00:00Z`);
+  const daysSinceMonday = (value.getUTCDay() + 6) % 7;
+  value.setUTCDate(value.getUTCDate() - daysSinceMonday);
+  return value.toISOString().slice(0, 10);
+};
+
+const weeklyPoints = (points: YearActivityPoint[]): YearActivityPoint[] => {
+  const latestByWeek = new Map<string, YearActivityPoint>();
+  for (const point of points) {
+    const key = weekStart(point.date);
+    const previous = latestByWeek.get(key);
+    if (!previous || point.date > previous.date) latestByWeek.set(key, point);
+  }
+  return [...latestByWeek.values()].sort((a, b) => a.date.localeCompare(b.date));
+};
+
 export function emptyYearActivity(username: string, now = new Date()): YearActivityHistory {
   return {
     username,
@@ -31,19 +48,19 @@ export function recordYearActivity(
   const date = now.toISOString().slice(0, 10);
   const year = now.getUTCFullYear();
   const start = `${year}-01-01`;
-  const points = new Map((previous?.year === year ? previous.history : [])
-    .filter(point => point.date >= start && point.date <= date)
-    .map(point => [point.date, point]));
-  points.set(date, { date, count });
+  const currentWeek = weekStart(date);
+  const points = (previous?.year === year ? previous.history : [])
+    .filter(point => point.date >= start && point.date <= date && weekStart(point.date) !== currentWeek);
+  points.push({ date, count });
   return {
     username,
     year,
     updatedAt: now.toISOString(),
-    history: [...points.values()].sort((a, b) => a.date.localeCompare(b.date)),
+    history: weeklyPoints(points),
   };
 }
 
-/** Build an exact cumulative daily history from dated source records. */
+/** Build cumulative calendar-week snapshots from dated source records. */
 export function seedYearActivity(
   username: string,
   dates: string[],
@@ -70,7 +87,8 @@ export function seedYearActivity(
   for (let time = Date.UTC(year, 0, 1); time <= Date.parse(today); time += DAY_MS) {
     const date = new Date(time).toISOString().slice(0, 10);
     count += dailyTotals.get(date) ?? 0;
-    history.push({ date, count });
+    const isSunday = new Date(time).getUTCDay() === 0;
+    if (isSunday || date === today) history.push({ date, count });
   }
 
   return { username, year, updatedAt: now.toISOString(), history };
@@ -86,6 +104,7 @@ interface YearActivitySvgOptions {
   accent: string;
   darkAccent: string;
   snapshot?: boolean;
+  archived?: boolean;
 }
 
 /** Render a cumulative count chart across the calendar year. */
@@ -97,11 +116,13 @@ export function renderYearActivitySvg(
   const year = data.year;
   const start = Date.UTC(year, 0, 1);
   const end = Date.UTC(year + 1, 0, 1) - DAY_MS;
-  const today = Math.min(Math.max(Date.parse(now.toISOString().slice(0, 10)), start), end);
-  const points = data.history.filter(point => {
+  const today = options.archived
+    ? end
+    : Math.min(Math.max(Date.parse(now.toISOString().slice(0, 10)), start), end);
+  const points = weeklyPoints(data.history.filter(point => {
     const time = Date.parse(point.date);
     return Number.isFinite(time) && time >= start && time <= today && Number.isSafeInteger(point.count) && point.count >= 0;
-  });
+  }));
   const latest = points.at(-1);
   const count = latest ? latest.count.toLocaleString('en-US') : '—';
   const maximumValue = Math.max(1, ...points.map(point => point.count));
@@ -111,13 +132,16 @@ export function renderYearActivitySvg(
   const maximum = Math.max(step, Math.ceil(maximumValue / step) * step);
   const ticks = Array.from({ length: Math.round(maximum / step) + 1 }, (_, index) => index * step);
   const plotLeft = Math.max(48, String(maximum).length * 9 + 32);
-  const plotRight = 616;
-  const plotTop = 92;
-  const plotBottom = 244;
+  const plotRight = 456;
+  const plotTop = 112;
+  const plotBottom = 308;
   const width = plotRight - plotLeft;
   const x = (date: string) => plotLeft + ((Date.parse(date) - start) / (end - start)) * width;
   const y = (value: number) => plotBottom - (value / maximum) * (plotBottom - plotTop);
   const path = points.map((point, index) => `${index === 0 ? 'M' : 'L'}${x(point.date).toFixed(2)},${y(point.count).toFixed(2)}`).join(' ');
+  const areaPath = points.length > 0
+    ? `M${x(points[0].date).toFixed(2)},${plotBottom} ${path.replace(/^M/, 'L')} L${x(points.at(-1)!.date).toFixed(2)},${plotBottom} Z`
+    : '';
   const xTicks = [
     { time: Date.UTC(year, 0, 1), label: 'Jan', anchor: 'start' },
     { time: Date.UTC(year, 3, 1), label: 'Apr', anchor: 'middle' },
@@ -126,28 +150,28 @@ export function renderYearActivitySvg(
     { time: end, label: 'Dec', anchor: 'end' },
   ];
   const stale = now.getTime() - Date.parse(data.updatedAt) > 2 * DAY_MS;
-  const status = options.snapshot ? 'Awaiting live data' : stale ? 'Last successful update' : 'Updated';
+  const status = options.archived ? 'Final update' : options.snapshot ? 'Awaiting live data' : stale ? 'Last successful update' : 'Updated';
   const updated = `${status}: ${data.updatedAt.slice(0, 10)}`;
   const description = latest
-    ? `${count} ${options.unit} in ${year}. Cumulative daily observations through ${latest.date}.`
+    ? `${count} ${options.unit} in ${year}. Cumulative weekly observations through ${latest.date}.`
     : `No ${options.unit} observations are available for ${year} yet.`;
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="300" viewBox="0 0 640 300" role="img" aria-labelledby="title description">
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="480" height="380" viewBox="0 0 480 380" role="img" aria-labelledby="title description">
   <title id="title">${escapeXml(options.title)}: ${count} ${escapeXml(options.unit)} in ${year}</title>
   <desc id="description">${escapeXml(description)}</desc>
   <style>
     :root { color-scheme: light dark; }
     text { font-family: system-ui, sans-serif; fill: #111827; }
-    .muted { fill: #4b5563; } .grid { stroke: #d1d5db; } .line { stroke: ${options.accent}; } .dot { fill: ${options.accent}; }
-    @media (prefers-color-scheme: dark) { text { fill: #f3f4f6; } .muted { fill: #d1d5db; } .grid { stroke: #4b5563; } .line { stroke: ${options.darkAccent}; } .dot { fill: ${options.darkAccent}; } }
+    .muted { fill: #4b5563; } .grid { stroke: #d1d5db; } .area { fill: ${options.accent}; opacity: .16; } .line { stroke: ${options.accent}; }
+    @media (prefers-color-scheme: dark) { text { fill: #f3f4f6; } .muted { fill: #d1d5db; } .grid { stroke: #4b5563; } .area { fill: ${options.darkAccent}; opacity: .2; } .line { stroke: ${options.darkAccent}; } }
   </style>
   <text x="24" y="43" font-size="40" font-weight="700">${count}</text>
-  <text x="616" y="39" text-anchor="end" font-size="16" class="muted">${year}</text>
+  <text x="456" y="39" text-anchor="end" font-size="16" class="muted">${year}</text>
   ${ticks.map(value => `<line x1="${plotLeft}" x2="${plotRight}" y1="${y(value)}" y2="${y(value)}" class="grid" stroke-dasharray="3 5"/><text x="${plotLeft - 10}" y="${y(value) + 5}" text-anchor="end" class="muted" font-size="14">${value}</text>`).join('')}
-  ${path ? `<path d="${path}" fill="none" class="line" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>` : ''}
-  ${points.map(point => `<circle cx="${x(point.date).toFixed(2)}" cy="${y(point.count).toFixed(2)}" r="${points.length === 1 ? 4 : 2}" class="dot"><title>${point.date}: ${point.count} ${escapeXml(options.unit)}</title></circle>`).join('')}
+  ${areaPath ? `<path d="${areaPath}" class="area"/>` : ''}
+  ${path ? `<path d="${path}" fill="none" class="line" stroke-width="2.5" stroke-dasharray="5 4" stroke-linecap="round" stroke-linejoin="round"/>` : ''}
   ${points.length === 0 ? `<text x="${(plotLeft + plotRight) / 2}" y="${(plotTop + plotBottom) / 2}" text-anchor="middle" class="muted" font-size="16">Awaiting first observation</text>` : ''}
-  ${xTicks.map(tick => `<text x="${plotLeft + ((tick.time - start) / (end - start)) * width}" y="270" text-anchor="${tick.anchor}" class="muted" font-size="14">${tick.label}</text>`).join('')}
-  <text x="24" y="292" class="muted" font-size="14">${escapeXml(updated)}</text>
+  ${xTicks.map(tick => `<text x="${plotLeft + ((tick.time - start) / (end - start)) * width}" y="333" text-anchor="${tick.anchor}" class="muted" font-size="14">${tick.label}</text>`).join('')}
+  <text x="24" y="366" class="muted" font-size="14">${escapeXml(updated)}</text>
 </svg>`;
 }

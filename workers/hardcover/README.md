@@ -9,13 +9,17 @@ the client.
 Public endpoints:
 
 - `/api/books/currently-reading/giraycoskun` — current book JSON.
-- `/api/books/read-this-year/giraycoskun.svg` — cumulative daily observations for
+- `/api/books/read-this-year/giraycoskun.svg` — cumulative weekly observations for
   the current year's completed-book count.
+- `/api/books/read-in/{year}/giraycoskun.svg` — a permanent completed-year chart
+  used by the gallery.
 
 The year boundaries are generated from the scheduled run date. On every successful
-run, the Worker reads the current year's exact finish dates and rebuilds a cumulative
-daily history from January 1 through today. This seeds a new installation immediately,
+run, the Worker reads the current year's exact finish dates and rebuilds cumulative
+calendar-week snapshots through today. This seeds a new installation immediately,
 repairs gaps after missed runs, and starts a new history automatically on January 1.
+Before the first collection of a new year, the Worker archives the completed prior
+year so `/gallery` can retain it as a year-in-review card.
 
 ## Setup
 

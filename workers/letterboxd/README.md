@@ -10,6 +10,7 @@ The deployed chart is at
 <https://giraycoskun-letterboxd.giraycoskun-dev.workers.dev/watchlist.svg>.
 The diary snapshot is at the same origin under `/diary.json`.
 The annual activity graph is at the same origin under `/watched-this-year.svg`.
+Completed years are retained under `/watched-in/{year}.svg` for the gallery.
 The `giraycoskun-com` Pages project has `PUBLIC_LETTERBOXD_WORKER_URL` set for
 production and preview builds. Pushing `main` deploys the production site.
 
@@ -19,11 +20,11 @@ production and preview builds. Pushing `main` deploys the production site.
   `{ date: "YYYY-MM-DD", count: number }` observations.
 - The `diary:giraycoskun:v1` key holds four entries parsed from the public
   Letterboxd RSS feed: title, year, watched date, rating, link, and poster URL.
-- The `diary-year:giraycoskun:v1` key holds an exact cumulative daily history for
+- The `diary-year:giraycoskun:v1` key holds cumulative calendar-week snapshots for
   the current year. The collector derives the year from its run date, follows every
   page of Letterboxd's matching `/diary/films/for/{year}/` diary, and rebuilds the
   history from each entry's watched date.
-- At most one point per UTC day; a rerun replaces that day's point.
+- At most one annual-activity point per calendar week; a rerun replaces the current week's point.
 - Watchlist collection retains the latest **365 calendar days** (at most 365
   points). Its chart shows the last **90 calendar days**, with gaps for missed days.
 - A failed fetch, non-HTML response, wrong profile, missing total, or conflicting
@@ -37,6 +38,9 @@ production and preview builds. Pushing `main` deploys the production site.
 - Annual histories reset automatically on January 1. A new installation backfills
   January through today from the public diary's dated entries on its first successful
   collection, so missed scheduled runs do not leave gaps or fabricate observations.
+- Before the first collection of a new year, the completed prior year is copied to
+  a permanent archive key. The gallery discovers completed years in the browser and
+  adds both yearly activity plots without requiring another site build.
 - HTTP reads never scrape Letterboxd or write KV. SVG and JSON responses are
   browser-cacheable for one hour. The JSON endpoint allows cross-origin reads and
   exposes only already-public diary data. No public collection endpoint exists.

@@ -3,6 +3,9 @@ import Layout from '../layouts/Layout.astro';
 import { Image } from 'astro:assets';
 import { galleryData, getUnsplashUrl } from '../data/gallery';
 
+const letterboxdWorkerUrl = import.meta.env.PUBLIC_LETTERBOXD_WORKER_URL?.trim() ?? '';
+const hardcoverWorkerUrl = import.meta.env.PUBLIC_HARDCOVER_WORKER_URL?.trim() ?? '';
+
 // Sort newest first for a nicer masonry feed
 const images = [...galleryData].sort((a, b) => {
 	if (!a.date && !b.date) return 0;
@@ -12,7 +15,7 @@ const images = [...galleryData].sort((a, b) => {
 });
 ---
 
-<Layout title="Gallery" description="Photo gallery of hikes, trips, and travels">
+<Layout title="Gallery" description="Gallery of hikes, trips, travels, and completed yearly activity">
 	<main class="container mx-auto px-2 py-12 max-w-7xl">
 		<h1 class="text-4xl font-bold mb-12 text-gray-900 dark:text-gray-100 text-center">
 			Gallery
@@ -88,6 +91,20 @@ const images = [...galleryData].sort((a, b) => {
 		<div class="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
 			<span id="image-count">{images.length}</span> images
 		</div>
+
+		<section
+			id="yearly-activity-archive"
+			data-letterboxd-worker={letterboxdWorkerUrl}
+			data-hardcover-worker={hardcoverWorkerUrl}
+			class="mt-16 hidden"
+			aria-labelledby="yearly-activity-title"
+		>
+			<div class="mb-6 text-center">
+				<h2 id="yearly-activity-title" class="text-3xl font-bold text-gray-900 dark:text-gray-100">Yearly activity</h2>
+				<p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Completed reading and film-watching years.</p>
+			</div>
+			<div id="yearly-activity-grid" class="grid grid-cols-1 gap-6 lg:grid-cols-2"></div>
+		</section>
 	</main>
 
 	<div
@@ -142,6 +159,83 @@ const images = [...galleryData].sort((a, b) => {
 			</figcaption>
 		</figure>
 	</div>
+
+	<script>
+		const ACTIVITY_ARCHIVE_START_YEAR = 2026;
+
+		const initYearlyActivityArchive = () => {
+			const section = document.getElementById('yearly-activity-archive');
+			const grid = document.getElementById('yearly-activity-grid');
+			if (!(section instanceof HTMLElement) || !(grid instanceof HTMLElement)) return;
+
+			const params = new URLSearchParams(window.location.search);
+			const previewCurrentYear = params.get('yearlyActivityPreview') === '1';
+			const currentYear = new Date().getUTCFullYear();
+			const latestYear = previewCurrentYear ? currentYear : currentYear - 1;
+			if (latestYear < ACTIVITY_ARCHIVE_START_YEAR) return;
+
+			const sources = [
+				{
+					name: 'Hardcover',
+					worker: section.dataset.hardcoverWorker ?? '',
+					path: (year: number) => `/api/books/read-in/${year}/giraycoskun.svg`,
+					accent: 'text-violet-700 dark:text-violet-300',
+				},
+				{
+					name: 'Letterboxd',
+					worker: section.dataset.letterboxdWorker ?? '',
+					path: (year: number) => `/watched-in/${year}.svg`,
+					accent: 'text-emerald-700 dark:text-emerald-300',
+				},
+			].filter(source => source.worker.length > 0);
+			if (sources.length === 0) return;
+
+			for (let year = latestYear; year >= ACTIVITY_ARCHIVE_START_YEAR; year -= 1) {
+				for (const source of sources) {
+					const url = new URL(source.path(year), source.worker).href;
+					const link = document.createElement('a');
+					link.href = url;
+					link.target = '_blank';
+					link.rel = 'noopener noreferrer';
+					link.className = 'group overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-gray-700 dark:bg-gray-800';
+
+					const image = document.createElement('img');
+					image.src = url;
+					image.alt = `${source.name} activity graph for ${year}`;
+					image.width = 480;
+					image.height = 380;
+					image.loading = 'lazy';
+					image.decoding = 'async';
+					image.className = 'block h-auto w-full bg-gray-50 dark:bg-gray-900';
+
+					const caption = document.createElement('div');
+					caption.className = 'flex items-center justify-between gap-4 border-t border-gray-200 px-4 py-3 dark:border-gray-700';
+					const title = document.createElement('span');
+					title.className = `font-semibold ${source.accent}`;
+					title.textContent = source.name;
+					const date = document.createElement('span');
+					date.className = 'text-sm text-gray-500 dark:text-gray-400';
+					date.textContent = year.toString();
+					caption.append(title, date);
+					link.append(image, caption);
+
+					image.addEventListener('error', () => {
+						link.remove();
+						if (grid.childElementCount === 0) section.classList.add('hidden');
+					});
+					grid.append(link);
+				}
+			}
+
+			if (grid.childElementCount > 0) section.classList.remove('hidden');
+		};
+
+		if (document.readyState === 'loading') {
+			document.addEventListener('DOMContentLoaded', initYearlyActivityArchive, { once: true });
+		} else {
+			initYearlyActivityArchive();
+		}
+	</script>
 
 	<script>
 		const IMAGES_PER_PAGE = 12;

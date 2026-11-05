@@ -3,7 +3,7 @@ import diarySnapshot from '../../src/data/diarySnapshot.json' with { type: 'json
 import type { DiarySnapshot } from '../../src/utils/diary.ts';
 import { renderWatchlistSvg, type WatchlistHistory } from '../../src/utils/watchlist.ts';
 import { emptyYearActivity, renderYearActivitySvg, type YearActivityHistory } from '../../src/utils/yearActivity.ts';
-import { collectDiary, collectWatchlist, collectYearlyDiary, DIARY_KEY, HISTORY_KEY, type Env, YEAR_DIARY_KEY } from './collector.ts';
+import { archiveCompletedDiaryYear, collectDiary, collectWatchlist, collectYearlyDiary, DIARY_KEY, HISTORY_KEY, type Env, YEAR_DIARY_KEY, yearDiaryArchiveKey } from './collector.ts';
 
 const JSON_HEADERS = {
   'Content-Type': 'application/json; charset=utf-8',
@@ -14,6 +14,8 @@ const JSON_HEADERS = {
 
 export default {
   async scheduled(_event: unknown, env: Env) {
+    // Preserve the completed prior year before the current-year key is replaced.
+    await archiveCompletedDiaryYear(env);
     // Run independently so a temporary failure in one source does not prevent the other update.
     const results = await Promise.allSettled([collectWatchlist(env), collectDiary(env), collectYearlyDiary(env)]);
     const failures = results.filter(result => result.status === 'rejected');
@@ -22,7 +24,8 @@ export default {
 
   async fetch(request: Request, env: Env): Promise<Response> {
     const path = new URL(request.url).pathname;
-    if (path !== '/watchlist.svg' && path !== '/diary.json' && path !== '/watched-this-year.svg') {
+    const archiveMatch = path.match(/^\/watched-in\/(\d{4})\.svg$/);
+    if (path !== '/watchlist.svg' && path !== '/diary.json' && path !== '/watched-this-year.svg' && !archiveMatch) {
       return new Response('Not found', { status: 404 });
     }
     if (request.method !== 'GET' && request.method !== 'HEAD') {
@@ -39,17 +42,27 @@ export default {
         });
       }
     }
-    if (path === '/watched-this-year.svg') {
+    if (path === '/watched-this-year.svg' || archiveMatch) {
       const now = new Date();
       try {
-        const stored = await env.WATCHLIST.get<YearActivityHistory>(YEAR_DIARY_KEY, 'json');
-        const current = stored?.year === now.getUTCFullYear() ? stored : emptyYearActivity('giraycoskun', now);
-        const svg = renderYearActivitySvg(current, {
-          title: 'Letterboxd films watched this year',
+        const archivedYear = archiveMatch ? Number(archiveMatch[1]) : null;
+        const stored = archivedYear === null
+          ? await env.WATCHLIST.get<YearActivityHistory>(YEAR_DIARY_KEY, 'json')
+          : await env.WATCHLIST.get<YearActivityHistory>(yearDiaryArchiveKey(archivedYear), 'json')
+            ?? await env.WATCHLIST.get<YearActivityHistory>(YEAR_DIARY_KEY, 'json');
+        if (archivedYear !== null && stored?.year !== archivedYear) {
+          return new Response('Archived year not found', { status: 404 });
+        }
+        const activity = archivedYear === null && stored?.year !== now.getUTCFullYear()
+          ? emptyYearActivity('giraycoskun', now)
+          : stored!;
+        const svg = renderYearActivitySvg(activity, {
+          title: archivedYear === null ? 'Letterboxd films watched this year' : `Letterboxd films watched in ${archivedYear}`,
           unit: 'films watched',
           accent: '#047857',
           darkAccent: '#34d399',
-          snapshot: current !== stored,
+          snapshot: archivedYear === null && activity !== stored,
+          archived: archivedYear !== null,
         }, now);
         return new Response(request.method === 'HEAD' ? null : svg, {
           headers: {
@@ -61,6 +74,7 @@ export default {
         });
       } catch (error) {
         console.error('Unable to read yearly diary history', error);
+        if (archiveMatch) return new Response('Unable to read archived year', { status: 503 });
         return new Response(request.method === 'HEAD' ? null : renderYearActivitySvg(emptyYearActivity('giraycoskun', now), {
           title: 'Letterboxd films watched this year', unit: 'films watched', accent: '#047857', darkAccent: '#34d399', snapshot: true,
         }, now), { headers: { 'Content-Type': 'image/svg+xml; charset=utf-8', 'Cache-Control': 'no-store' } });
